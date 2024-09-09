@@ -1,4 +1,4 @@
-DETECTRON2_FASTER_RCNN:
+FASTER_RCNN_DETECTRON2:
   CONFIG: "lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config"
   WEIGHTS: "https://huggingface.co/nlpconnect/PubLayNet-faster_rcnn_R_50_FPN_3x/resolve/main/model_final.pth"
   LABEL_MAP:
