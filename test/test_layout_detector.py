@@ -7,9 +7,9 @@ from tensordoc.layout_detector import LayoutDetectorFactory, LayoutDetectorType
 
 
 class TestLayoutDetector(unittest.TestCase):
-    def test_detectron2_layout_detector(self):
+    def test_faster_rcnn_layout_detector(self):
         detector = LayoutDetectorFactory.get_layout_detector(
-            LayoutDetectorType.DETECTRON2
+            LayoutDetectorType.FASTER_RCNN
         )
 
         curr_path = os.path.dirname(__file__)

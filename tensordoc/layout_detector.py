@@ -5,21 +5,11 @@ from typing import List
 import layoutparser as lp
 import numpy as np
 
-DETECTRON2_FASTER_RCNN_R_50_FPN_3X_CONFIG = (
-    "lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config"
-)
-
-FASTER_RCNN_LABEL_MAP = {
-    0: "Text",
-    1: "Title",
-    2: "List",
-    3: "Table",
-    4: "Figure",
-}
+from tensordoc.config.utils import load_layout_detector_config
 
 
 class LayoutDetectorType(Enum):
-    DETECTRON2 = "detectron2"
+    FASTER_RCNN = "faster_rcnn"
 
 
 class LayoutDetector(ABC):
@@ -31,19 +21,31 @@ class LayoutDetector(ABC):
     def process(self, image: np.ndarray) -> List[lp.elements.Layout]: ...
 
 
-class Detectron2LayoutDetector(LayoutDetector):
+class FasterRCNNLayoutDetector(LayoutDetector):
     """
-    Layout detector using Detectron2 and LayoutParser.
+    Faster RCNN based layout detector using Detectron2.
     """
 
-    def __init__(self):
-        self.model = lp.models.Detectron2LayoutModel(
-            config_path=DETECTRON2_FASTER_RCNN_R_50_FPN_3X_CONFIG,
-            label_map=FASTER_RCNN_LABEL_MAP,
+    def __init__(self, **kwargs):
+
+        self._config = load_layout_detector_config()["DETECTRON2_FASTER_RCNN"]
+        self._load_model(**kwargs)
+
+    def _load_model(self, **kwargs):
+        if "model_path" not in kwargs:
+            model_path = self._config["WEIGHTS"]
+        else:
+            model_path = kwargs["model_path"]
+
+        self._model = lp.models.Detectron2LayoutModel(
+            model_path=model_path,
+            config_path=self._config["CONFIG"],
+            label_map=self._config["LABEL_MAP"],
+            **kwargs,
         )
 
     def process(self, image: np.ndarray) -> List[lp.elements.Layout]:
-        return self.model.detect(image)
+        return self._model.detect(image)
 
 
 class LayoutDetectorFactory:
@@ -54,12 +56,13 @@ class LayoutDetectorFactory:
     @staticmethod
     def get_layout_detector(
         layout_detector_type: LayoutDetectorType,
+        **kwargs,
     ) -> LayoutDetector:
         """
-        Get a layout detector based on the type.
+        Get a layout detector based on the type of layout detection engine.
         """
-        if layout_detector_type == LayoutDetectorType.DETECTRON2:
-            return Detectron2LayoutDetector()
+        if layout_detector_type == LayoutDetectorType.FASTER_RCNN:
+            return FasterRCNNLayoutDetector(**kwargs)
         raise ValueError(
             f"Invalid layout detector type: {layout_detector_type}"
         )

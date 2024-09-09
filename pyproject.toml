@@ -14,6 +14,10 @@ pydantic = "^2.8"
 jupyter = "^1.0" 
 notebook = "^6.4"
 jupyterlab = "^3.2" 
+layoutparser = "^0.3.1"
+torch = "^2.3.1"
+torchvision = "^0.19.1"
+Pillow = "^9.5.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
@@ -22,10 +26,6 @@ pytest = "^7.1.1"
 pytest-cov = "^4.0.0"
 pytest-runner = "^6.0.0"
 pytest-watch = "^4.2.0"
-layoutparser = "^0.3.1"
-torch = "^2.3.1"
-torchvision = "^0.19.1"
-Pillow = "^9.5.0"
 
 [tool.black]
 line-length = 79
