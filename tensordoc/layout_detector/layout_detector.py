@@ -2,10 +2,11 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
 
-import layoutparser as lp
 import numpy as np
 
-from tensordoc.config.utils import load_layout_detector_config
+from tensordoc.components import Layout
+from tensordoc.layout_detector.config.utils import load_layout_detector_config
+from tensordoc.layout_detector.detectron2_engine import Detectron2LayoutEngine
 
 
 class LayoutDetectorType(Enum):
@@ -18,7 +19,7 @@ class LayoutDetector(ABC):
     """
 
     @abstractmethod
-    def process(self, image: np.ndarray) -> List[lp.elements.Layout]: ...
+    def process(self, image: np.ndarray) -> List[Layout]: ...
 
 
 class FasterRCNNLayoutDetector(LayoutDetector):
@@ -27,7 +28,10 @@ class FasterRCNNLayoutDetector(LayoutDetector):
     """
 
     def __init__(self, **kwargs):
-        self._config = load_layout_detector_config()["FASTER_RCNN_DETECTRON2"]
+        model_cfg, detectron_cfg_path = load_layout_detector_config()
+        self._model_cfg = model_cfg
+        self._detectron_cfg_path = detectron_cfg_path
+        self._config = model_cfg["FASTER_RCNN_DETECTRON2"]
         self._load_model(**kwargs)
 
     def _load_model(self, **kwargs):
@@ -36,14 +40,14 @@ class FasterRCNNLayoutDetector(LayoutDetector):
         else:
             model_path = kwargs["model_path"]
 
-        self._model = lp.models.Detectron2LayoutModel(
+        self._model = Detectron2LayoutEngine(
             model_path=model_path,
-            config_path=self._config["CONFIG"],
+            config_path=self._detectron_cfg_path,
             label_map=self._config["LABEL_MAP"],
             **kwargs,
         )
 
-    def process(self, image: np.ndarray) -> List[lp.elements.Layout]:
+    def process(self, image: np.ndarray) -> List[Layout]:
         return self._model.detect(image)
 
 
