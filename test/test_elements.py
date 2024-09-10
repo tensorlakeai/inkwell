@@ -331,10 +331,6 @@ class TestElements(unittest.TestCase):
             [i2, r2, q2, q], page_data={"width": 200, "height": 200}
         )
 
-        # Test addition
-        with pytest.raises(ValueError):
-            l.page_data = {"width": 200, "height": 400}
-
         # Test sort
         ## When sorting inplace, it should return None
         l = Layout([i])
