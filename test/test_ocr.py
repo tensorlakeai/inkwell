@@ -6,7 +6,7 @@ from tensordoc.ocr import OCRFactory, OCRType
 
 class TestOCR(unittest.TestCase):
     def test_tesseract_ocr(self):
-        ocr = OCRFactory.get_ocr(OCRType.TESSERACT)
+        ocr = OCRFactory.get_ocr(OCRType.TESSERACT, lang="eng")
 
         curr_path = os.path.dirname(__file__)
         image_path = os.path.join(curr_path, "./data/sample.png")
