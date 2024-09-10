@@ -51,3 +51,12 @@ class BaseLayoutEngine(ABC):
         It will process the input images appropriately to the target format.
         """
         pass
+
+
+class BaseLayoutDetector(ABC):
+    """
+    Abstract class for layout detection.
+    """
+
+    @abstractmethod
+    def process(self, image: np.ndarray) -> Layout: ...

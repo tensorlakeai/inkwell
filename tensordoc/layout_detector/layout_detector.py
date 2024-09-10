@@ -1,10 +1,9 @@
-from abc import ABC, abstractmethod
 from enum import Enum
-from typing import List
 
 import numpy as np
 
 from tensordoc.components import Layout
+from tensordoc.layout_detector.base import BaseLayoutDetector
 from tensordoc.layout_detector.config.utils import load_layout_detector_config
 from tensordoc.layout_detector.detectron2_engine import Detectron2LayoutEngine
 
@@ -13,16 +12,7 @@ class LayoutDetectorType(Enum):
     FASTER_RCNN = "faster_rcnn"
 
 
-class LayoutDetector(ABC):
-    """
-    Abstract class for layout detection.
-    """
-
-    @abstractmethod
-    def process(self, image: np.ndarray) -> List[Layout]: ...
-
-
-class FasterRCNNLayoutDetector(LayoutDetector):
+class FasterRCNNLayoutDetector(BaseLayoutDetector):
     """
     Faster RCNN based layout detector using Detectron2.
     """
@@ -47,7 +37,7 @@ class FasterRCNNLayoutDetector(LayoutDetector):
             **kwargs,
         )
 
-    def process(self, image: np.ndarray) -> List[Layout]:
+    def process(self, image: np.ndarray) -> Layout:
         return self._model.detect(image)
 
 
@@ -60,7 +50,7 @@ class LayoutDetectorFactory:
     def get_layout_detector(
         layout_detector_type: LayoutDetectorType,
         **kwargs,
-    ) -> LayoutDetector:
+    ) -> BaseLayoutDetector:
         """
         Get a layout detector based on the type of layout detection engine.
         """
