@@ -1,44 +1,11 @@
-from enum import Enum
-
-import numpy as np
-
-from tensordoc.components import Layout
-from tensordoc.layout_detector.base import BaseLayoutDetector
-from tensordoc.layout_detector.config.utils import load_layout_detector_config
-from tensordoc.layout_detector.detectron2_engine import Detectron2LayoutEngine
-
-
-class LayoutDetectorType(Enum):
-    FASTER_RCNN = "faster_rcnn"
-
-
-class FasterRCNNLayoutDetector(BaseLayoutDetector):
-    """
-    Faster RCNN based layout detector using Detectron2.
-    """
-
-    def __init__(self, **kwargs):
-        model_cfg, detectron_cfg_path = load_layout_detector_config()
-        self._model_cfg = model_cfg
-        self._detectron_cfg_path = detectron_cfg_path
-        self._config = model_cfg["FASTER_RCNN_DETECTRON2"]
-        self._load_model(**kwargs)
-
-    def _load_model(self, **kwargs):
-        if "model_path" not in kwargs:
-            model_path = self._config["WEIGHTS"]
-        else:
-            model_path = kwargs["model_path"]
-
-        self._model = Detectron2LayoutEngine(
-            model_path=model_path,
-            config_path=self._detectron_cfg_path,
-            label_map=self._config["LABEL_MAP"],
-            **kwargs,
-        )
-
-    def process(self, image: np.ndarray) -> Layout:
-        return self._model.detect(image)
+from tensordoc.layout_detector.base import (
+    BaseLayoutDetector,
+    LayoutDetectorType,
+)
+from tensordoc.layout_detector.dit_detector import DitLayoutDetector
+from tensordoc.layout_detector.faster_rcnn_detector import (
+    FasterRCNNLayoutDetector,
+)
 
 
 class LayoutDetectorFactory:
@@ -56,6 +23,8 @@ class LayoutDetectorFactory:
         """
         if layout_detector_type == LayoutDetectorType.FASTER_RCNN:
             return FasterRCNNLayoutDetector(**kwargs)
+        if layout_detector_type == LayoutDetectorType.DIT:
+            return DitLayoutDetector(**kwargs)
         raise ValueError(
             f"Invalid layout detector type: {layout_detector_type}"
         )

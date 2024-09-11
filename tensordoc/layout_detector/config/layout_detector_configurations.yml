@@ -1,0 +1,19 @@
+faster_rcnn:
+  WEIGHTS: "https://huggingface.co/nlpconnect/PubLayNet-faster_rcnn_R_50_FPN_3x/resolve/main/model_final.pth"
+  CONFIG_FILE: "faster_rcnn_detectron2_cfg.yml" 
+  LABEL_MAP:
+    0: "Text"
+    1: "Title"
+    2: "List"
+    3: "Table"
+    4: "Figure"
+
+dit:
+  WEIGHTS: "https://huggingface.co/Sebas6k/DiT_weights/resolve/main/publaynet_dit-b_cascade.pth"
+  CONFIG_FILE: "cascade_dit_base.yml"
+  LABEL_MAP:
+    0: "Text"
+    1: "Title"
+    2: "List"
+    3: "Table"
+    4: "Figure"
