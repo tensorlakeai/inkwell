@@ -20,7 +20,7 @@ import numpy as np
 from PIL import Image
 
 from tensordoc.components import Layout, Rectangle, TextBlock
-from tensordoc.layout_detector.base_layout_engine import BaseLayoutEngine
+from tensordoc.layout_detector.base import BaseLayoutEngine
 from tensordoc.utils.env_utils import (
     is_detectron2_available,
     is_torch_cuda_available,
@@ -47,9 +47,15 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
             supported datasets, Layout Parser will
             automatically initialize the label_map.
             Defaults to `None`.
+        detection_threshold (:obj:`float`, optional):
+            The threshold for the detection confidence score.
+            If the score is less than the threshold,
+            the detection will be ignored.
+            Defaults to `0.5`.
         device(:obj:`str`, optional):
             Whether to use cuda or cpu devices. If not set, it will
             automatically determine the device to initialize the models on.
+
     """
 
     DEPENDENCIES = ["detectron2"]
@@ -61,6 +67,7 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
         model_path: str = None,
         label_map: dict = None,
         device: Union[str, None] = None,
+        **kwargs,
     ):
 
         cfg = detectron2.config.get_cfg()
@@ -75,6 +82,11 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
                 device = "cpu"
 
         cfg.MODEL.DEVICE = device
+
+        if "detection_threshold" in kwargs:
+            cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = kwargs[
+                "detection_threshold"
+            ]
 
         self.cfg = cfg
         self.label_map = label_map
