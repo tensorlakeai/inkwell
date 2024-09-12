@@ -6,6 +6,7 @@ from tensordoc.layout_detector.dit_detector import DitLayoutDetector
 from tensordoc.layout_detector.faster_rcnn_detector import (
     FasterRCNNLayoutDetector,
 )
+from tensordoc.layout_detector.layoutlmv3_detector import LayoutLMv3Detector
 
 
 class LayoutDetectorFactory:
@@ -25,6 +26,8 @@ class LayoutDetectorFactory:
             return FasterRCNNLayoutDetector(**kwargs)
         if layout_detector_type == LayoutDetectorType.DIT:
             return DitLayoutDetector(**kwargs)
+        if layout_detector_type == LayoutDetectorType.LAYOUTLMV3:
+            return LayoutLMv3Detector(**kwargs)
         raise ValueError(
             f"Invalid layout detector type: {layout_detector_type}"
         )
