@@ -1,26 +1,14 @@
-# Copyright 2021 The Layout Parser team. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # pylint: disable=used-before-assignment
 
-from typing import Union
+from pathlib import Path
+from typing import List, Union
 
 import numpy as np
+from detectron2.config import CfgNode as CN
 from PIL import Image
 
 from tensordoc.components import Layout, Rectangle, TextBlock
-from tensordoc.layout_detector.base import BaseLayoutEngine
+from tensordoc.layout_detector.base import BaseLayoutDetector, BaseLayoutEngine
 from tensordoc.utils.env_utils import (
     is_detectron2_available,
     is_torch_cuda_available,
@@ -31,8 +19,41 @@ if is_detectron2_available():
     import detectron2.engine  # pylint: disable=import-outside-toplevel
 
 
+def add_vit_config(cfg):
+    """
+    Add config for VIT.
+    """
+    _cfg = cfg
+
+    _cfg.MODEL.VIT = CN()
+
+    # CoaT model name.
+    _cfg.MODEL.VIT.NAME = ""
+
+    # Output features from CoaT backbone.
+    _cfg.MODEL.VIT.OUT_FEATURES = ["layer3", "layer5", "layer7", "layer11"]
+
+    _cfg.MODEL.VIT.IMG_SIZE = [224, 224]
+
+    _cfg.MODEL.VIT.POS_TYPE = "shared_rel"
+
+    _cfg.MODEL.VIT.DROP_PATH = 0.0
+
+    _cfg.MODEL.VIT.MODEL_KWARGS = "{}"
+
+    _cfg.SOLVER.OPTIMIZER = "ADAMW"
+
+    _cfg.SOLVER.BACKBONE_MULTIPLIER = 1.0
+
+    _cfg.AUG = CN()
+
+    _cfg.AUG.DETR = False
+
+
 class Detectron2LayoutEngine(BaseLayoutEngine):
     """Create a Detectron2-based Layout Detection Model
+
+    Code adapted from: https://github.com/Layout-Parser/layout-parser
 
     Args:
         config_path (:obj:`str`):
@@ -69,34 +90,37 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
         device: Union[str, None] = None,
         **kwargs,
     ):
-
-        cfg = detectron2.config.get_cfg()
-        cfg.merge_from_file(config_path)
-
-        cfg.MODEL.WEIGHTS = model_path
+        self._config_path = config_path
+        self._model_path = model_path
+        self._label_map = label_map
 
         if device is None:
-            if is_torch_cuda_available():
-                device = "cuda"
-            else:
-                device = "cpu"
+            device = "cuda" if is_torch_cuda_available() else "cpu"
 
-        cfg.MODEL.DEVICE = device
+        self._device = device
+
+        self._create_cfg(**kwargs)
+        self._create_model()
+
+    def _create_cfg(self, **kwargs):
+        cfg = detectron2.config.get_cfg()
+        if kwargs.get("add_vit_config", False):
+            add_vit_config(cfg)
+        cfg.merge_from_file(self._config_path)
+        cfg.MODEL.WEIGHTS = self._model_path
+        cfg.MODEL.DEVICE = self._device
 
         if "detection_threshold" in kwargs:
             cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = kwargs[
                 "detection_threshold"
             ]
 
-        self.cfg = cfg
-        self.label_map = label_map
-        self._create_model()
+        self._cfg = cfg
 
     def _create_model(self):
-        self._model = detectron2.engine.DefaultPredictor(self.cfg)
+        self._model = detectron2.engine.DefaultPredictor(self._cfg)
 
     def _gather_output(self, outputs: dict) -> Layout:
-
         instance_pred = outputs["instances"].to("cpu")
         layout = Layout()
         scores = instance_pred.scores.tolist()
@@ -105,7 +129,7 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
 
         for score, box, label in zip(scores, boxes, labels):
             x_1, y_1, x_2, y_2 = box
-            label = self.label_map.get(label, label)
+            label = self._label_map.get(label, label)
             cur_block = TextBlock(
                 Rectangle(x_1, y_1, x_2, y_2), type=label, score=score
             )
@@ -145,3 +169,31 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
                 "Detectron2 is not installed. Please install it first."
             )
         return super().__new__(cls)
+
+
+class Detectron2LayoutDetector(BaseLayoutDetector):
+    """
+    Detectron2-based layout detector.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._config = {}
+        self._model = None
+
+    def _load_model(self, **kwargs):
+        model_path = kwargs.get("model_path", self._config["WEIGHTS"])
+
+        config_path = (
+            Path(self._config["cfg_dir"]) / self._config["CONFIG_FILE"]
+        )
+
+        self._model = Detectron2LayoutEngine(
+            model_path=model_path,
+            config_path=config_path,
+            label_map=self._config["LABEL_MAP"],
+            **kwargs,
+        )
+
+    def process(self, image: np.ndarray) -> List[Layout]:
+        return self._model.detect(image)
