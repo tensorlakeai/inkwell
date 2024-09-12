@@ -1,14 +1,15 @@
 # pylint: disable=used-before-assignment
 
+import os
 from pathlib import Path
-from typing import List, Union
+from typing import Callable, List, Optional, Union
 
 import numpy as np
-from detectron2.config import CfgNode as CN
 from PIL import Image
 
 from tensordoc.components import Layout, Rectangle, TextBlock
 from tensordoc.layout_detector.base import BaseLayoutDetector, BaseLayoutEngine
+from tensordoc.utils.download import download_file, get_cache_directory
 from tensordoc.utils.env_utils import (
     is_detectron2_available,
     is_torch_cuda_available,
@@ -17,37 +18,6 @@ from tensordoc.utils.env_utils import (
 if is_detectron2_available():
     import detectron2.config  # pylint: disable=import-outside-toplevel
     import detectron2.engine  # pylint: disable=import-outside-toplevel
-
-
-def add_vit_config(cfg):
-    """
-    Add config for VIT.
-    """
-    _cfg = cfg
-
-    _cfg.MODEL.VIT = CN()
-
-    # CoaT model name.
-    _cfg.MODEL.VIT.NAME = ""
-
-    # Output features from CoaT backbone.
-    _cfg.MODEL.VIT.OUT_FEATURES = ["layer3", "layer5", "layer7", "layer11"]
-
-    _cfg.MODEL.VIT.IMG_SIZE = [224, 224]
-
-    _cfg.MODEL.VIT.POS_TYPE = "shared_rel"
-
-    _cfg.MODEL.VIT.DROP_PATH = 0.0
-
-    _cfg.MODEL.VIT.MODEL_KWARGS = "{}"
-
-    _cfg.SOLVER.OPTIMIZER = "ADAMW"
-
-    _cfg.SOLVER.BACKBONE_MULTIPLIER = 1.0
-
-    _cfg.AUG = CN()
-
-    _cfg.AUG.DETR = False
 
 
 class Detectron2LayoutEngine(BaseLayoutEngine):
@@ -84,15 +54,18 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
 
     def __init__(
         self,
+        model_path: str,
         config_path: str,
-        model_path: str = None,
         label_map: dict = None,
         device: Union[str, None] = None,
-        **kwargs,
+        add_architecture_config_method: Optional[Callable] = None,
+        **kwargs,  # pylint: disable=too-many-arguments
     ):
+
         self._config_path = config_path
         self._model_path = model_path
         self._label_map = label_map
+        self._add_architecture_config_method = add_architecture_config_method
 
         if device is None:
             device = "cuda" if is_torch_cuda_available() else "cpu"
@@ -104,9 +77,11 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
 
     def _create_cfg(self, **kwargs):
         cfg = detectron2.config.get_cfg()
-        if kwargs.get("add_vit_config", False):
-            add_vit_config(cfg)
+        if self._add_architecture_config_method:
+            self._add_architecture_config_method(cfg)
+
         cfg.merge_from_file(self._config_path)
+
         cfg.MODEL.WEIGHTS = self._model_path
         cfg.MODEL.DEVICE = self._device
 
@@ -180,16 +155,32 @@ class Detectron2LayoutDetector(BaseLayoutDetector):
         super().__init__()
         self._config = {}
         self._model = None
+        self._model_name = ""
 
     def _load_model(self, **kwargs):
-        model_path = kwargs.get("model_path", self._config["WEIGHTS"])
+
+        default_model_path = (
+            get_cache_directory()
+            / self._model_name
+            / self._config["WEIGHTS_FILE"]
+        )
+
+        model_path = kwargs.get("model_path", default_model_path)
+
+        if not model_path.exists():
+
+            model_path.parent.mkdir(parents=True, exist_ok=True)
+            file_name = os.path.join(
+                self._model_name, self._config["WEIGHTS_FILE"]
+            )
+            download_file(self._config["WEIGHTS_URL"], file_name)
 
         config_path = (
             Path(self._config["cfg_dir"]) / self._config["CONFIG_FILE"]
         )
 
         self._model = Detectron2LayoutEngine(
-            model_path=model_path,
+            model_path=str(model_path),
             config_path=config_path,
             label_map=self._config["LABEL_MAP"],
             **kwargs,
