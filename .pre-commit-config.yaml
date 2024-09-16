@@ -8,6 +8,13 @@ repos:
       - id: check-added-large-files
 
 repos:
+
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        language_version: python3  
+        
   - repo: https://github.com/PyCQA/pylint
     rev: v3.2.7 
     hooks:
@@ -17,15 +24,8 @@ repos:
           - --disable=import-error
           - --disable=too-few-public-methods
 
-        language_version: python3 
-        depends_on: [black]
+        language_version: python3
 
-  - repo: https://github.com/psf/black
-    rev: 24.8.0
-    hooks:
-      - id: black
-        language_version: python3  
-        
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.10.1 
     hooks:
