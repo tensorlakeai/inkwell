@@ -1,17 +1,26 @@
 import os
 import unittest
 
+from PIL import Image
+
 from tensordoc.ocr import OCRFactory, OCRType
 
 
 class TestOCR(unittest.TestCase):
+
+    @staticmethod
+    def _load_test_image():
+        curr_path = os.path.dirname(__file__)
+        image_path = os.path.join(curr_path, "./data/sample.png")
+        image = Image.open(image_path)
+        return image
+
     def test_tesseract_ocr(self):
         ocr = OCRFactory.get_ocr(OCRType.TESSERACT, lang="eng")
 
-        curr_path = os.path.dirname(__file__)
-        image_path = os.path.join(curr_path, "./data/sample.png")
+        image = self._load_test_image()
 
-        text = ocr.process(image_path)
+        text = ocr.process(image)
         assert isinstance(text, str), "Text should be a string"
         assert len(text) > 0, "Text should not be empty"
         assert "receipt" in text, "Text should contain 'receipt'"
