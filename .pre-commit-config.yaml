@@ -18,6 +18,7 @@ repos:
           - --disable=too-few-public-methods
 
         language_version: python3 
+        depends_on: [black]
 
   - repo: https://github.com/psf/black
     rev: 24.8.0
