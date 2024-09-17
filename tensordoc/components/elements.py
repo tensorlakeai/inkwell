@@ -530,6 +530,9 @@ class Rectangle(BaseCoordElement):
     _name = "rectangle"
     _features = ["x_1", "y_1", "x_2", "y_2"]
 
+    class Config:
+        arbitrary_types_allowed = True
+
     def __init__(self, x_1, y_1, x_2, y_2):
 
         self.x_1 = x_1
@@ -1317,6 +1320,13 @@ class TextBlock(BaseLayoutElement):
         Return the area of associated block.
         """
         return self.block.area
+
+    @property
+    def rectangle(self):
+        """
+        Return the Rectangle of the block.
+        """
+        return self.block
 
     @mixin_textblock_meta
     def condition_on(self, other):

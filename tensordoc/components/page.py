@@ -1,11 +1,12 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Union
 
 from pydantic import BaseModel
 
 from tensordoc.components.image import Image
+from tensordoc.components.layout import Layout
 from tensordoc.components.table import Table
-from tensordoc.components.text import Text
+from tensordoc.components.text import TextBox
 
 
 class PageFragmentType(str, Enum):
@@ -20,9 +21,7 @@ class PageFragmentType(str, Enum):
 
 class PageFragment(BaseModel):
     fragment_type: PageFragmentType
-    text: Optional[Text] = None
-    table: Optional[Table] = None
-    figure: Optional[Image] = None
+    content: Union[TextBox, Table, Image]
 
 
 class Page(BaseModel):
@@ -31,7 +30,32 @@ class Page(BaseModel):
     """
 
     page_number: int
-    fragments: List[PageFragment]
+    page_fragments: List[PageFragment]
+    layout: Layout
+
+    def get_text_fragments(self) -> List[TextBox]:
+        return [
+            fragment
+            for fragment in self.page_fragments
+            if fragment.fragment_type == PageFragmentType.TEXT
+        ]
+
+    def get_table_fragments(self) -> List[Table]:
+        return [
+            fragment
+            for fragment in self.page_fragments
+            if fragment.fragment_type == PageFragmentType.TABLE
+        ]
+
+    def get_image_fragments(self) -> List[Image]:
+        return [
+            fragment
+            for fragment in self.page_fragments
+            if fragment.fragment_type == PageFragmentType.FIGURE
+        ]
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class Document(BaseModel):

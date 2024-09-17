@@ -1,9 +1,23 @@
+from typing import Optional
+
+import numpy as np
 from pydantic import BaseModel
 
+from tensordoc.components.elements import Rectangle
 
-class Text(BaseModel):
+
+class TextBox(BaseModel):
     """
     Text in a document.
     """
 
-    data: str
+    text: str
+    bbox: Optional[Rectangle] = None
+    score: Optional[float] = None
+    image: Optional[np.ndarray] = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    def __repr__(self):
+        return f"TextBox(bbox={self.bbox}, score={self.score})"

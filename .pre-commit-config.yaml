@@ -23,6 +23,7 @@ repos:
           - --disable=missing-docstring
           - --disable=import-error
           - --disable=too-few-public-methods
+          - --disable=too-many-locals
 
         language_version: python3
 
