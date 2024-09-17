@@ -1,15 +1,14 @@
 import os
 import unittest
 
-import cv2
-
+from tensordoc.io import read_image
 from tensordoc.layout_detector import LayoutDetectorFactory, LayoutDetectorType
 
 
 class TestLayoutDetector(unittest.TestCase):
 
     def setUp(self):
-        self.test_image = self.load_test_image()
+        self.test_image = read_image(self.load_test_image())
 
     @staticmethod
     def check_detected_layout(layout):
@@ -24,9 +23,7 @@ class TestLayoutDetector(unittest.TestCase):
     def load_test_image():
         curr_path = os.path.dirname(__file__)
         image_path = os.path.join(curr_path, "./data/sample.png")
-        image = cv2.imread(image_path)
-        image = image[..., ::-1]
-        return image
+        return image_path
 
     def test_faster_rcnn_layout_detector(self):
         detector = LayoutDetectorFactory.get_layout_detector(

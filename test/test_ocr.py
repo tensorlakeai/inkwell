@@ -1,8 +1,7 @@
 import os
 import unittest
 
-from PIL import Image
-
+from tensordoc.io import read_image
 from tensordoc.ocr import OCRFactory, OCRType
 
 
@@ -12,7 +11,7 @@ class TestOCR(unittest.TestCase):
     def _load_test_image():
         curr_path = os.path.dirname(__file__)
         image_path = os.path.join(curr_path, "./data/sample.png")
-        image = Image.open(image_path)
+        image = read_image(image_path)
         return image
 
     def test_tesseract_ocr(self):

@@ -1,16 +1,77 @@
+import urllib.error
+import urllib.parse
+import urllib.request
+from io import BytesIO
+
 import cv2
 import numpy as np
 import pdfplumber
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+        AppleWebKit/537.36 (KHTML, like Gecko) \
+            Chrome/58.0.3029.110 Safari/537.3"
+}
+
+
+def _check_local_or_url(path: str) -> bool:
+    parsed_url = urllib.parse.urlparse(path)
+    return parsed_url.scheme in ["http", "https"]
+
 
 def read_image(image_path: str) -> np.ndarray:
-    image = cv2.imread(image_path)
+    """
+    Read an image from a file or a URL.
+
+    Args:
+        image_path (str): The path to the image file or URL.
+
+    Returns:
+        np.ndarray: The image as a numpy array.
+    """
+
+    if _check_local_or_url(image_path):
+        try:
+            req = urllib.request.Request(image_path, headers=HEADERS)
+            with urllib.request.urlopen(req) as response:
+                arr = np.asarray(bytearray(response.read()), dtype=np.uint8)
+                image = cv2.imdecode(arr, -1)
+                if image is None:
+                    raise ValueError(f"Error reading image from {image_path}")
+        except urllib.error.URLError as e:
+            raise ValueError(
+                f"Error downloading image from {image_path}: {e}"
+            ) from e
+    else:
+        image = cv2.imread(image_path)
+        if image is None:
+            raise ValueError(f"Error reading image from path: {image_path}")
+
     image = image[:, :, ::-1]
     return image
 
 
 def read_pdf_document(pdf_path: str) -> pdfplumber.pdf.PDF:
-    document = pdfplumber.open(pdf_path)
+    """
+    Read a PDF document from a file or a URL.
+
+    Args:
+        pdf_path (str): The path to the PDF file or URL.
+
+    Returns:
+        pdfplumber.pdf.PDF: The PDF document.
+    """
+
+    if _check_local_or_url(pdf_path):
+        try:
+            req = urllib.request.Request(pdf_path, headers=HEADERS)
+            with urllib.request.urlopen(req) as response:
+                pdf_content = BytesIO(response.read())
+                document = pdfplumber.open(pdf_content)
+        except urllib.error.URLError as e:
+            raise ValueError(f"Error downloading PDF from URL: {e}") from e
+    else:
+        document = pdfplumber.open(pdf_path)
     return document
 
 
@@ -20,6 +81,16 @@ def convert_page_to_image(page: pdfplumber.pdf.Page) -> np.ndarray:
 
 
 def read_pdf_as_images(pdf_path: str) -> list[np.ndarray]:
+    """
+    Read a PDF document as a list of images.
+
+    Args:
+        pdf_path (str): The path to the PDF file or URL.
+
+    Returns:
+        list[np.ndarray]: The list of images.
+    """
+
     document = read_pdf_document(pdf_path)
     images = []
     for page in document.pages:
