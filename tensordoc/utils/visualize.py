@@ -244,7 +244,7 @@ def draw_transparent_box(
 @image_loader
 def draw_box(
     canvas: Image.Image,
-    layout: Layout,
+    layout: Optional[Layout] = None,
     box_width: Optional[Union[List[int], int]] = None,
     box_alpha: Optional[Union[List[float], float]] = None,
     box_color: Optional[Union[List[str], str]] = None,
@@ -324,6 +324,8 @@ def draw_box(
         :obj:`PIL.Image.Image`:
             A Image object containing the `layout` draw upon the input `canvas`.
     """
+    if not layout:
+        layout = []
 
     assert 0 <= id_text_background_alpha <= 1, ValueError(
         f"The id_text_background_alpha value {id_text_background_alpha} is not within range [0,1]."

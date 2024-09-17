@@ -367,3 +367,6 @@ class Layout(MutableSequence):
         df = pd.DataFrame([ele.to_dict() for ele in blocks])
 
         return df
+
+    def get_blocks(self) -> List[TextBlock]:
+        return self._blocks

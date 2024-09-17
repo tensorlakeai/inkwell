@@ -8,7 +8,16 @@ from tensordoc.components.elements import (
     Rectangle,
     TextBlock,
 )
+from tensordoc.components.image import Image
 from tensordoc.components.layout import Layout
+from tensordoc.components.page import (
+    Document,
+    Page,
+    PageFragment,
+    PageFragmentType,
+)
+from tensordoc.components.table import Table, TableEncoding
+from tensordoc.components.text import TextBox
 
 __all__ = [
     "BaseCoordElement",
@@ -21,4 +30,12 @@ __all__ = [
     "Rectangle",
     "TextBlock",
     "Layout",
+    "Table",
+    "TableEncoding",
+    "Image",
+    "PageFragment",
+    "PageFragmentType",
+    "Page",
+    "Document",
+    "TextBox",
 ]
