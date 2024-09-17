@@ -27,44 +27,19 @@ pip install pytesseract
 
 ## Usage
 
+
+### Basic Usage
+
 ```python
+from tensordoc.pipeline import Pipeline
 
-import cv2
-from tensordoc.layout_detector import LayoutDetectorFactory, LayoutDetectorType
-from tensordoc.ocr import OCRFactory, OCRType
-
-# Read your pdf documents
-image = cv2.imread("./data/sample.png")
-
-# Initialize the layout detector
-layout_detector = LayoutDetectorFactory.get_layout_detector(
-    detector_name=LayoutDetectorType.FASTER_RCNN
-)
-
-# Initialize the OCR agent
-
-ocr_agent = OCRFactory.get_ocr(
-    OCRType.TESSERACT,
-    lang="eng"
-)
-
-# Obtain layout components
-
-layout = layout_detector.process(image)
-
-# Obtain text from layout components that have text
-
-text_blocks = Layout([l for l in layout if l.type in ["Text", "Title"]])
-
-text_snippets = []
-for layout_component in text_blocks:
-    segment_image = (layout_component
-                     .pad(left=5, right=5, top=5, bottom=5)
-                     .crop_image(image))
-    text = ocr_agent.process(segment_image)
-    text_segments.append(text)
-
-print(text_snippets)
+results = pipeline.process("/path/to/pdf")
+for page in results.pages:
+    images = results.get_image_fragments()
+    tables = results.get_table_fragments()
+    text_blocks = results.get_text_fragments()
 ```
 
+### Individial Components
 
+Refer to ```demo_detectors.ipynb``` in the ```notebooks``` folder for more details.
