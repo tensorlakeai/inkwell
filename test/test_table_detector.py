@@ -1,8 +1,7 @@
 import os
 from unittest import TestCase
 
-import cv2
-
+from tensordoc.io import read_image
 from tensordoc.table_detector import TableDetectorFactory, TableDetectorType
 
 
@@ -12,8 +11,7 @@ class TestTableDetector(TestCase):
     def load_test_image():
         curr_path = os.path.dirname(__file__)
         image_path = os.path.join(curr_path, "./data/sample.png")
-        image = cv2.imread(image_path)
-        image = image[..., ::-1]
+        image = read_image(image_path)
         return image
 
     def setUp(self):
