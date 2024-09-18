@@ -1,5 +1,7 @@
 from typing import List
 
+import numpy as np
+
 from tensordoc.components import (
     Document,
     Image,
@@ -73,6 +75,29 @@ class Pipeline:
 
         return pages
 
+    def _process_tables(self, image: np.ndarray):
+        layout = self.table_detector.process(image)
+        table_fragments = []
+        for table_block in layout:
+            table_image = table_block.pad(
+                left=5, right=5, top=5, bottom=5
+            ).crop_image(image)
+            table_text = self.ocr_detector.process(table_image)
+            table = Table(
+                data=table_text,
+                bbox=table_block.rectangle,
+                score=table_block.score,
+                image=table_image,
+                encoding=TableEncoding.TEXT,
+            )
+            table_fragments.append(
+                PageFragment(
+                    fragment_type=PageFragmentType.TABLE,
+                    content=table,
+                )
+            )
+        return table_fragments
+
     def process(
         self, document_path: str, pages_to_parse: List[int] = None
     ) -> Document:
@@ -87,64 +112,63 @@ class Pipeline:
         print(f"Processing {len(pages)} pages")
         for page_image, page_number in pages:
             print(f"Processing page {page_number}")
-            layout = self.layout_detector.process(page_image)
-            detected_block_types = set(block.type for block in layout)
+            if self.layout_detector:
+                layout = self.layout_detector.process(page_image)
+                detected_block_types = set(block.type for block in layout)
 
-            fragments = []
-            for block in layout.get_blocks():
+                fragments = []
+                for block in layout.get_blocks():
 
-                if block.type == "Figure":
-                    block_image = block.pad(
-                        left=5, right=5, top=5, bottom=5
-                    ).crop_image(page_image)
-                    image_text = self.ocr_detector.process(block_image)
-                    fragments.append(
-                        PageFragment(
-                            fragment_type=PageFragmentType.FIGURE,
-                            content=Image(
-                                image=block_image,
-                                bbox=block.rectangle,
-                                score=block.score,
-                                text=image_text,
-                            ),
+                    if block.type == "Figure":
+                        block_image = block.pad(
+                            left=5, right=5, top=5, bottom=5
+                        ).crop_image(page_image)
+                        image_text = self.ocr_detector.process(block_image)
+                        fragments.append(
+                            PageFragment(
+                                fragment_type=PageFragmentType.FIGURE,
+                                content=Image(
+                                    image=block_image,
+                                    bbox=block.rectangle,
+                                    score=block.score,
+                                    text=image_text,
+                                ),
+                            )
                         )
-                    )
 
-                elif block.type == "Table":
-                    block_image = block.pad(
-                        left=5, right=5, top=5, bottom=5
-                    ).crop_image(page_image)
-                    table_text = self.ocr_detector.process(block_image)
-                    fragments.append(
-                        PageFragment(
-                            fragment_type=PageFragmentType.TABLE,
-                            content=Table(
-                                data=table_text,
-                                bbox=block.rectangle,
-                                score=block.score,
-                                image=block_image,
-                                encoding=TableEncoding.TEXT,
-                            ),
+                    elif block.type in detected_block_types - {
+                        "Figure",
+                        "Table",
+                    }:
+                        block_image = block.pad(
+                            left=5, right=5, top=5, bottom=5
+                        ).crop_image(page_image)
+                        text_data = self.ocr_detector.process(block_image)
+                        fragments.append(
+                            PageFragment(
+                                fragment_type=PageFragmentType.TEXT,
+                                content=TextBox(
+                                    text=text_data,
+                                    bbox=block.rectangle,
+                                    score=block.score,
+                                    image=block_image,
+                                ),
+                            )
                         )
+            else:
+                print(
+                    "No layout detector configured, \
+                    doing OCR on the whole image"
+                )
+                fragments.append(
+                    PageFragment(
+                        fragment_type=PageFragmentType.TEXT,
+                        content=self.ocr_detector.process(page_image),
                     )
-
-                elif block.type in detected_block_types - {"Figure", "Table"}:
-                    block_image = block.pad(
-                        left=5, right=5, top=5, bottom=5
-                    ).crop_image(page_image)
-                    text_data = self.ocr_detector.process(block_image)
-                    fragments.append(
-                        PageFragment(
-                            fragment_type=PageFragmentType.TEXT,
-                            content=TextBox(
-                                text=text_data,
-                                bbox=block.rectangle,
-                                score=block.score,
-                                image=block_image,
-                            ),
-                        )
-                    )
-
+                )
+            if self.config.table_detector:
+                table_fragments = self._process_tables(page_image)
+                fragments.extend(table_fragments)
             processed_pages.append(
                 Page(
                     page_number=page_number,
