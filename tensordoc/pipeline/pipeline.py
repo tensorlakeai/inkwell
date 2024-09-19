@@ -161,9 +161,7 @@ class Pipeline:
             pages = [(self._read_image(document_path), 0)]
 
         processed_pages = []
-        print(f"Processing {len(pages)} pages")
         for page_image, page_number in pages:
-            print(f"Processing page {page_number}")
             if self.layout_detector:
                 layout = self.layout_detector.process(page_image)
 

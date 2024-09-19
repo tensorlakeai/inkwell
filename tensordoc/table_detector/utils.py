@@ -6,6 +6,16 @@ from tensordoc.table_detector.table_detector import TableDetectorType
 
 CFG = "config.yml"
 
+TABLE_EXTRACTOR_PROMPT = """Extract information from the table image
+into the following json format:
+
+{
+    "header": List[str] # list of header names
+    "data": List[List[str]] # list of rows, each row is a list of strings
+}
+
+Strictly return the json output only, and nothing else."""
+
 
 def load_table_detector_config(
     table_detector_type: TableDetectorType,

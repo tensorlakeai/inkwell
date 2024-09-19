@@ -3,3 +3,6 @@ table_transformer_detector:
 
 table_transformer_extractor:
   model_name_hf: "microsoft/table-transformer-structure-recognition"
+
+phi3v_table_extractor:
+  model_name_hf: "microsoft/Phi-3.5-vision-instruct"

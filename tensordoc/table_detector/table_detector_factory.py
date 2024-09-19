@@ -1,3 +1,7 @@
+from tensordoc.table_detector.openai_table_extractor import (
+    OpenAITableExtractor,
+)
+from tensordoc.table_detector.phi3v_table_extractor import Phi3VTableExtractor
 from tensordoc.table_detector.table_detector import (
     TableDetectorType,
     TableExtractorType,
@@ -23,6 +27,10 @@ class TableExtractorFactory:
     def get_table_extractor(table_extractor_type: TableExtractorType):
         if table_extractor_type == TableExtractorType.TABLE_TRANSFORMER:
             return TableTransformerExtractor()
+        if table_extractor_type == TableExtractorType.PHI3V:
+            return Phi3VTableExtractor()
+        if table_extractor_type == TableExtractorType.OPENAI:
+            return OpenAITableExtractor()
         raise ValueError(
             f"Invalid table extractor type: {table_extractor_type}"
         )
