@@ -5,5 +5,5 @@ class TableDetectorType(Enum):
     TABLE_TRANSFORMER = "table_transformer_detector"
 
 
-class TableSegmentationType(Enum):
-    TABLE_TRANSFORMER = "table_transformer_segmentation"
+class TableExtractorType(Enum):
+    TABLE_TRANSFORMER = "table_transformer_extractor"

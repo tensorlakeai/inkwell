@@ -1,15 +1,15 @@
 from tensordoc.table_detector.table_detector import (
     TableDetectorType,
-    TableSegmentationType,
+    TableExtractorType,
 )
 from tensordoc.table_detector.table_detector_factory import (
     TableDetectorFactory,
-    TableSegmentationFactory,
+    TableExtractorFactory,
 )
 
 __all__ = [
     "TableDetectorType",
     "TableDetectorFactory",
-    "TableSegmentationType",
-    "TableSegmentationFactory",
+    "TableExtractorType",
+    "TableExtractorFactory",
 ]
