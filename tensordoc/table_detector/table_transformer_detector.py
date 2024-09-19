@@ -12,13 +12,15 @@ from tensordoc.table_detector.utils import load_table_detector_config
 
 
 class TableTransformerDetector(BaseTableDetector):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._feature_extractor = DetrImageProcessor()
         self._cfg = load_table_detector_config(
             TableDetectorType.TABLE_TRANSFORMER
         )
         self._load_processor()
         self._load_model()
+
+        self._detection_threshold = kwargs.get("detection_threshold", 0.5)
 
     def _load_model(self):
         self._model = TableTransformerForObjectDetection.from_pretrained(
@@ -62,7 +64,9 @@ class TableTransformerDetector(BaseTableDetector):
         width, height = image_pil.size
         table_detection_results = (
             self._feature_extractor.post_process_object_detection(
-                outputs, threshold=0.5, target_sizes=[(height, width)]
+                outputs,
+                threshold=self._detection_threshold,
+                target_sizes=[(height, width)],
             )[0]
         )
 

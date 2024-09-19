@@ -1,5 +1,5 @@
 table_transformer_detector:
   model_name_hf: "microsoft/table-transformer-detection"
 
-table_transformer_segmentation:
+table_transformer_extractor:
   model_name_hf: "microsoft/table-transformer-structure-recognition"

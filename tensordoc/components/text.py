@@ -12,6 +12,7 @@ class TextBox(BaseModel):
     """
 
     text: str
+    text_type: Optional[str] = None
     bbox: Optional[Rectangle] = None
     score: Optional[float] = None
     image: Optional[np.ndarray] = None

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Dict
 
 import numpy as np
 
@@ -11,7 +12,7 @@ class BaseTableDetector(ABC):
         pass
 
 
-class BaseTableSegmentation(ABC):
+class BaseTableExtractor(ABC):
     @abstractmethod
-    def process(self, image: np.ndarray) -> Layout:
+    def process(self, image: np.ndarray) -> Dict:
         pass

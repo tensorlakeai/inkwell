@@ -404,7 +404,7 @@ def draw_box(
         if show_element_id or show_element_type:
             text = ""
             if show_element_id:
-                ele_id = ele.id or idx
+                ele_id = ele.id or idx or ele.type
                 text += str(ele_id)
             if show_element_type:
                 text = (

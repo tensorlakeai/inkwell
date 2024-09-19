@@ -16,6 +16,7 @@ class TableEncoding(str, Enum):
     HTML = "html"
     JSON = "json"
     TEXT = "text"
+    DICT = "dict"
 
 
 class Table(BaseModel):
