@@ -4,9 +4,9 @@ from tensordoc.components.elements import (
     BASECOORD_ELEMENT_INDEXMAP,
     BASECOORD_ELEMENT_NAMEMAP,
     Interval,
+    LayoutBlock,
     Quadrilateral,
     Rectangle,
-    TextBlock,
 )
 from tensordoc.components.image import Image
 from tensordoc.components.layout import Layout
@@ -28,7 +28,7 @@ __all__ = [
     "Interval",
     "Quadrilateral",
     "Rectangle",
-    "TextBlock",
+    "LayoutBlock",
     "Layout",
     "Table",
     "TableEncoding",

@@ -30,9 +30,9 @@ import tensordoc
 from tensordoc.components import (
     Interval,
     Layout,
+    LayoutBlock,
     Quadrilateral,
     Rectangle,
-    TextBlock,
 )
 from tensordoc.components.utils import cvt_coordinates_to_points
 

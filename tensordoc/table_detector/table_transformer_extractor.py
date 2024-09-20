@@ -6,7 +6,7 @@ import torch
 from PIL import Image
 from transformers import DetrImageProcessor, TableTransformerForObjectDetection
 
-from tensordoc.components import Layout, Rectangle, TextBlock
+from tensordoc.components import Layout, LayoutBlock, Rectangle
 from tensordoc.ocr.base import BaseOCR
 from tensordoc.ocr.ocr import OCRFactory, OCRType
 from tensordoc.table_detector.base import BaseTableExtractor
@@ -38,10 +38,10 @@ class TableTransformerExtractor(BaseTableExtractor):
     def _load_ocr_detector(self):
         self._ocr_detector = OCRFactory.get_ocr(OCRType.TESSERACT)
 
-    def _get_cell_coordinates_by_row(self, table_blocks: List[TextBlock]):
+    def _get_cell_coordinates_by_row(self, table_blocks: List[LayoutBlock]):
 
-        rows: List[TextBlock] = []
-        columns: List[TextBlock] = []
+        rows: List[LayoutBlock] = []
+        columns: List[LayoutBlock] = []
 
         for block in table_blocks:
             if block.type in ["table row", "table column header"]:
@@ -52,7 +52,7 @@ class TableTransformerExtractor(BaseTableExtractor):
         rows.sort(key=lambda x: x.rectangle.y_1)
         columns.sort(key=lambda x: x.rectangle.x_1)
 
-        def find_cell_coordinates(row: TextBlock, column: TextBlock):
+        def find_cell_coordinates(row: LayoutBlock, column: LayoutBlock):
             cell_bbox = [
                 column.rectangle.x_1,
                 row.rectangle.y_1,
@@ -94,7 +94,7 @@ class TableTransformerExtractor(BaseTableExtractor):
 
             row_text = []
             for cell in row["cells"]:
-                cell_block = TextBlock(
+                cell_block = LayoutBlock(
                     block=Rectangle(
                         x_1=cell["cell"][0],
                         y_1=cell["cell"][1],
@@ -126,7 +126,7 @@ class TableTransformerExtractor(BaseTableExtractor):
         total = len(scores)
         for i in range(total):
 
-            block = TextBlock(
+            block = LayoutBlock(
                 text="",
                 block=Rectangle(
                     x_1=boxes[i][0],

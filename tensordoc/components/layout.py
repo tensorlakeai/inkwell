@@ -25,7 +25,7 @@ from tensordoc.components.base import BaseLayoutElement
 from tensordoc.components.elements import (
     ALL_BASECOORD_ELEMENTS,
     BASECOORD_ELEMENT_INDEXMAP,
-    TextBlock,
+    LayoutBlock,
 )
 
 
@@ -295,7 +295,7 @@ class Layout(MutableSequence):
         """Convert all elements into blocks of the same type based
         on the type casting rule::
 
-            Interval < Rectangle < Quadrilateral < TextBlock
+            Interval < Rectangle < Quadrilateral < LayoutBlock
 
         Returns:
             List[BaseLayoutElement]:
@@ -308,7 +308,7 @@ class Layout(MutableSequence):
         max_coord_level = -1
         for ele in self:
 
-            if isinstance(ele, TextBlock):
+            if isinstance(ele, LayoutBlock):
                 has_textblock = True
                 block = ele.block
             else:
@@ -322,7 +322,7 @@ class Layout(MutableSequence):
         if has_textblock:
             new_blocks = []
             for ele in self:
-                if isinstance(ele, TextBlock):
+                if isinstance(ele, LayoutBlock):
                     ele = copy(ele)
                     if ele.block._name != target_coord_name:
                         ele.block = getattr(
@@ -331,7 +331,7 @@ class Layout(MutableSequence):
                 else:
                     if ele._name != target_coord_name:
                         ele = getattr(ele, f"to_{target_coord_name}")()
-                    ele = TextBlock(block)
+                    ele = LayoutBlock(block)
                 new_blocks.append(ele)
         else:
             new_blocks = [
@@ -368,5 +368,5 @@ class Layout(MutableSequence):
 
         return df
 
-    def get_blocks(self) -> List[TextBlock]:
+    def get_blocks(self) -> List[LayoutBlock]:
         return self._blocks

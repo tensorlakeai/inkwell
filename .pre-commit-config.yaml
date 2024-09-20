@@ -38,4 +38,4 @@ repos:
     hooks:
       - id: flake8
         args:
-          - --ignore=E203
+          - --ignore=E203,W503

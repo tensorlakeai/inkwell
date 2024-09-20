@@ -5,7 +5,7 @@ import torch
 from PIL import Image
 from transformers import DetrImageProcessor, TableTransformerForObjectDetection
 
-from tensordoc.components import Layout, Rectangle, TextBlock
+from tensordoc.components import Layout, LayoutBlock, Rectangle
 from tensordoc.table_detector.base import BaseTableDetector
 from tensordoc.table_detector.table_detector import TableDetectorType
 from tensordoc.table_detector.utils import load_table_detector_config
@@ -40,7 +40,7 @@ class TableTransformerDetector(BaseTableDetector):
 
         blocks = []
         for score, label, box in zip(table_scores, table_labels, table_boxes):
-            block = TextBlock(
+            block = LayoutBlock(
                 text="",
                 block=Rectangle(
                     x_1=box[0], y_1=box[1], x_2=box[2], y_2=box[3]

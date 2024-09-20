@@ -1,6 +1,9 @@
 # Tensordoc
 
-Tensordoc is a Python library for extracting information from documents. 
+Tensordoc is a modular Python library for extracting information from documents. It is designed to be flexible and easy to extend, with a focus on document layout detection, OCR, and table detection. 
+
+You can easily swap out components of the pipeline, and add your own implement new detectors, using your own fintuned models or a cloud-based API.  
+
 
 ## Installation
 
@@ -33,11 +36,28 @@ pip install pytesseract
 ```python
 from tensordoc.pipeline import Pipeline
 
-results = pipeline.process("/path/to/pdf")
+results = pipeline.process("/path/to/file.pdf")
+
 for page in results.pages:
-    images = results.get_image_fragments()
-    tables = results.get_table_fragments()
-    text_blocks = results.get_text_fragments()
+
+    figures = page.get_image_fragments()
+    tables = page.get_table_fragments()
+    text_blocks = page.get_text_fragments()
+
+    # Check the content of the image fragments
+    for figure in figures:
+        figure_image = figure.content.image
+        print(f"Text in figure:\n{figure.content.text}")
+    
+    # Check the content of the table fragments
+    for table in tables:
+        table_image = table.content.image
+        print(f"Table detected: {table.content.data}")
+
+    # Check the content of the text blocks
+    for text_block in text_blocks:
+        text_block_image = text_block.content.image
+        print(f"Text block detected: {text_block.content.text}")
 ```
 
 ### Individial Components
