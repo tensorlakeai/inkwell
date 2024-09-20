@@ -24,7 +24,7 @@ class Table(BaseModel):
     Table in a document.
     """
 
-    data: str
+    data: dict
     encoding: TableEncoding
     bbox: Optional[Rectangle] = None
     text: Optional[str] = None

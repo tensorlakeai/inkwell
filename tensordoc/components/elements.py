@@ -51,7 +51,7 @@ class InvalidShapeError(Exception):
     """
 
 
-def mixin_textblock_meta(func):
+def mixin_layoutblock_meta(func):
     @functools.wraps(func)
     def wrap(self, *args, **kwargs):
         out = func(self, *args, **kwargs)
@@ -84,7 +84,7 @@ def inherit_docstrings(cls=None, *, base_class=None):
     return cls
 
 
-def support_textblock(func):
+def support_layoutblock(func):
     @functools.wraps(func)
     def wrap(self, other, *args, **kwargs):
         if isinstance(other, LayoutBlock):
@@ -243,7 +243,7 @@ class Interval(BaseCoordElement):
 
         return self.set(canvas_height=h, canvas_width=w)
 
-    @support_textblock
+    @support_layoutblock
     def condition_on(self, other):
 
         if isinstance(other, Interval):
@@ -269,7 +269,7 @@ class Interval(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def relative_to(self, other):
 
         if isinstance(other, Interval):
@@ -293,7 +293,7 @@ class Interval(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def is_in(self, other, soft_margin={}, center=False):
 
         other = other.pad(**soft_margin)
@@ -324,7 +324,7 @@ class Interval(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def intersect(self, other: BaseCoordElement, strict: bool = True):
         """"""
 
@@ -372,7 +372,7 @@ class Interval(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def union(self, other: BaseCoordElement, strict: bool = True):
         """"""
         if isinstance(other, Interval):
@@ -603,7 +603,7 @@ class Rectangle(BaseCoordElement):
         """
         return self.width * self.height
 
-    @support_textblock
+    @support_layoutblock
     def condition_on(self, other):
 
         if isinstance(other, Interval):
@@ -633,7 +633,7 @@ class Rectangle(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def relative_to(self, other):
         if isinstance(other, Interval):
             if other.axis == "x":
@@ -662,7 +662,7 @@ class Rectangle(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def is_in(self, other, soft_margin={}, center=False):
 
         other = other.pad(**soft_margin)
@@ -702,7 +702,7 @@ class Rectangle(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def intersect(self, other: BaseCoordElement, strict: bool = True):
         """"""
 
@@ -732,7 +732,7 @@ class Rectangle(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def union(self, other: BaseCoordElement, strict: bool = True):
         """"""
         if isinstance(other, Interval):
@@ -979,7 +979,7 @@ class Quadrilateral(BaseCoordElement):
             ]
         ).T
 
-    @support_textblock
+    @support_layoutblock
     def condition_on(self, other):
 
         if isinstance(other, Interval):
@@ -1003,7 +1003,7 @@ class Quadrilateral(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def relative_to(self, other):
 
         if isinstance(other, Interval):
@@ -1027,7 +1027,7 @@ class Quadrilateral(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def is_in(self, other, soft_margin={}, center=False):
 
         other = other.pad(**soft_margin)
@@ -1067,7 +1067,7 @@ class Quadrilateral(BaseCoordElement):
         else:
             raise Exception(f"Invalid input type {other.__class__} for other")
 
-    @support_textblock
+    @support_layoutblock
     def intersect(self, other: BaseCoordElement, strict: bool = True):
         """"""
 
@@ -1091,7 +1091,7 @@ class Quadrilateral(BaseCoordElement):
                     f"Invalid input type {other.__class__} for other"
                 )
 
-    @support_textblock
+    @support_layoutblock
     def union(self, other: BaseCoordElement, strict: bool = True):
         """"""
         if strict:
@@ -1245,7 +1245,7 @@ class LayoutBlock(BaseLayoutElement):
             The prediction confidence of the block
     """
 
-    _name = "textblock"
+    _name = "layoutblock"
     _features = ["text", "id", "type", "parent", "next", "score"]
 
     def __init__(
@@ -1328,34 +1328,34 @@ class LayoutBlock(BaseLayoutElement):
         """
         return self.block
 
-    @mixin_textblock_meta
+    @mixin_layoutblock_meta
     def condition_on(self, other):
         return self.block.condition_on(other)
 
-    @mixin_textblock_meta
+    @mixin_layoutblock_meta
     def relative_to(self, other):
         return self.block.relative_to(other)
 
     def is_in(self, other, soft_margin={}, center=False):
         return self.block.is_in(other, soft_margin, center)
 
-    @mixin_textblock_meta
+    @mixin_layoutblock_meta
     def union(self, other: BaseCoordElement, strict: bool = True):
         return self.block.union(other, strict=strict)
 
-    @mixin_textblock_meta
+    @mixin_layoutblock_meta
     def intersect(self, other: BaseCoordElement, strict: bool = True):
         return self.block.intersect(other, strict=strict)
 
-    @mixin_textblock_meta
+    @mixin_layoutblock_meta
     def shift(self, shift_distance):
         return self.block.shift(shift_distance)
 
-    @mixin_textblock_meta
+    @mixin_layoutblock_meta
     def pad(self, left=0, right=0, top=0, bottom=0, safe_mode=True):
         return self.block.pad(left, right, top, bottom, safe_mode)
 
-    @mixin_textblock_meta
+    @mixin_layoutblock_meta
     def scale(self, scale_factor):
         return self.block.scale(scale_factor)
 
@@ -1386,7 +1386,7 @@ class LayoutBlock(BaseLayoutElement):
 
     def to_dict(self) -> Dict[str, Any]:
         """
-        Generate a dictionary representation of the current textblock of the format::
+        Generate a dictionary representation of the current layoutblock of the format::
 
             {
                 "block_type": <name of self.block>,
@@ -1403,9 +1403,9 @@ class LayoutBlock(BaseLayoutElement):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "LayoutBlock":
-        """Initialize the textblock based on the dictionary representation.
+        """Initialize the layoutblock based on the dictionary representation.
         It generate the block based on the `block_type` and `block_attr`,
-        and loads the textblock specific features from the dict.
+        and loads the layoutblock specific features from the dict.
 
         Args:
             data (:obj:`dict`): The dictionary representation of the object
