@@ -1,4 +1,3 @@
-import json
 from typing import List
 
 import numpy as np
@@ -16,17 +15,26 @@ from tensordoc.components import (
 )
 from tensordoc.io import convert_page_to_image, read_image, read_pdf_document
 from tensordoc.layout_detector import LayoutDetectorFactory
+from tensordoc.layout_detector.base import BaseLayoutDetector
 from tensordoc.ocr import OCRFactory
+from tensordoc.ocr.base import BaseOCR
 from tensordoc.pipeline.pipeline_config import PipelineConfig
 from tensordoc.table_detector import (
     TableDetectorFactory,
     TableExtractorFactory,
 )
+from tensordoc.table_detector.base import BaseTableDetector, BaseTableExtractor
 
 
 class Pipeline:
     def __init__(self, config: PipelineConfig = PipelineConfig()):
         self.config = config
+
+        self.layout_detector = None
+        self.ocr_detector = None
+        self.table_detector = None
+        self.table_extractor = None
+
         self._initialize_layout_detector()
         self._initialize_ocr_detector()
         self._initialize_table_detector()
@@ -54,6 +62,18 @@ class Pipeline:
             self.table_extractor = TableExtractorFactory.get_table_extractor(
                 self.config.table_extractor
             )
+
+    def add_layout_detector(self, layout_detector: BaseLayoutDetector):
+        self.layout_detector = layout_detector
+
+    def add_ocr_detector(self, ocr_detector: BaseOCR):
+        self.ocr_detector = ocr_detector
+
+    def add_table_detector(self, table_detector: BaseTableDetector):
+        self.table_detector = table_detector
+
+    def add_table_extractor(self, table_extractor: BaseTableExtractor):
+        self.table_extractor = table_extractor
 
     def _is_native_pdf(self, path: str) -> bool:
         return path.endswith(".pdf")
@@ -88,14 +108,13 @@ class Pipeline:
             ).crop_image(image)
 
             if self.config.table_extractor:
-                table_dict = self.table_extractor.process(table_image)
-                table_text = json.dumps(table_dict, indent=4)
+                table_data = self.table_extractor.process(table_image)
                 table_encoding = TableEncoding.JSON
             else:
-                table_text = self.ocr_detector.process(table_image)
+                table_data = self.ocr_detector.process(table_image)
                 table_encoding = TableEncoding.TEXT
             table = Table(
-                data=table_text,
+                data=table_data,
                 bbox=table_block.rectangle,
                 score=table_block.score,
                 image=table_image,

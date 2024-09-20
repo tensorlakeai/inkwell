@@ -191,7 +191,7 @@ class TestElements(unittest.TestCase):
         assert q.relative_to(r).condition_on(r) == q
         assert q.relative_to(q).condition_on(q) == q
 
-    def test_textblock(self):
+    def test_layoutblock(self):
 
         i = Interval(4, 5, axis="y")
         q = Quadrilateral(np.array([[2, 2], [6, 2], [6, 7], [2, 5]]))

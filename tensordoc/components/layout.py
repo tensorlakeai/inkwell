@@ -304,12 +304,12 @@ class Layout(MutableSequence):
         """
 
         # Detect the maximal compatible type
-        has_textblock = False
+        has_layoutblock = False
         max_coord_level = -1
         for ele in self:
 
             if isinstance(ele, LayoutBlock):
-                has_textblock = True
+                has_layoutblock = True
                 block = ele.block
             else:
                 block = ele
@@ -319,7 +319,7 @@ class Layout(MutableSequence):
             )
         target_coord_name = ALL_BASECOORD_ELEMENTS[max_coord_level]._name
 
-        if has_textblock:
+        if has_layoutblock:
             new_blocks = []
             for ele in self:
                 if isinstance(ele, LayoutBlock):
