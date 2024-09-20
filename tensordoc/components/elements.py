@@ -87,7 +87,7 @@ def inherit_docstrings(cls=None, *, base_class=None):
 def support_textblock(func):
     @functools.wraps(func)
     def wrap(self, other, *args, **kwargs):
-        if isinstance(other, TextBlock):
+        if isinstance(other, LayoutBlock):
             other = other.block
         out = func(self, other, *args, **kwargs)
         return out
@@ -1223,7 +1223,7 @@ BASECOORD_ELEMENT_INDEXMAP = {
 
 
 @inherit_docstrings(base_class=BaseCoordElement)
-class TextBlock(BaseLayoutElement):
+class LayoutBlock(BaseLayoutElement):
     """
     This class constructs content-related information of a layout element in addition to its coordinate definitions
     (i.e. Interval, Rectangle or Quadrilateral).
@@ -1402,7 +1402,7 @@ class TextBlock(BaseLayoutElement):
         return base_dict
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "TextBlock":
+    def from_dict(cls, data: Dict[str, Any]) -> "LayoutBlock":
         """Initialize the textblock based on the dictionary representation.
         It generate the block based on the `block_type` and `block_attr`,
         and loads the textblock specific features from the dict.

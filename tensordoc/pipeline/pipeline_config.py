@@ -13,7 +13,5 @@ class PipelineConfig(BaseModel):
 
     layout_detector: LayoutDetectorType = LayoutDetectorType.FASTER_RCNN
     ocr_detector: OCRType = OCRType.TESSERACT
-    table_detector: TableDetectorType = (
-        None  # TableDetectorType.TABLE_TRANSFORMER
-    )
+    table_detector: TableDetectorType = None
     table_extractor: TableExtractorType = TableExtractorType.TABLE_TRANSFORMER

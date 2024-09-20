@@ -7,7 +7,7 @@ from typing import Callable, List, Optional, Union
 import numpy as np
 from PIL import Image
 
-from tensordoc.components import Layout, Rectangle, TextBlock
+from tensordoc.components import Layout, LayoutBlock, Rectangle
 from tensordoc.layout_detector.base import BaseLayoutDetector, BaseLayoutEngine
 from tensordoc.utils.download import download_file, get_cache_directory
 from tensordoc.utils.env_utils import (
@@ -105,7 +105,7 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
         for score, box, label in zip(scores, boxes, labels):
             x_1, y_1, x_2, y_2 = box
             label = self._label_map.get(label, label)
-            cur_block = TextBlock(
+            cur_block = LayoutBlock(
                 Rectangle(x_1, y_1, x_2, y_2), type=label, score=score
             )
             layout.append(cur_block)

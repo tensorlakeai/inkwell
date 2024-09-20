@@ -22,9 +22,9 @@ import pytest
 from tensordoc.components import (
     Interval,
     Layout,
+    LayoutBlock,
     Quadrilateral,
     Rectangle,
-    TextBlock,
 )
 from tensordoc.components.elements import (
     InvalidShapeError,
@@ -197,79 +197,79 @@ class TestElements(unittest.TestCase):
         q = Quadrilateral(np.array([[2, 2], [6, 2], [6, 7], [2, 5]]))
         r = Rectangle(3, 3, 5, 6)
 
-        t = TextBlock(i, id=1, type=2, text="12")
+        t = LayoutBlock(i, id=1, type=2, text="12")
         assert (
             t.relative_to(q).condition_on(q).block
             == i.put_on_canvas(q).to_quadrilateral()
         )
-        t = TextBlock(r, id=1, type=2, parent="a")
+        t = LayoutBlock(r, id=1, type=2, parent="a")
         assert t.relative_to(i).condition_on(i).block == r
-        t = TextBlock(q, id=1, type=2, parent="a")
+        t = LayoutBlock(q, id=1, type=2, parent="a")
         assert t.relative_to(r).condition_on(r).block == q
 
         # Ensure the operations did not change the object itself
-        assert t == TextBlock(q, id=1, type=2, parent="a")
-        t1 = TextBlock(q, id=1, type=2, parent="a")
-        t2 = TextBlock(i, id=1, type=2, text="12")
+        assert t == LayoutBlock(q, id=1, type=2, parent="a")
+        t1 = LayoutBlock(q, id=1, type=2, parent="a")
+        t2 = LayoutBlock(i, id=1, type=2, text="12")
         t1.relative_to(t2)
         assert t2.is_in(t1)
 
-        t = TextBlock(q, score=0.2)
+        t = LayoutBlock(q, score=0.2)
 
         # Additional test for shape conversion
-        assert TextBlock(
+        assert LayoutBlock(
             i, id=1, type=2, text="12"
-        ).to_interval() == TextBlock(i, id=1, type=2, text="12")
-        assert TextBlock(
+        ).to_interval() == LayoutBlock(i, id=1, type=2, text="12")
+        assert LayoutBlock(
             i, id=1, type=2, text="12"
-        ).to_rectangle() == TextBlock(
+        ).to_rectangle() == LayoutBlock(
             i.to_rectangle(), id=1, type=2, text="12"
         )
-        assert TextBlock(
+        assert LayoutBlock(
             i, id=1, type=2, text="12"
-        ).to_quadrilateral() == TextBlock(
+        ).to_quadrilateral() == LayoutBlock(
             i.to_quadrilateral(), id=1, type=2, text="12"
         )
 
-        assert TextBlock(r, id=1, type=2, parent="a").to_interval(
+        assert LayoutBlock(r, id=1, type=2, parent="a").to_interval(
             axis="x"
-        ) == TextBlock(r.to_interval(axis="x"), id=1, type=2, parent="a")
-        assert TextBlock(r, id=1, type=2, parent="a").to_interval(
+        ) == LayoutBlock(r.to_interval(axis="x"), id=1, type=2, parent="a")
+        assert LayoutBlock(r, id=1, type=2, parent="a").to_interval(
             axis="y"
-        ) == TextBlock(r.to_interval(axis="y"), id=1, type=2, parent="a")
-        assert TextBlock(
+        ) == LayoutBlock(r.to_interval(axis="y"), id=1, type=2, parent="a")
+        assert LayoutBlock(
             r, id=1, type=2, parent="a"
-        ).to_rectangle() == TextBlock(r, id=1, type=2, parent="a")
-        assert TextBlock(
+        ).to_rectangle() == LayoutBlock(r, id=1, type=2, parent="a")
+        assert LayoutBlock(
             r, id=1, type=2, parent="a"
-        ).to_quadrilateral() == TextBlock(
+        ).to_quadrilateral() == LayoutBlock(
             r.to_quadrilateral(), id=1, type=2, parent="a"
         )
 
-        assert TextBlock(q, id=1, type=2, parent="a").to_interval(
+        assert LayoutBlock(q, id=1, type=2, parent="a").to_interval(
             axis="x"
-        ) == TextBlock(q.to_interval(axis="x"), id=1, type=2, parent="a")
-        assert TextBlock(q, id=1, type=2, parent="a").to_interval(
+        ) == LayoutBlock(q.to_interval(axis="x"), id=1, type=2, parent="a")
+        assert LayoutBlock(q, id=1, type=2, parent="a").to_interval(
             axis="y"
-        ) == TextBlock(q.to_interval(axis="y"), id=1, type=2, parent="a")
-        assert TextBlock(
+        ) == LayoutBlock(q.to_interval(axis="y"), id=1, type=2, parent="a")
+        assert LayoutBlock(
             q, id=1, type=2, parent="a"
-        ).to_rectangle() == TextBlock(
+        ).to_rectangle() == LayoutBlock(
             q.to_rectangle(), id=1, type=2, parent="a"
         )
-        assert TextBlock(
+        assert LayoutBlock(
             q, id=1, type=2, parent="a"
-        ).to_quadrilateral() == TextBlock(q, id=1, type=2, parent="a")
+        ).to_quadrilateral() == LayoutBlock(q, id=1, type=2, parent="a")
 
         with pytest.raises(ValueError):
-            TextBlock(q, id=1, type=2, parent="a").to_interval()
-            TextBlock(r, id=1, type=2, parent="a").to_interval()
+            LayoutBlock(q, id=1, type=2, parent="a").to_interval()
+            LayoutBlock(r, id=1, type=2, parent="a").to_interval()
 
     def test_layout(self):  # pylint: disable=too-many-statements
         i = Interval(4, 5, axis="y")
         q = Quadrilateral(np.array([[2, 2], [6, 2], [6, 7], [2, 5]]))
         r = Rectangle(3, 3, 5, 6)
-        t = TextBlock(i, id=1, type=2, text="12")
+        t = LayoutBlock(i, id=1, type=2, text="12")
 
         # Test Initializations
         l = Layout([i, q, r])
@@ -300,9 +300,9 @@ class TestElements(unittest.TestCase):
             r.to_quadrilateral(),
         ]
 
-        i2 = TextBlock(i, id=1, type=2, text="12")
-        r2 = TextBlock(r, id=1, type=2, parent="a")
-        q2 = TextBlock(q, id=1, type=2, next="a")
+        i2 = LayoutBlock(i, id=1, type=2, text="12")
+        r2 = LayoutBlock(r, id=1, type=2, parent="a")
+        q2 = LayoutBlock(q, id=1, type=2, next="a")
         l2 = Layout([i2, r2, q2], page_data={"width": 200, "height": 200})
 
         l2.get_texts()
@@ -362,19 +362,19 @@ class TestElements(unittest.TestCase):
         b.append(Rectangle(1, 2, 3, 5))
         assert a == b
 
-        a = Layout([TextBlock(Rectangle(1, 2, 3, 4))])
+        a = Layout([LayoutBlock(Rectangle(1, 2, 3, 4))])
         assert a != b
 
     def test_shape_operations(self):
         i_1 = Interval(1, 2, axis="y", canvas_height=30, canvas_width=400)
-        i_2 = TextBlock(Interval(1, 2, axis="x"))
+        i_2 = LayoutBlock(Interval(1, 2, axis="x"))
         i_3 = Interval(1, 2, axis="y")
 
         r_1 = Rectangle(0.5, 0.5, 2.5, 1.5)
-        r_2 = TextBlock(Rectangle(0.5, 0.5, 2, 2.5))
+        r_2 = LayoutBlock(Rectangle(0.5, 0.5, 2, 2.5))
 
         q_1 = Quadrilateral([[1, 1], [2.5, 1.2], [2.5, 3], [1.5, 3]])
-        q_2 = TextBlock(
+        q_2 = LayoutBlock(
             Quadrilateral([[0.5, 0.5], [2, 1], [1.5, 2.5], [0.5, 2]])
         )
 
@@ -504,21 +504,21 @@ class TestElements(unittest.TestCase):
         }
         assert l.to_dict() == l_dict
 
-        i2 = TextBlock(i, "")
+        i2 = LayoutBlock(i, "")
         i_dict["text"] = ""
         assert i2.to_dict() == i_dict
-        assert i2 == TextBlock.from_dict(i_dict)
+        assert i2 == LayoutBlock.from_dict(i_dict)
 
-        r2 = TextBlock(r, id=24)
+        r2 = LayoutBlock(r, id=24)
         r_dict["id"] = 24
         assert r2.to_dict() == r_dict
-        assert r2 == TextBlock.from_dict(r_dict)
+        assert r2 == LayoutBlock.from_dict(r_dict)
 
-        q2 = TextBlock(q, text="test", parent=45)
+        q2 = LayoutBlock(q, text="test", parent=45)
         q_dict["text"] = "test"
         q_dict["parent"] = 45
         assert q2.to_dict() == q_dict
-        assert q2 == TextBlock.from_dict(q_dict)
+        assert q2 == LayoutBlock.from_dict(q_dict)
 
         l2 = Layout([i2, r2, q2])
         l2_dict = {"page_data": {}, "blocks": [i_dict, r_dict, q_dict]}
