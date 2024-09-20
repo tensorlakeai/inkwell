@@ -1,6 +1,6 @@
 faster_rcnn:
-  WEIGHTS_URL: "https://huggingface.co/nlpconnect/PubLayNet-faster_rcnn_R_50_FPN_3x/resolve/main/model_final.pth"
-  WEIGHTS_FILE: "faster_rcnn_publaynet.pth"
+  WEIGHTS_URL: "https://huggingface.co/tensorlake/faster_rcnn-publaynet/resolve/main/model_final.pth"
+  WEIGHTS_FILE: "faster_rcnn-publaynet.pth"
   CONFIG_FILE: "faster_rcnn_detectron2_cfg.yml" 
   LABEL_MAP:
     0: "Text"
@@ -10,8 +10,8 @@ faster_rcnn:
     4: "Figure"
 
 dit:
-  WEIGHTS_URL: "https://huggingface.co/Sebas6k/DiT_weights/resolve/main/publaynet_dit-b_cascade.pth"
-  WEIGHTS_FILE: "dit_publaynet.pth"
+  WEIGHTS_URL: "https://huggingface.co/tensorlake/dit_cascade-publaynet/resolve/main/publaynet_dit-b_cascade.pth"
+  WEIGHTS_FILE: "dit_cascade-publaynet.pth"
   CONFIG_FILE: "cascade_dit_base.yml"
   LABEL_MAP:
     0: "Text"
@@ -21,7 +21,7 @@ dit:
     4: "Figure"
 
 layoutlmv3:
-  WEIGHTS_URL: "https://huggingface.co/HYPJUDY/layoutlmv3-base-finetuned-publaynet/resolve/main/model_final.pth"
+  WEIGHTS_URL: "https://huggingface.co/tensorlake/layoutlmv3-publaynet/resolve/main/model_final.pth"
   WEIGHTS_FILE: "model_final.pth"
   CONFIG_FILE: "cascade_layoutlmv3.yml"
   LABEL_MAP:
