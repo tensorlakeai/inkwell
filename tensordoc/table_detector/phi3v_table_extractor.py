@@ -10,7 +10,10 @@ from tensordoc.table_detector.utils import (
     TABLE_EXTRACTOR_PROMPT,
     load_table_detector_config,
 )
-
+from tensordoc.utils.env_utils import (
+    is_torch_cuda_available,
+    is_flash_attention_available
+)
 
 class Phi3VTableExtractor(BaseTableExtractor):
     def __init__(self):
@@ -20,12 +23,23 @@ class Phi3VTableExtractor(BaseTableExtractor):
         self._load_processor()
 
     def _load_model(self):
-        self._model = AutoModelForCausalLM.from_pretrained(
-            self._cfg["model_name_hf"],
-            trust_remote_code=True,
-            torch_dtype="auto",
-            _attn_implementation="eager",
-        )
+        _attn_implementation = "flash_attention_2" if is_flash_attention_available() else "eager"
+        
+        if is_torch_cuda_available():
+            self._model = AutoModelForCausalLM.from_pretrained(
+                self._cfg["model_name_hf"],
+                device_map="cuda",
+                trust_remote_code=True,
+                torch_dtype="auto",
+                _attn_implementation=_attn_implementation,
+            )
+        else:
+            self._model = AutoModelForCausalLM.from_pretrained(
+                self._cfg["model_name_hf"],
+                trust_remote_code=True,
+                torch_dtype="auto",
+                _attn_implementation=_attn_implementation,
+            )
 
     def _load_processor(self):
         self._processor = AutoProcessor.from_pretrained(

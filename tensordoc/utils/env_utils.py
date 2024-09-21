@@ -24,3 +24,9 @@ def is_detectron2_available():
     Check if Detectron2 is available.
     """
     return importlib.util.find_spec("detectron2") is not None
+
+def is_flash_attention_available():
+    """
+    Check if Flash Attention is available.
+    """
+    return importlib.util.find_spec("flash_attn") is not None
