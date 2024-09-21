@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tensordoc"
-version = "0.0.1"
+version = "0.0.2"
 description = "Python library for document processing"
 authors = ["Mohit Raghavendra <mohithmitra@gmail.com>"]
 license = "Apache 2.0"
