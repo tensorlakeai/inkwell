@@ -2,7 +2,7 @@
 
 Tensordoc is a modular Python library for extracting information from documents. It is designed to be flexible and easy to extend, with a focus on document layout detection, OCR, and table detection. 
 
-You can easily swap out components of the pipeline, and add your own implement new detectors, using your own fintuned models or a cloud-based API.  
+You can easily swap out components of the pipeline, and add your own components, using custom models or a cloud-based API.  
 
 
 ## Installation
@@ -10,7 +10,7 @@ You can easily swap out components of the pipeline, and add your own implement n
 ### Install from source
 
 ```bash
-pip install git+https://github.com/tensorlakeai/tensordoc.git
+pip install tensordoc
 ```
 
 In addition, you need to install the dependencies for the layout detector and OCR agent you want to use. By default we use Detectron2 based layout detectors and Tesseract OCR for OCR.
@@ -23,10 +23,7 @@ pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v
 
 ### Tesseract OCR
 
-Install Tesseract OCR from the instructions at [Tesseract OCR](https://tesseract-ocr.github.io/tessdoc/Installation.html) and then install pytesseract
-```bash
-pip install pytesseract
-```
+Install Tesseract OCR from the instructions at [Tesseract OCR](https://tesseract-ocr.github.io/tessdoc/Installation.html).
 
 ## Usage
 
@@ -38,9 +35,9 @@ Use the default pipeline to extract information from a PDF file. Checkout ```dem
 ```python
 from tensordoc.pipeline import Pipeline
 
-results = pipeline.process("/path/to/file.pdf")
+document = pipeline.process("/path/to/file.pdf")
 
-for page in results.pages:
+for page in document.pages:
 
     figures = page.get_image_fragments()
     tables = page.get_table_fragments()
@@ -92,17 +89,17 @@ pipeline.add_table_detector(MyTableDetector())
 
 ```python
 
-results = model.detect() # The detection results that your model returns, assuming it returns a dictionary with keys "scores", "labels", and "boxes"
+detection_results = model.detect() # The detection results that your model returns, assuming it returns a dictionary with keys "scores", "labels", and "boxes"
 
-scores = results["scores"]
-labels = results["labels"]
-boxes = results["boxes"]
+scores = detection_results["scores"]
+labels = detection_results["labels"]
+bboxes = detection_results["boxes"]
 
 blocks = []
-for score, label, box in zip(scores, labels, boxes):
+for score, label, bbox in zip(scores, labels, bboxes):
     block = LayoutBlock(
         block=Rectangle(
-            x_1=box[0], y_1=box[1], x_2=box[2], y_2=box[3]
+            x_1=bbox[0], y_1=bbox[1], x_2=bbox[2], y_2=bbox[3]
         ),
         score=score.item(),
         type=class_label_map[label.item()], # This is the type of the layout element, e.g. "Table" or "Text"
