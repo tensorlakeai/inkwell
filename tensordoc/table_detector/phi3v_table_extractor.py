@@ -58,6 +58,8 @@ class Phi3VTableExtractor(BaseTableExtractor):
         )
 
         inputs = self._processor(prompt, image, return_tensors="pt")
+        if is_torch_cuda_available():
+            inputs = inputs.to("cuda")
         return inputs
 
     def process(self, image: np.ndarray) -> dict:
