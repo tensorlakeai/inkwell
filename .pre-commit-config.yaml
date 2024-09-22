@@ -24,7 +24,9 @@ repos:
           - --disable=import-error
           - --disable=too-few-public-methods
           - --disable=too-many-locals
-
+          - --disable=too-many-arguments
+          - --disable=too-many-instance-attributes
+        
         language_version: python3
 
   - repo: https://github.com/pre-commit/mirrors-isort
