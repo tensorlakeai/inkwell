@@ -70,7 +70,7 @@ Example of adding a new table extractor is in ```demo_custom_pipeline.ipynb``` i
 Layout and Table detectors can be subclasses of ```BaseLayoutDetector``` and ```BaseTableDetector``` respectively. You can implement your own detectors and use them in the pipeline. Example of adding a new table extractor is in ```demo_custom_pipeline.ipynb``` in the ```notebooks``` folder.
 
 
-Custom layout and table detectors  need to implement the ```process``` method and return a ```Layout``` object, and added to the pipeline like this:
+Custom layout and table detectors  need to implement the ```process``` method and return a ```Layout``` object, and added to the pipeline during initialization:
 ```python
 class MyLayoutDetector(BaseLayoutDetector):
     def process(self, image: np.ndarray) -> Layout: 
@@ -82,9 +82,10 @@ class MyTableDetector(BaseTableDetector):
         # Your detection logic here
         return Layout(blocks=blocks)
 
-pipeline = Pipeline()
-pipeline.add_layout_detector(MyLayoutDetector())
-pipeline.add_table_detector(MyTableDetector())
+pipeline = Pipeline(
+    layout_detector=MyLayoutDetector(),
+    table_detector=MyTableDetector()
+)
 ```
 
 ```python

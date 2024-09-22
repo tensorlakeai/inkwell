@@ -1,3 +1,3 @@
-from tensordoc.layout_detector.dit.backbone import build_vit_fpn_backbone
+from tensordoc.layout_detector.dit.rcnn_vl import VLGeneralizedRCNN
 
-__all__ = ["build_vit_fpn_backbone"]
+__all__ = ["VLGeneralizedRCNN"]
