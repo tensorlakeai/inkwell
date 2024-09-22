@@ -773,7 +773,7 @@ class BEiT(nn.Module):
                                                   f'specify `Pretrained` in ' \
                                                   f'`init_cfg` in ' \
                                                   f'{self.__class__.__name__} '
-            logger.info(f"Will load ckpt from {self.init_cfg['checkpoint']}")
+            logger.debug(f"Will load ckpt from {self.init_cfg['checkpoint']}")
             load_checkpoint(self,
                             filename=self.init_cfg['checkpoint'],
                             strict=False,

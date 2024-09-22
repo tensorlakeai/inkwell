@@ -1,3 +1,5 @@
+import logging
+
 from typing import List
 
 import numpy as np
@@ -24,6 +26,9 @@ from tensordoc.table_detector import (
     TableExtractorFactory,
 )
 from tensordoc.table_detector.base import BaseTableDetector, BaseTableExtractor
+
+
+_logger = logging.getLogger(__name__)
 
 
 class Pipeline:
@@ -101,6 +106,8 @@ class Pipeline:
         return pages
 
     def _process_tables(self, image: np.ndarray, layout: Layout):
+        
+        _logger.debug(f"Running table detector {self.table_detector}")
         table_fragments = []
         for table_block in layout:
             table_image = table_block.pad(
@@ -129,6 +136,7 @@ class Pipeline:
         return table_fragments
 
     def _process_figures(self, image: np.ndarray, layout: Layout):
+        _logger.debug(f"Running figure detector {self.ocr_detector}")
         figure_fragments = []
         for figure_block in layout:
             figure_image = figure_block.pad(
@@ -149,6 +157,7 @@ class Pipeline:
         return figure_fragments
 
     def _process_text(self, image: np.ndarray, layout: Layout):
+        _logger.debug(f"Running text detector {self.ocr_detector}")
         text_fragments = []
         for text_block in layout:
             text_image = text_block.pad(
@@ -181,6 +190,7 @@ class Pipeline:
 
         processed_pages = []
         for page_image, page_number in pages:
+            _logger.info(f"Processing page {page_number}/{len(pages)}")
             if self.layout_detector:
                 layout = self.layout_detector.process(page_image)
 
@@ -218,7 +228,7 @@ class Pipeline:
 
                 fragments.extend(table_fragments)
             else:
-                print(
+                _logger.info(
                     "No layout detector configured, \
                     doing OCR on the whole image"
                 )

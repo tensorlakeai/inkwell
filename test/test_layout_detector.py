@@ -1,13 +1,16 @@
 import os
 import unittest
+import logging
 
 from tensordoc.io import read_image
 from tensordoc.layout_detector import LayoutDetectorFactory, LayoutDetectorType
 
+_logger = logging.getLogger(__name__)
 
 class TestLayoutDetector(unittest.TestCase):
 
     def setUp(self):
+        _logger.debug(f"Running test: {self._testMethodName}")
         self.test_image = read_image(self.load_test_image())
 
     @staticmethod

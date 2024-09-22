@@ -1,3 +1,5 @@
+import logging
+
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -7,6 +9,8 @@ import cv2
 import numpy as np
 import pdfplumber
 
+_logger = logging.getLogger(__name__)
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
         AppleWebKit/537.36 (KHTML, like Gecko) \
@@ -14,7 +18,7 @@ HEADERS = {
 }
 
 
-def _check_local_or_url(path: str) -> bool:
+def _is_url(path: str) -> bool:
     parsed_url = urllib.parse.urlparse(path)
     return parsed_url.scheme in ["http", "https"]
 
@@ -29,8 +33,9 @@ def read_image(image_path: str) -> np.ndarray:
     Returns:
         np.ndarray: The image as a numpy array.
     """
+    _logger.debug(f"Reading image from {image_path}")
 
-    if _check_local_or_url(image_path):
+    if _is_url(image_path):
         try:
             req = urllib.request.Request(image_path, headers=HEADERS)
             with urllib.request.urlopen(req) as response:
@@ -61,8 +66,8 @@ def read_pdf_document(pdf_path: str) -> pdfplumber.pdf.PDF:
     Returns:
         pdfplumber.pdf.PDF: The PDF document.
     """
-
-    if _check_local_or_url(pdf_path):
+    _logger.debug(f"Reading PDF from {pdf_path}")
+    if _is_url(pdf_path):
         try:
             req = urllib.request.Request(pdf_path, headers=HEADERS)
             with urllib.request.urlopen(req) as response:
