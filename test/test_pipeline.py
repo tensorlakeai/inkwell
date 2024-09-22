@@ -1,5 +1,6 @@
 import os
 import unittest
+import logging
 
 from tensordoc.components import Document
 from tensordoc.pipeline import Pipeline
@@ -7,7 +8,7 @@ from tensordoc.pipeline import Pipeline
 _PDF_URL = "https://pub-5dc4d0c0254749378ccbcfffa4bd2a1e.r2.dev/sample_ratings_report.pdf"  # noqa: E501, pylint: disable=line-too-long
 _IMG_PATH = "/data/sample.png"
 
-
+_logger = logging.getLogger(__name__)
 class TestPipeline(unittest.TestCase):
 
     @staticmethod
@@ -17,6 +18,7 @@ class TestPipeline(unittest.TestCase):
         return image_path
 
     def setUp(self):
+        _logger.debug(f"Running test: {self._testMethodName}")
         self._pipeline = Pipeline()
         self._document_url = _PDF_URL
         self._image_path = self._load_test_image_path()

@@ -1,4 +1,6 @@
 import os
+import logging
+
 from unittest import TestCase
 
 from tensordoc.io import read_image
@@ -9,6 +11,7 @@ from tensordoc.table_detector import (
     TableExtractorType,
 )
 
+_logger = logging.getLogger(__name__)
 
 class TestTableDetector(TestCase):
 
@@ -27,6 +30,7 @@ class TestTableDetector(TestCase):
         return image
 
     def setUp(self):
+        _logger.debug(f"Running test: {self._testMethodName}")        
         self._image = self.load_test_image()
         self._image_table = self.load_test_image_table()
 

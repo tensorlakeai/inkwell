@@ -364,9 +364,9 @@ class Interval(BaseCoordElement):
                     "The intersection between an Interval and a Quadrilateral might generate Polygon shapes that are not supported. You can pass `strict=False` in the input that converts the Quadrilateral to Rectangle to avoid this Exception."
                 )
             else:
-                warnings.warn(
-                    f"With `strict=False`, the other of shape {other.__class__} will be converted to {Rectangle} for obtaining the intersection"
-                )
+                # warnings.warn(
+                #     f"With `strict=False`, the other of shape {other.__class__} will be converted to {Rectangle} for obtaining the intersection"
+                # )
                 return self.intersect(other.to_rectangle())
 
         else:
@@ -406,9 +406,9 @@ class Interval(BaseCoordElement):
                     "The intersection between an Interval and a Quadrilateral might generate Polygon shapes that are not supported. You can pass `strict=False` in the input that converts the Quadrilateral to Rectangle to avoid this Exception."
                 )
             else:
-                warnings.warn(
-                    f"With `strict=False`, the other of shape {other.__class__} will be converted to {Rectangle} for obtaining the intersection"
-                )
+                # warnings.warn(
+                #     f"With `strict=False`, the other of shape {other.__class__} will be converted to {Rectangle} for obtaining the intersection"
+                # )
                 return self.union(other.to_rectangle())
 
         else:
@@ -426,10 +426,10 @@ class Interval(BaseCoordElement):
         else:
             start = self.start - top
             end = self.end + bottom
-            if left or right:
-                warnings.warn(
-                    f"Invalid padding right/left for a y axis {self.__class__.__name__}"
-                )
+            # if left or right:
+            #     warnings.warn(
+            #         f"Invalid padding right/left for a y axis {self.__class__.__name__}"
+            #     )
 
         if safe_mode:
             start = max(0, start)
@@ -451,9 +451,9 @@ class Interval(BaseCoordElement):
             shift_distance = (
                 shift_distance[0] if self.axis == "x" else shift_distance[1]
             )
-            warnings.warn(
-                f"Input shift for multiple axes. Only use the distance for the {self.axis} axis"
-            )
+            # warnings.warn(
+            #     f"Input shift for multiple axes. Only use the distance for the {self.axis} axis"
+            # )
 
         start = self.start + shift_distance
         end = self.end + shift_distance
@@ -474,9 +474,9 @@ class Interval(BaseCoordElement):
             scale_factor = (
                 scale_factor[0] if self.axis == "x" else scale_factor[1]
             )
-            warnings.warn(
-                f"Input scale for multiple axes. Only use the factor for the {self.axis} axis"
-            )
+            # warnings.warn(
+            #     f"Input scale for multiple axes. Only use the factor for the {self.axis} axis"
+            # )
 
         start = self.start * scale_factor
         end = self.end * scale_factor
@@ -724,9 +724,9 @@ class Rectangle(BaseCoordElement):
                     "The intersection between a Rectangle and a Quadrilateral might generate Polygon shapes that are not supported. You can pass `strict=False` in the input that converts the Quadrilateral to Rectangle to avoid this Exception."
                 )
             else:
-                warnings.warn(
-                    f"With `strict=False`, the other of shape {other.__class__} will be converted to {Rectangle} for obtaining the intersection"
-                )
+                # warnings.warn(
+                #     f"With `strict=False`, the other of shape {other.__class__} will be converted to {Rectangle} for obtaining the intersection"
+                # )
                 return self.intersect(other.to_rectangle())
 
         else:
@@ -752,9 +752,9 @@ class Rectangle(BaseCoordElement):
                     "The intersection between an Interval and a Quadrilateral might generate Polygon shapes that are not supported. You can pass `strict=False` in the input that converts the Quadrilateral to Rectangle to avoid this Exception."
                 )
             else:
-                warnings.warn(
-                    f"With `strict=False`, the other of shape {other.__class__} will be converted to {Rectangle} for obtaining the intersection"
-                )
+                # warnings.warn(
+                #     f"With `strict=False`, the other of shape {other.__class__} will be converted to {Rectangle} for obtaining the intersection"
+                # )
                 return self.union(other.to_rectangle())
 
         else:
@@ -1077,14 +1077,14 @@ class Quadrilateral(BaseCoordElement):
             )
         else:
             if isinstance(other, Interval) or isinstance(other, Rectangle):
-                warnings.warn(
-                    f"With `strict=False`, the current Quadrilateral object will be converted to {Rectangle} for obtaining the intersection"
-                )
+                # warnings.warn(
+                #     f"With `strict=False`, the current Quadrilateral object will be converted to {Rectangle} for obtaining the intersection"
+                # )
                 return other.intersect(self.to_rectangle())
             elif isinstance(other, Quadrilateral):
-                warnings.warn(
-                    f"With `strict=False`, both input Quadrilateral objects will be converted to {Rectangle} for obtaining the intersection"
-                )
+                # warnings.warn(
+                #     f"With `strict=False`, both input Quadrilateral objects will be converted to {Rectangle} for obtaining the intersection"
+                # )
                 return self.to_rectangle().intersect(other.to_rectangle())
             else:
                 raise Exception(
@@ -1100,14 +1100,14 @@ class Quadrilateral(BaseCoordElement):
             )
         else:
             if isinstance(other, Interval) or isinstance(other, Rectangle):
-                warnings.warn(
-                    f"With `strict=False`, the current Quadrilateral object will be converted to {Rectangle} for obtaining the intersection"
-                )
+                # warnings.warn(
+                #     f"With `strict=False`, the current Quadrilateral object will be converted to {Rectangle} for obtaining the intersection"
+                # )
                 return other.union(self.to_rectangle())
             elif isinstance(other, Quadrilateral):
-                warnings.warn(
-                    f"With `strict=False`, both input Quadrilateral objects will be converted to {Rectangle} for obtaining the intersection"
-                )
+                # warnings.warn(
+                #     f"With `strict=False`, both input Quadrilateral objects will be converted to {Rectangle} for obtaining the intersection"
+                # )
                 return self.to_rectangle().union(other.to_rectangle())
             else:
                 raise Exception(
