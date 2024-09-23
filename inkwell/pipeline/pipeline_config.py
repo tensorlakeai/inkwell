@@ -15,3 +15,21 @@ class PipelineConfig(BaseModel):
     ocr_detector: OCRType = OCRType.TESSERACT
     table_detector: TableDetectorType = None
     table_extractor: TableExtractorType = TableExtractorType.TABLE_TRANSFORMER
+
+    def __init__(self, 
+            layout_detector: LayoutDetectorType = None,
+            table_detector: TableDetectorType = None,
+            table_extractor: TableExtractorType = None,
+            ocr_detector: OCRType = None
+    ):
+        
+        if layout_detector:
+            self.layout_detector = layout_detector
+        if table_detector:
+            self.table_detector = table_detector
+        if table_extractor:
+            self.table_extractor = table_extractor
+        if ocr_detector:
+            self.ocr_detector = ocr_detector
+        
+        

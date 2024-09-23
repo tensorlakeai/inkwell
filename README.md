@@ -37,6 +37,8 @@ brew install tesseract
 from inkwell.pipeline import Pipeline
 from inkwell import PipelineConfig
 
+pipeline = Pipeline()
+
 document = pipeline.process("/path/to/file.pdf")
 
 for page in document.pages:
@@ -61,21 +63,40 @@ for page in document.pages:
         print(f"Text block detected: {text_block.content.text}")
 ```
 
-## Document Detection Models  
+## Models/Frameworks currently available
 
-Create a Grid of Models which is used by default and available models by their function 
+Default models: We have defined a config class [here](inkwell/pipeline/pipeline_config.py) that is used by default in the pipeline.
+
+If you want to change the default models, you can replace them with models listed below by passing them in the config during pipeline initialization:
+
+#### Layout Detection
+
+* Faster RCNN
+* LayoutLMv3
 
 #### Table Detection
 
-**
+* Table Transformer
 
 #### Table Extraction
 
-**Phi3**
+* Table Transformer
+* Phi3.5-Vision
 
-**Qwen**
+```python
+from inkwell.pipeline import PipelineConfig, Pipeline
+from inkwell.layout_detector import LayoutDetectorType
+from inkwell.ocr import OCRType
+from inkwell.table_detector import TableDetectorType, TableExtractorType
 
-**PaddlePaddle**
+config = PipelineConfig(
+    layout_detector=LayoutDetectorType.FASTER_RCNN,
+    table_extractor=TableExtractorType.PHI3V,
+)
+
+pipeline = Pipeline(config=config)
+```
+
 
 ## Advanced Customizations
 
