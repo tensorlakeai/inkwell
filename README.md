@@ -1,6 +1,6 @@
-# Document
+# Inkwell
 
-inkwell is a Python library for extracting information from PDF documents. It is designed to be modular and easy to extend with Vision LLM models, with a focus on document layout detection, OCR, and table detection. 
+Inkwell is a modular Python library for extracting information from documents. It is designed to be flexible and easy to extend, with a focus on document layout detection, OCR, and table detection. 
 
 You can easily swap out components of the pipeline, and add your own components, using custom models or a cloud-based API.  
 
