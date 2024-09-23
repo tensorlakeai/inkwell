@@ -26,6 +26,7 @@ transformers = "^4.44.2"
 pytesseract = "^0.3.13"
 pdfplumber = "^0.11.4"
 openai = "^1.46.1"
+detectron2 = { url = "https://github.com/facebookresearch/detectron2", branch = "master" }
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"   
