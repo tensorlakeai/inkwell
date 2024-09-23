@@ -33,21 +33,21 @@ class Page(BaseModel):
     page_fragments: List[PageFragment]
     layout: Layout
 
-    def get_text_fragments(self) -> List[TextBox]:
+    def text_fragments(self) -> List[TextBox]:
         return [
             fragment
             for fragment in self.page_fragments
             if fragment.fragment_type == PageFragmentType.TEXT
         ]
 
-    def get_table_fragments(self) -> List[Table]:
+    def table_fragments(self) -> List[Table]:
         return [
             fragment
             for fragment in self.page_fragments
             if fragment.fragment_type == PageFragmentType.TABLE
         ]
 
-    def get_image_fragments(self) -> List[Image]:
+    def image_fragments(self) -> List[Image]:
         return [
             fragment
             for fragment in self.page_fragments
