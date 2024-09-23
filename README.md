@@ -1,9 +1,8 @@
-# Tensordoc
+# Document
 
-Tensordoc is a modular Python library for extracting information from documents. It is designed to be flexible and easy to extend, with a focus on document layout detection, OCR, and table detection. 
+Tensordoc is a Python library for extracting information from PDF documents. It is designed to be modular and easy to extend with Vision LLM models, with a focus on document layout detection, OCR, and table detection. 
 
 You can easily swap out components of the pipeline, and add your own components, using custom models or a cloud-based API.  
-
 
 ## Installation
 
@@ -13,35 +12,24 @@ You can easily swap out components of the pipeline, and add your own components,
 pip install tensordoc
 ```
 
-In addition, you need to install the dependencies for the layout detector and OCR agent you want to use. By default we use Detectron2 based layout detectors and Tesseract OCR for OCR.
+Install Tessarect for your Operating System 
+#### Linux 
 
-### Detectron2
-
-```bash
-pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.5#egg=detectron2"
-```
-
-### Tesseract OCR
-
-Install Tesseract OCR from the instructions at [Tesseract OCR](https://tesseract-ocr.github.io/tessdoc/Installation.html).
-
-## Usage
-
+#### Mac OS
 
 ### Basic Usage
 
-Use the default pipeline to extract information from a PDF file. Checkout ```demo_pipeline.ipynb``` in the ```notebooks``` folder for more details.
-
 ```python
 from tensordoc.pipeline import Pipeline
+from tensordoc import PipelineConfig
 
 document = pipeline.process("/path/to/file.pdf")
 
 for page in document.pages:
 
-    figures = page.get_image_fragments()
-    tables = page.get_table_fragments()
-    text_blocks = page.get_text_fragments()
+    figures = page.image_fragments()
+    tables = page.table_fragments()
+    text_blocks = page.text_fragments()
 
     # Check the content of the image fragments
     for figure in figures:
@@ -59,85 +47,27 @@ for page in document.pages:
         print(f"Text block detected: {text_block.content.text}")
 ```
 
+## Document Detection Models  
 
-## Adding custom components
+Create a Grid of Models which is used by default and avaialable models by their function 
+
+#### Table Detection
+
+**
+
+#### Table Extraction
+
+**Phi3**
+
+**Qwen**
+
+**PaddlePaddle**
+
+## Advanced Customizations
 
 You can add your own detectors and other components to the pipeline. 
-Example of adding a new table extractor is in ```demo_custom_pipeline.ipynb``` in the ```notebooks``` folder.
 
-### Adding Layout or Table Detector
-
-Layout and Table detectors can be subclasses of ```BaseLayoutDetector``` and ```BaseTableDetector``` respectively. You can implement your own detectors and use them in the pipeline. Example of adding a new table extractor is in ```demo_custom_pipeline.ipynb``` in the ```notebooks``` folder.
-
-
-Custom layout and table detectors  need to implement the ```process``` method and return a ```Layout``` object, and added to the pipeline during initialization:
-```python
-class MyLayoutDetector(BaseLayoutDetector):
-    def process(self, image: np.ndarray) -> Layout: 
-        # Your detection logic here
-        return Layout(blocks=blocks)
-
-class MyTableDetector(BaseTableDetector):
-    def process(self, image: np.ndarray) -> Layout: 
-        # Your detection logic here
-        return Layout(blocks=blocks)
-
-pipeline = Pipeline(
-    layout_detector=MyLayoutDetector(),
-    table_detector=MyTableDetector()
-)
-```
-
-```python
-
-detection_results = model.detect() # The detection results that your model returns, assuming it returns a dictionary with keys "scores", "labels", and "boxes"
-
-scores = detection_results["scores"]
-labels = detection_results["labels"]
-bboxes = detection_results["boxes"]
-
-blocks = []
-for score, label, bbox in zip(scores, labels, bboxes):
-    block = LayoutBlock(
-        block=Rectangle(
-            x_1=bbox[0], y_1=bbox[1], x_2=bbox[2], y_2=bbox[3]
-        ),
-        score=score.item(),
-        type=class_label_map[label.item()], # This is the type of the layout element, e.g. "Table" or "Text"
-    )
-    blocks.append(block)
-
-layout = Layout(blocks=blocks)
-```
-
-### Adding OCR Detector
-
-OCR detector can be a subclass of ```BaseOCRDetector```, that has a ```process``` method, which takes an image (np.ndarray) as input and returns a ```str``` object.
-
-```python
-class MyOCRDetector(BaseOCRDetector):
-    def process(self, image: np.ndarray) -> str: 
-        # Your OCR logic here
-        return "Extracted text"
-
-pipeline = Pipeline()
-pipeline.add_ocr_detector(MyOCRDetector())
-```
-
-### Adding Table Extractor
-
-Table extractor can be a subclass of ```BaseTableExtractor```, that has a ```process``` method, which takes an image (np.ndarray) as input and returns a ```dict``` object.
-
-```python
-class MyTableExtractor(BaseTableExtractor):
-    def process(self, image: np.ndarray) -> dict: 
-        # Your table extraction logic here
-        return Layout(blocks=blocks)
-
-pipeline = Pipeline()
-pipeline.add_table_extractor(MyTableExtractor())
-```
-
+* [**Custom Table Extractor:**](notebooks/demo_custom_pipeline.ipynb)
 
 ### Acknowledgements
 
