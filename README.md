@@ -16,7 +16,7 @@ In addition, install detectron2 for layout detection:
 pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.5#egg=detectron2"
 ```
 
-Install [Tessarect](https://tesseract-ocr.github.io/tessdoc/Installation.html) for your Operating System 
+Install [Tesseract](https://tesseract-ocr.github.io/tessdoc/Installation.html) for your Operating System 
 
 #### Ubuntu
 
@@ -79,9 +79,7 @@ Create a Grid of Models which is used by default and available models by their f
 
 ## Advanced Customizations
 
-You can add your own detectors and other components to the pipeline. 
-
-* [**Custom Table Extractor:**](notebooks/demo_custom_pipeline.ipynb)
+You can add custom detectors and other components to the pipeline yourself - follow the instructions in the [Custom Components](notebooks/demo_pipeline_custom.ipynb) notebook
 
 ### Acknowledgements
 
