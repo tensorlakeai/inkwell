@@ -1,10 +1,9 @@
-import os
 import logging
-
+import os
 from unittest import TestCase
 
-from tensordoc.io import read_image
-from tensordoc.table_detector import (
+from inkwell.io import read_image
+from inkwell.table_detector import (
     TableDetectorFactory,
     TableDetectorType,
     TableExtractorFactory,
@@ -12,6 +11,7 @@ from tensordoc.table_detector import (
 )
 
 _logger = logging.getLogger(__name__)
+
 
 class TestTableDetector(TestCase):
 
@@ -30,7 +30,7 @@ class TestTableDetector(TestCase):
         return image
 
     def setUp(self):
-        _logger.debug(f"Running test: {self._testMethodName}")        
+        _logger.debug("Running test: %s", self._testMethodName)
         self._image = self.load_test_image()
         self._image_table = self.load_test_image_table()
 

@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "tensordoc"
+name = "inkwell"
 version = "0.0.2"
 description = "Python library for document processing"
 authors = ["Mohit Raghavendra <mohithmitra@gmail.com>"]
 license = "Apache 2.0"
 readme = "README.md"
 homepage = "https://github.com/tensorlakeai/indexify"
-repository = "https://github.com/tensorlakeai/tensordoc"
+repository = "https://github.com/tensorlakeai/inkwell"
 
 [tool.poetry.dependencies]
 python = "^3.9"

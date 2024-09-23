@@ -1,16 +1,17 @@
+import logging
 import os
 import unittest
 
-from tensordoc.io import read_image
-from tensordoc.ocr import OCRFactory, OCRType
-import logging
+from inkwell.io import read_image
+from inkwell.ocr import OCRFactory, OCRType
 
 _logger = logging.getLogger(__name__)
+
 
 class TestOCR(unittest.TestCase):
 
     def setUp(self):
-        _logger.debug(f"Running test: {self._testMethodName}")
+        _logger.debug("Running test: %s", self._testMethodName)
 
     @staticmethod
     def _load_test_image():
