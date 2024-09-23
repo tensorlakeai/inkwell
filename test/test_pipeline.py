@@ -2,8 +2,8 @@ import logging
 import os
 import unittest
 
-from tensordoc.components import Document
-from tensordoc.pipeline import Pipeline
+from inkwell.components import Document
+from inkwell.pipeline import Pipeline
 
 _PDF_URL = "https://pub-5dc4d0c0254749378ccbcfffa4bd2a1e.r2.dev/sample_ratings_report.pdf"  # noqa: E501, pylint: disable=line-too-long
 _IMG_PATH = "./data/sample.png"

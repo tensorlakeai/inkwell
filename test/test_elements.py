@@ -19,14 +19,14 @@ import unittest
 import numpy as np
 import pytest
 
-from tensordoc.components import (
+from inkwell.components import (
     Interval,
     Layout,
     LayoutBlock,
     Quadrilateral,
     Rectangle,
 )
-from tensordoc.components.elements import (
+from inkwell.components.elements import (
     InvalidShapeError,
     NotSupportedShapeError,
 )

@@ -1,6 +1,6 @@
-# Document
+# Inkwell
 
-Tensordoc is a Python library for extracting information from PDF documents. It is designed to be modular and easy to extend with Vision LLM models, with a focus on document layout detection, OCR, and table detection. 
+Inkwell is a modular Python library for extracting information from documents. It is designed to be flexible and easy to extend, with a focus on document layout detection, OCR, and table detection. 
 
 You can easily swap out components of the pipeline, and add your own components, using custom models or a cloud-based API.  
 
@@ -9,7 +9,7 @@ You can easily swap out components of the pipeline, and add your own components,
 ### Install from source
 
 ```bash
-pip install tensordoc
+pip install inkwell
 ```
 
 Install Tessarect for your Operating System 
@@ -20,8 +20,8 @@ Install Tessarect for your Operating System
 ### Basic Usage
 
 ```python
-from tensordoc.pipeline import Pipeline
-from tensordoc import PipelineConfig
+from inkwell.pipeline import Pipeline
+from inkwell import PipelineConfig
 
 document = pipeline.process("/path/to/file.pdf")
 
