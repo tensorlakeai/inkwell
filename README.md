@@ -6,16 +6,30 @@ You can easily swap out components of the pipeline, and add your own components,
 
 ## Installation
 
-### Install from source
-
 ```bash
 pip install inkwell
 ```
 
-Install Tessarect for your Operating System 
-#### Linux 
+In addition, install detectron2 for layout detection:
+
+```bash
+pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.5#egg=detectron2"
+```
+
+Install [Tessarect](https://tesseract-ocr.github.io/tessdoc/Installation.html) for your Operating System 
+
+#### Ubuntu
+
+```bash
+sudo apt install tesseract-ocr
+sudo apt install libtesseract-dev
+```
 
 #### Mac OS
+
+```bash
+brew install tesseract
+```
 
 ### Basic Usage
 
@@ -49,7 +63,7 @@ for page in document.pages:
 
 ## Document Detection Models  
 
-Create a Grid of Models which is used by default and avaialable models by their function 
+Create a Grid of Models which is used by default and available models by their function 
 
 #### Table Detection
 
