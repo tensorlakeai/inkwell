@@ -80,7 +80,7 @@ def read_pdf_document(pdf_path: str) -> pdfplumber.pdf.PDF:
 
 
 def convert_page_to_image(page: pdfplumber.pdf.Page) -> np.ndarray:
-    image = page.to_image(resolution=1024).original
+    image = page.to_image(resolution=512).original
     return np.array(image)
 
 

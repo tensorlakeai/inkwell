@@ -7,8 +7,8 @@ from PIL import Image
 from transformers import DetrImageProcessor, TableTransformerForObjectDetection
 
 from inkwell.components import Layout, LayoutBlock, Rectangle
+from inkwell.ocr import OCRFactory, OCRType
 from inkwell.ocr.base import BaseOCR
-from inkwell.ocr.ocr import OCRFactory, OCRType
 from inkwell.table_detector.base import BaseTableExtractor
 from inkwell.table_detector.table_detector import TableExtractorType
 from inkwell.table_detector.utils import load_table_detector_config

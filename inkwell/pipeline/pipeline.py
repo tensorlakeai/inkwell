@@ -19,7 +19,10 @@ from inkwell.pipeline.fragment_processor import (
     TableFragmentProcessor,
     TextFragmentProcessor,
 )
-from inkwell.pipeline.pipeline_config import PipelineConfig
+from inkwell.pipeline.pipeline_config import (
+    DefaultCPUPipelineConfig,
+    PipelineConfig,
+)
 from inkwell.table_detector import TableDetectorFactory, TableExtractorFactory
 from inkwell.table_detector.base import BaseTableDetector, BaseTableExtractor
 
@@ -29,7 +32,7 @@ _logger = logging.getLogger(__name__)
 class Pipeline:
     def __init__(
         self,
-        config: PipelineConfig = PipelineConfig(),
+        config: PipelineConfig = DefaultCPUPipelineConfig(),
         layout_detector: BaseLayoutDetector = None,
         ocr_detector: BaseOCR = None,
         table_detector: BaseTableDetector = None,
@@ -174,19 +177,23 @@ class Pipeline:
                     )
 
                 fragments.extend(table_fragments)
+                layout = Layout(
+                    blocks=figure_blocks + table_blocks + text_blocks
+                )
+
             else:
                 _logger.info(
                     "No layout detector configured, \
                     doing OCR on the whole image"
                 )
-                fragments.append(
+                fragments = [
                     PageFragment(
                         fragment_type=PageFragmentType.TEXT,
                         content=self.ocr_detector.process(page_image),
                     )
-                )
+                ]
 
-            layout = Layout(blocks=figure_blocks + table_blocks + text_blocks)
+                layout = None
 
             processed_pages.append(
                 Page(

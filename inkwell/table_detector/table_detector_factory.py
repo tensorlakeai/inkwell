@@ -1,5 +1,6 @@
 from inkwell.table_detector.openai_table_extractor import OpenAITableExtractor
 from inkwell.table_detector.phi3v_table_extractor import Phi3VTableExtractor
+from inkwell.table_detector.qwen2_ocr import Qwen2TableExtractor
 from inkwell.table_detector.table_detector import (
     TableDetectorType,
     TableExtractorType,
@@ -25,10 +26,12 @@ class TableExtractorFactory:
     def get_table_extractor(table_extractor_type: TableExtractorType):
         if table_extractor_type == TableExtractorType.TABLE_TRANSFORMER:
             return TableTransformerExtractor()
-        if table_extractor_type == TableExtractorType.PHI3V:
+        if table_extractor_type == TableExtractorType.PHI3_VISION:
             return Phi3VTableExtractor()
         if table_extractor_type == TableExtractorType.OPENAI:
             return OpenAITableExtractor()
+        if table_extractor_type == TableExtractorType.QWEN2_VISION:
+            return Qwen2TableExtractor()
         raise ValueError(
             f"Invalid table extractor type: {table_extractor_type}"
         )
