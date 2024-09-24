@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union
 
 import numpy as np
 from pydantic import BaseModel
@@ -24,7 +24,7 @@ class Table(BaseModel):
     Table in a document.
     """
 
-    data: dict
+    data: Union[dict, str]
     encoding: TableEncoding
     bbox: Optional[Rectangle] = None
     text: Optional[str] = None

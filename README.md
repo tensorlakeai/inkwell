@@ -91,7 +91,7 @@ from inkwell.table_detector import TableDetectorType, TableExtractorType
 
 config = PipelineConfig(
     layout_detector=LayoutDetectorType.FASTER_RCNN,
-    table_extractor=TableExtractorType.PHI3V,
+    table_extractor=TableExtractorType.PHI3_VISION,
 )
 
 pipeline = Pipeline(config=config)

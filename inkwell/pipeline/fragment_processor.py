@@ -54,8 +54,10 @@ class TableFragmentProcessor(FragmentProcessor):
                 table_data = self.ocr_detector.process(table_image)
                 table_encoding = TableEncoding.TEXT
 
+            table_text = str(table_data)
             table = Table(
                 data=table_data,
+                text=table_text,
                 bbox=table_block.rectangle,
                 score=table_block.score,
                 image=table_image,
