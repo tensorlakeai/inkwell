@@ -20,7 +20,7 @@ from inkwell.pipeline.fragment_processor import (
     TextFragmentProcessor,
 )
 from inkwell.pipeline.pipeline_config import (
-    DefaultCPUPipelineConfig,
+    DefaultGPUPipelineConfig,
     PipelineConfig,
 )
 from inkwell.table_detector import TableDetectorFactory, TableExtractorFactory
@@ -32,13 +32,12 @@ _logger = logging.getLogger(__name__)
 class Pipeline:
     def __init__(
         self,
-        config: PipelineConfig = DefaultCPUPipelineConfig(),
+        config: PipelineConfig = DefaultGPUPipelineConfig(),
         layout_detector: BaseLayoutDetector = None,
         ocr_detector: BaseOCR = None,
         table_detector: BaseTableDetector = None,
         table_extractor: BaseTableExtractor = None,
     ):
-
         self.config = config
 
         self._initialize_layout_detector()
@@ -46,7 +45,7 @@ class Pipeline:
         self._initialize_table_detector()
         self._initialize_table_segmentation_detector()
 
-        # Passing the custom components replaces the default components
+        # Passing custom components replaces the default components
         if layout_detector:
             self.layout_detector = layout_detector
         if ocr_detector:

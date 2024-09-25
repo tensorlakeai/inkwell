@@ -65,7 +65,15 @@ for page in document.pages:
 
 ## Models/Frameworks currently available
 
-Default models: We have defined a config class [here](inkwell/pipeline/pipeline_config.py) that is used by default in the pipeline.
+
+
+Default models: We have defined a config class [here](inkwell/pipeline/pipeline_config.py), and we use the default GPU Config in the pipeline for best results. If you want to use the default CPU pipeline, you can instantiate it with the CPU config class. 
+
+```python
+from inkwell.pipeline import DefaultCPUPipelineConfig, Pipeline
+config = DefaultCPUPipelineConfig()
+pipeline = Pipeline(config=config)
+```
 
 If you want to change the default models, you can replace them with models listed below by passing them in the config during pipeline initialization:
 
@@ -82,6 +90,14 @@ If you want to change the default models, you can replace them with models liste
 
 * Table Transformer
 * Phi3.5-Vision
+* Qwen2 VL 2B
+
+#### OCR
+
+* Tesseract
+* Phi 3.5-Vision
+* Qwen2 VL 2B
+* OpenAI GPT-4o (requires an API key)
 
 ```python
 from inkwell.pipeline import PipelineConfig, Pipeline
