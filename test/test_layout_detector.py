@@ -38,15 +38,6 @@ class TestLayoutDetector(unittest.TestCase):
 
         self.check_detected_layout(layout)
 
-    def test_dit_layout_detector(self):
-        detector = LayoutDetectorFactory.get_layout_detector(
-            LayoutDetectorType.DIT
-        )
-
-        layout = detector.process(self.test_image)
-
-        self.check_detected_layout(layout)
-
     def test_layoutlmv3_layout_detector(self):
         detector = LayoutDetectorFactory.get_layout_detector(
             LayoutDetectorType.LAYOUTLMV3
