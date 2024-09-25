@@ -1,3 +1,5 @@
+# flake8: noqa: E501
+
 from inkwell.table_detector.openai_table_extractor import OpenAITableExtractor
 from inkwell.table_detector.phi3v_table_extractor import Phi3VTableExtractor
 from inkwell.table_detector.table_detector import (
@@ -10,11 +12,8 @@ from inkwell.table_detector.table_transformer_detector import (
 from inkwell.table_detector.table_transformer_extractor import (
     TableTransformerExtractor,
 )
+from inkwell.utils.env_utils import is_qwen2_available
 
-try:
-    from inkwell.table_detector.qwen2_table_extractor import Qwen2TableExtractor
-except ImportError:
-    print("Please install the latest transformers from source to use Qwen2 Vision OCR")
 
 class TableDetectorFactory:
     @staticmethod
@@ -34,7 +33,16 @@ class TableExtractorFactory:
         if table_extractor_type == TableExtractorType.OPENAI:
             return OpenAITableExtractor()
         if table_extractor_type == TableExtractorType.QWEN2_VISION:
-            return Qwen2TableExtractor()
+            if is_qwen2_available():
+                from inkwell.table_detector.qwen2_table_extractor import (  # pylint: disable=import-outside-toplevel,unused-import
+                    Qwen2TableExtractor,
+                )
+
+                return Qwen2TableExtractor()
+            raise ValueError(
+                "Please install the latest transformers from source \
+                        to use Qwen2 Vision OCR"
+            )
         raise ValueError(
             f"Invalid table extractor type: {table_extractor_type}"
         )

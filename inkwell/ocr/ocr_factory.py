@@ -1,11 +1,10 @@
+# flake8: noqa: E501
+
 from inkwell.ocr.ocr import OCRType
 from inkwell.ocr.phi3_ocr import Phi3VisionOCR
 from inkwell.ocr.tesseract_ocr import TesseractOCR
+from inkwell.utils.env_utils import is_qwen2_available
 
-try:
-    from inkwell.ocr.qwen2_ocr import Qwen2VisionOCR
-except ImportError:
-    print("Please install the latest transformers from source to use Qwen2 Vision OCR")
 
 class OCRFactory:
     @staticmethod
@@ -15,5 +14,14 @@ class OCRFactory:
         if ocr_type == OCRType.PHI3_VISION:
             return Phi3VisionOCR(**kwargs)
         if ocr_type == OCRType.QWEN2_VISION:
-            return Qwen2VisionOCR(**kwargs)
+            if is_qwen2_available():
+                from inkwell.ocr.qwen2_ocr import (  # pylint: disable=import-outside-toplevel
+                    Qwen2VisionOCR,
+                )
+
+                return Qwen2VisionOCR(**kwargs)
+            raise ValueError(
+                "Please install the latest transformers from \
+                    source to use Qwen2 Vision OCR"
+            )
         raise ValueError(f"Invalid OCR type: {ocr_type}")

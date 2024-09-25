@@ -7,15 +7,15 @@ You can easily swap out components of the pipeline, and add your own components,
 ## Installation
 
 ```bash
-pip install inkwell
+pip install py-inkwell
 ```
 
-In addition, install detectron2 and transformers from source
+In addition, install detectron2
 
 ```bash
 pip install git+https://github.com/facebookresearch/detectron2.git
-pip install git+https://github.com/huggingface/transformers.git
 ```
+
 
 Install [Tesseract](https://tesseract-ocr.github.io/tessdoc/Installation.html) for your Operating System 
 
@@ -31,6 +31,13 @@ sudo apt install libtesseract-dev
 ```bash
 brew install tesseract
 ```
+
+If you want to run the pipeline on GPU, install flash-attn
+
+```bash
+pip install flash-attn --no-build-isolation
+```
+
 
 ### Basic Usage
 
