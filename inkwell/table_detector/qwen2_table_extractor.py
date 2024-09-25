@@ -1,6 +1,10 @@
 from PIL import Image
 
-from inkwell.ocr.qwen2_ocr import Qwen2VisionOCR
+try:
+    from inkwell.ocr.qwen2_ocr import Qwen2VisionOCR
+except ImportError:
+    print("Please install the latest transformers from source to use Qwen2 Vision OCR")
+
 from inkwell.table_detector.base import BaseTableExtractor
 from inkwell.table_detector.utils import TABLE_EXTRACTOR_PROMPT
 

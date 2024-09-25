@@ -1,6 +1,5 @@
 from inkwell.table_detector.openai_table_extractor import OpenAITableExtractor
 from inkwell.table_detector.phi3v_table_extractor import Phi3VTableExtractor
-from inkwell.table_detector.qwen2_ocr import Qwen2TableExtractor
 from inkwell.table_detector.table_detector import (
     TableDetectorType,
     TableExtractorType,
@@ -12,6 +11,10 @@ from inkwell.table_detector.table_transformer_extractor import (
     TableTransformerExtractor,
 )
 
+try:
+    from inkwell.table_detector.qwen2_table_extractor import Qwen2TableExtractor
+except ImportError:
+    print("Please install the latest transformers from source to use Qwen2 Vision OCR")
 
 class TableDetectorFactory:
     @staticmethod
