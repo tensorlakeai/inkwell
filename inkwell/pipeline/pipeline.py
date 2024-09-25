@@ -111,7 +111,8 @@ class Pipeline:
             ]
 
         pages = [
-            (convert_page_to_image(page), page.page_number) for page in pages
+            (convert_page_to_image(page), page.page_number + 1)
+            for page in pages
         ]
 
         return pages
@@ -142,11 +143,11 @@ class Pipeline:
             document = self._read_pdf(document_path)
             pages = self._preprocess_native_pdf(document, pages_to_parse)
         else:
-            pages = [(self._read_image(document_path), 0)]
+            pages = [(self._read_image(document_path), 1)]
 
         processed_pages = []
-        for page_image, page_number in pages:
-            _logger.info("Processing page %d/%d", page_number, len(pages))
+        for idx, (page_image, page_number) in enumerate(pages):
+            _logger.info("Processing page %d/%d", idx, len(pages))
             if self.layout_detector:
                 layout = self.layout_detector.process(page_image)
 

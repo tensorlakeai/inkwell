@@ -13,7 +13,7 @@ pip install inkwell
 In addition, install detectron2 for layout detection:
 
 ```bash
-pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.5#egg=detectron2"
+pip install git+https://github.com/facebookresearch/detectron2.git
 ```
 
 Install [Tesseract](https://tesseract-ocr.github.io/tessdoc/Installation.html) for your Operating System 
