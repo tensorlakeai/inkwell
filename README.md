@@ -10,10 +10,11 @@ You can easily swap out components of the pipeline, and add your own components,
 pip install inkwell
 ```
 
-In addition, install detectron2 for layout detection:
+In addition, install detectron2 and transformers from source
 
 ```bash
 pip install git+https://github.com/facebookresearch/detectron2.git
+pip install git+https://github.com/huggingface/transformers.git
 ```
 
 Install [Tesseract](https://tesseract-ocr.github.io/tessdoc/Installation.html) for your Operating System 
@@ -67,11 +68,11 @@ for page in document.pages:
 
 
 
-Default models: We have defined a config class [here](inkwell/pipeline/pipeline_config.py), and we use the default GPU Config in the pipeline for best results. If you want to use the default CPU pipeline, you can instantiate it with the CPU config class. 
+Default models: We have defined a config class [here](inkwell/pipeline/pipeline_config.py), and we use the default CPU Config in the pipeline for best results. If you want to use the default GPU pipeline, you can instantiate it with the GPU config class. 
 
 ```python
-from inkwell.pipeline import DefaultCPUPipelineConfig, Pipeline
-config = DefaultCPUPipelineConfig()
+from inkwell.pipeline import DefaultGPUPipelineConfig, Pipeline
+config = DefaultGPUPipelineConfig()
 pipeline = Pipeline(config=config)
 ```
 

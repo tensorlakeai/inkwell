@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 from PIL import Image
-from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
 
 from inkwell.ocr.base import BaseOCR
 from inkwell.ocr.ocr import OCRType
@@ -11,6 +10,11 @@ from inkwell.utils.env_utils import (
     is_torch_cuda_available,
 )
 
+
+try:
+    from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
+except ImportError:
+    raise ImportError("Please install the latest transformers from source to use Qwen2 models")
 
 class Qwen2VisionOCR(BaseOCR):
     def __init__(self, user_prompt: str = ""):
