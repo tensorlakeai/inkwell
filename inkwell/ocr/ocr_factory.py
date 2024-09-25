@@ -1,8 +1,11 @@
 from inkwell.ocr.ocr import OCRType
 from inkwell.ocr.phi3_ocr import Phi3VisionOCR
-from inkwell.ocr.qwen2_ocr import Qwen2VisionOCR
 from inkwell.ocr.tesseract_ocr import TesseractOCR
 
+try:
+    from inkwell.ocr.qwen2_ocr import Qwen2VisionOCR
+except ImportError:
+    print("Please install the latest transformers from source to use Qwen2 Vision OCR")
 
 class OCRFactory:
     @staticmethod
