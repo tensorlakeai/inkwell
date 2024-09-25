@@ -1,3 +1,5 @@
+# flake8: noqa: E501
+
 import importlib.util
 
 
@@ -31,3 +33,19 @@ def is_flash_attention_available():
     Check if Flash Attention is available.
     """
     return importlib.util.find_spec("flash_attn") is not None
+
+
+def is_qwen2_available():
+    """
+    Check if the transformers library and Qwen2 are available.
+    """
+    try:
+        importlib.import_module("transformers")
+        from transformers import (  # pylint: disable=import-outside-toplevel,unused-import
+            AutoProcessor,
+            Qwen2VLForConditionalGeneration,
+        )
+
+        return True
+    except ImportError:
+        return False
