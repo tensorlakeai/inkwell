@@ -1,5 +1,4 @@
 from inkwell.layout_detector.base import BaseLayoutDetector, LayoutDetectorType
-from inkwell.layout_detector.dit_detector import DitLayoutDetector
 from inkwell.layout_detector.faster_rcnn_detector import (
     FasterRCNNLayoutDetector,
 )
@@ -21,8 +20,6 @@ class LayoutDetectorFactory:
         """
         if layout_detector_type == LayoutDetectorType.FASTER_RCNN:
             return FasterRCNNLayoutDetector(**kwargs)
-        if layout_detector_type == LayoutDetectorType.DIT:
-            return DitLayoutDetector(**kwargs)
         if layout_detector_type == LayoutDetectorType.LAYOUTLMV3:
             return LayoutLMv3Detector(**kwargs)
         raise ValueError(

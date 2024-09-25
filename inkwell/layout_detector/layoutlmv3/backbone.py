@@ -20,13 +20,13 @@ from detectron2.modeling import BACKBONE_REGISTRY, FPN, Backbone
 from detectron2.modeling.backbone.fpn import LastLevelMaxPool, LastLevelP6P7
 from transformers import AutoConfig
 
-from inkwell.layout_detector.dit.beit import (
+from inkwell.layout_detector.layoutlmv3.beit import (
     beit_base_patch16,
     beit_large_patch16,
     dit_base_patch16,
     dit_large_patch16,
 )
-from inkwell.layout_detector.dit.deit import (
+from inkwell.layout_detector.layoutlmv3.deit import (
     deit_base_patch16,
     mae_base_patch16,
 )
