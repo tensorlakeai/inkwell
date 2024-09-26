@@ -38,12 +38,6 @@ If you want to run the pipeline on GPU, install flash-attn
 pip install flash-attn --no-build-isolation
 ```
 
-For paddle detection based models, install PaddlePaddle and PaddleOCR
-
-```bash
-pip install paddlepaddle "paddleocr>=2.0.1"
-```
-
 ### Basic Usage
 
 ```python
@@ -103,15 +97,18 @@ If you want to change the default models, you can replace them with models liste
 #### Table Extraction
 
 * Table Transformer
+* Paddle 
 * Phi3.5-Vision
 * Qwen2 VL 2B
+* OpenAI 4o Mini (Requires API Key)
+
 
 #### OCR
 
 * Tesseract
 * Phi 3.5-Vision
 * Qwen2 VL 2B
-* OpenAI GPT-4o (requires an API key)
+* PaddleOCR
 
 ```python
 from inkwell.pipeline import PipelineConfig, Pipeline

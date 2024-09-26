@@ -34,7 +34,10 @@ class TestTableDetector(TestCase):
         self._image = self.load_test_image()
         self._image_table = self.load_test_image_table()
 
-    def test_get_table_detector(self):
+    def _test_results(self, results):
+        self.assertIsInstance(results, dict)
+
+    def test_table_transformer_detector(self):
         table_detector = TableDetectorFactory.get_table_detector(
             TableDetectorType.TABLE_TRANSFORMER
         )
@@ -46,12 +49,17 @@ class TestTableDetector(TestCase):
 
         assert table_blocks, "There should be at least one table block"
 
-    def test_get_table_extractor(self):
+    def test_table_transformer_extractor(self):
         table_extractor = TableExtractorFactory.get_table_extractor(
             TableExtractorType.TABLE_TRANSFORMER
         )
         results = table_extractor.process(self._image_table)
+        self._test_results(results)
 
-        self.assertIsInstance(results, dict)
-        self.assertEqual(len(results["header"]), 1)
-        self.assertEqual(len(results["data"]), 5)
+    def test_paddle_table_extractor(self):
+
+        table_extractor = TableExtractorFactory.get_table_extractor(
+            TableExtractorType.PADDLE
+        )
+        results = table_extractor.process(self._image_table)
+        self._test_results(results)

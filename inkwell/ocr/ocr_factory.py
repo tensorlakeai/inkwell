@@ -3,7 +3,7 @@
 from inkwell.ocr.ocr import OCRType
 from inkwell.ocr.phi3_ocr import Phi3VisionOCR
 from inkwell.ocr.tesseract_ocr import TesseractOCR
-from inkwell.utils.env_utils import is_qwen2_available
+from inkwell.utils.env_utils import is_paddleocr_available, is_qwen2_available
 
 
 class OCRFactory:
@@ -24,4 +24,12 @@ class OCRFactory:
                 "Please install the latest transformers from \
                     source to use Qwen2 Vision OCR"
             )
+        if ocr_type == OCRType.PADDLE:
+            if is_paddleocr_available():
+                from inkwell.ocr.paddle_ocr import (  # pylint: disable=import-outside-toplevel
+                    PaddleOCR,
+                )
+
+                return PaddleOCR(**kwargs)
+            raise ValueError("Please install paddleocr to use PaddleOCR")
         raise ValueError(f"Invalid OCR type: {ocr_type}")

@@ -10,3 +10,4 @@ class TableExtractorType(Enum):
     PHI3_VISION = "phi3v_table_extractor"
     OPENAI = "openai_table_extractor"
     QWEN2_VISION = "qwen2_table_extractor"
+    PADDLE = "paddle_table_extractor"

@@ -29,7 +29,6 @@ class PaddleDetector(BaseLayoutDetector):
         self._load_engine()
 
     def _load_engine(self):
-        print(self._detection_threshold)
         self._engine = PPStructure(
             table=True,
             ocr=True,

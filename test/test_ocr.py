@@ -20,12 +20,23 @@ class TestOCR(unittest.TestCase):
         image = read_image(image_path)
         return image
 
+    def _test_results(self, text: str):
+        assert isinstance(text, str), "Text should be a string"
+        assert len(text) > 0, "Text should not be empty"
+        assert "receipt" in text, "Text should contain 'receipt'"
+
     def test_tesseract_ocr(self):
         ocr = OCRFactory.get_ocr(OCRType.TESSERACT, lang="eng")
 
         image = self._load_test_image()
 
         text = ocr.process(image)
-        assert isinstance(text, str), "Text should be a string"
-        assert len(text) > 0, "Text should not be empty"
-        assert "receipt" in text, "Text should contain 'receipt'"
+        self._test_results(text)
+
+    def test_paddle_ocr(self):
+        ocr = OCRFactory.get_ocr(OCRType.PADDLE, lang="en")
+
+        image = self._load_test_image()
+
+        text = ocr.process(image)
+        self._test_results(text)

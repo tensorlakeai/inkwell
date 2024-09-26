@@ -9,6 +9,7 @@ homepage = "https://github.com/tensorlakeai/indexify"
 repository = "https://github.com/tensorlakeai/inkwell"
 packages = [{ include = "inkwell"}]
 
+
 [tool.poetry.dependencies]
 python = "^3.9"
 pydantic = "^2.8"
@@ -30,6 +31,8 @@ openai = "^1.46.1"
 accelerate = "^0.34.2"
 albumentations = "^1.4.16"
 numpy = "<2.0.0"
+paddleocr = "^2.8.1"
+paddlepaddle = "^2.6.2"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"   
