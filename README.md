@@ -97,8 +97,11 @@ If you want to change the default models, you can replace them with models liste
 #### Table Extraction
 
 * Table Transformer
+* Paddle 
 * Phi3.5-Vision
 * Qwen2 VL 2B
+* OpenAI 4o Mini (Requires API Key)
+
 
 #### OCR
 

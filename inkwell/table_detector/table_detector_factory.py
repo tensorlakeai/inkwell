@@ -12,7 +12,7 @@ from inkwell.table_detector.table_transformer_detector import (
 from inkwell.table_detector.table_transformer_extractor import (
     TableTransformerExtractor,
 )
-from inkwell.utils.env_utils import is_qwen2_available
+from inkwell.utils.env_utils import is_paddleocr_available, is_qwen2_available
 
 
 class TableDetectorFactory:
@@ -43,6 +43,14 @@ class TableExtractorFactory:
                 "Please install the latest transformers from source \
                         to use Qwen2 Vision OCR"
             )
+        if table_extractor_type == TableExtractorType.PADDLE:
+            if is_paddleocr_available():
+                from inkwell.table_detector.paddle_table_extractor import (  # pylint: disable=import-outside-toplevel,unused-import
+                    PaddleTableExtractor,
+                )
+
+                return PaddleTableExtractor()
+            raise ValueError("Please install paddleocr to use PaddleOCR")
         raise ValueError(
             f"Invalid table extractor type: {table_extractor_type}"
         )

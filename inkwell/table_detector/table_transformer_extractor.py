@@ -106,7 +106,9 @@ class TableTransformerExtractor(BaseTableExtractor):
                 cell_block_image = cell_block.pad(10, 10, 10, 10).crop_image(
                     image
                 )
-                result = self._ocr_detector.process(cell_block_image)
+                result = self._ocr_detector.process(cell_block_image).replace(
+                    "\n", ""
+                )
 
                 row_text.append(result)
 
