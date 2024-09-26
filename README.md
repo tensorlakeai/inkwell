@@ -94,6 +94,7 @@ If you want to change the default models, you can replace them with models liste
 
 * Faster RCNN
 * LayoutLMv3
+* Paddle
 
 #### Table Detection
 
