@@ -1,7 +1,7 @@
 from detectron2.config import CfgNode as CN
 
-from inkwell.layout_detector.base import LayoutDetectorType
 from inkwell.layout_detector.detectron2_engine import Detectron2LayoutDetector
+from inkwell.layout_detector.layout_detector import LayoutDetectorType
 from inkwell.layout_detector.layoutlmv3.backbone import (  # noqa pylint: disable=unused-import
     build_vit_fpn_backbone_layoutlmv3,
 )

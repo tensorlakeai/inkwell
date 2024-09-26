@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import Callable, List, Optional, Union
+from typing import Callable, Optional, Union
 
 import numpy as np
 from PIL import Image
@@ -112,7 +112,7 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
 
         return layout
 
-    def detect(self, image):
+    def detect(self, image: np.ndarray) -> Layout:
         """Detect the layout of a given image.
 
         Args:
@@ -186,5 +186,5 @@ class Detectron2LayoutDetector(BaseLayoutDetector):
             **kwargs,
         )
 
-    def process(self, image: np.ndarray) -> List[Layout]:
+    def process(self, image: np.ndarray) -> Layout:
         return self._model.detect(image)

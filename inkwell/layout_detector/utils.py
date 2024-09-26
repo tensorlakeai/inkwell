@@ -2,7 +2,7 @@ import pathlib
 
 import yaml
 
-from inkwell.layout_detector.base import LayoutDetectorType
+from inkwell.layout_detector.layout_detector import LayoutDetectorType
 
 CFG_DIR = "config"
 LAYOUT_DETECTOR_CONFIG_FILE = "layout_detector_configurations.yml"
