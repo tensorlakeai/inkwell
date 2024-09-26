@@ -111,7 +111,7 @@ If you want to change the default models, you can replace them with models liste
 * Tesseract
 * Phi 3.5-Vision
 * Qwen2 VL 2B
-* OpenAI GPT-4o (requires an API key)
+* PaddleOCR
 
 ```python
 from inkwell.pipeline import PipelineConfig, Pipeline

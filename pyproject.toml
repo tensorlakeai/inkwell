@@ -8,6 +8,8 @@ readme = "README.md"
 homepage = "https://github.com/tensorlakeai/indexify"
 repository = "https://github.com/tensorlakeai/inkwell"
 packages = [{ include = "inkwell"}]
+extras = { pip = ["paddlepaddle", "paddleocr"] } 
+
 
 [tool.poetry.dependencies]
 python = "^3.9"
