@@ -1,5 +1,5 @@
-from inkwell.layout_detector.base import LayoutDetectorType
 from inkwell.layout_detector.detectron2_engine import Detectron2LayoutDetector
+from inkwell.layout_detector.layout_detector import LayoutDetectorType
 from inkwell.layout_detector.utils import load_layout_detector_config
 
 

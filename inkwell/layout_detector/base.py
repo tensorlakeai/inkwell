@@ -2,7 +2,6 @@
 
 
 from abc import ABC, abstractmethod
-from enum import Enum
 from typing import List, Union
 
 import numpy as np
@@ -49,9 +48,3 @@ class BaseLayoutDetector(ABC):
     @abstractmethod
     def process(self, image: np.ndarray) -> Layout:
         pass
-
-
-class LayoutDetectorType(Enum):
-    FASTER_RCNN = "faster_rcnn"
-    DIT = "dit"
-    LAYOUTLMV3 = "layoutlmv3"

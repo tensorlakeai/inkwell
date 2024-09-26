@@ -49,3 +49,17 @@ def is_qwen2_available():
         return True
     except ImportError:
         return False
+
+
+def is_paddle_available():
+    """
+    Check if PaddlePaddle is available.
+    """
+    return importlib.util.find_spec("paddlepaddle") is not None
+
+
+def is_paddleocr_available():
+    """
+    Check if PaddleOCR is available.
+    """
+    return importlib.util.find_spec("paddleocr") is not None

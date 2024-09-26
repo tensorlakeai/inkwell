@@ -28,6 +28,8 @@ pytesseract = "^0.3.13"
 pdfplumber = "^0.11.4"
 openai = "^1.46.1"
 accelerate = "^0.34.2"
+albumentations = "^1.4.16"
+numpy = "<2.0.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"   
