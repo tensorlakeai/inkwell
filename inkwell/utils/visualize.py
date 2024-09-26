@@ -49,7 +49,7 @@ _font_path = os.path.join(_current_path, "NotoSerifCJKjp-Regular.otf")
 
 DEFAULT_BOX_WIDTH_RATIO = 0.005
 DEFAULT_OUTLINE_COLOR = "red"
-DEAFULT_COLOR_PALETTE = "#f6bd60-#f7ede2-#f5cac3-#84a59d-#f28482"
+DEAFULT_COLOR_PALETTE = "#ee6352-#59cd90-#3fa7d6-#fac05e-#f79d84"
 # From https://coolors.co/f6bd60-f7ede2-f5cac3-84a59d-f28482
 
 DEFAULT_FONT_PATH = _font_path
