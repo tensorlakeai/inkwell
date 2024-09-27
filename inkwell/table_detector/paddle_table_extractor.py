@@ -1,3 +1,5 @@
+# pylint: disable=duplicate-code
+
 import html_to_json
 import numpy as np
 
