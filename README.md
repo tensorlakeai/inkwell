@@ -1,8 +1,15 @@
 # Inkwell
 
+### Quickstart on Colab
+<a target="_blank" href="https://colab.research.google.com/drive/1AVeHmYk3nleXEZYys814pomo7cGbtAD-?usp=sharing">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Quickstart on Colab"/>
+</a>
+
+### Overview
+
 Inkwell is a modular Python library for extracting information from documents. It is designed to be flexible and easy to extend. You can easily swap out components of the pipeline, and add your own components, using custom models or a cloud-based API. This makes it easy to integrate any open-source or cloud based API for any of the components. 
 
-We have implemented several open-source models and frameworks (listed below) and we are working on adding more. 
+We have implemented several open-source models and frameworks (listed below) and we are working on adding more state-of-the-art models. 
 
 * **Layout Detection**: Faster RCNN, LayoutLMv3, Paddle
 * **Table Detection**: Table Transformer
@@ -49,10 +56,8 @@ pip install flash-attn --no-build-isolation
 
 ```python
 from inkwell.pipeline import Pipeline
-from inkwell import PipelineConfig
 
 pipeline = Pipeline()
-
 document = pipeline.process("/path/to/file.pdf")
 
 for page in document.pages:
