@@ -53,7 +53,7 @@ DEAFULT_COLOR_PALETTE = "#ee6352-#59cd90-#3fa7d6-#fac05e-#f79d84"
 # From https://coolors.co/f6bd60-f7ede2-f5cac3-84a59d-f28482
 
 DEFAULT_FONT_PATH = _font_path
-DEFAULT_FONT_SIZE = 15
+DEFAULT_FONT_SIZE = 20
 DEFAULT_FONT_OBJECT = ImageFont.truetype(DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE)
 DEFAULT_TEXT_COLOR = "black"
 DEFAULT_TEXT_BACKGROUND = "white"
@@ -244,13 +244,13 @@ def draw_transparent_box(
 @image_loader
 def draw_box(
     canvas: Image.Image,
-    layout: Optional[Layout] = None,
+    layout: Optional[Layout] = [],
     box_width: Optional[Union[List[int], int]] = None,
     box_alpha: Optional[Union[List[float], float]] = None,
     box_color: Optional[Union[List[str], str]] = None,
     color_map: Optional[Dict] = None,
     show_element_id: bool = False,
-    show_element_type: bool = False,
+    show_element_type: bool = True,
     id_font_size: Optional[int] = None,
     id_font_path: Optional[str] = None,
     id_text_color: Optional[str] = None,
