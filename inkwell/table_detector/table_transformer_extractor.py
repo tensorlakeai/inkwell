@@ -81,7 +81,7 @@ class TableTransformerExtractor(BaseTableExtractor):
 
         return cell_coordinates_for_rows
 
-    def _process_segmentation_layout(
+    def _return_cell_results(
         self, image: np.ndarray, table_segementation_layout: Layout
     ) -> dict:
         table_blocks = table_segementation_layout.get_blocks()
@@ -106,9 +106,7 @@ class TableTransformerExtractor(BaseTableExtractor):
                 cell_block_image = cell_block.pad(10, 10, 10, 10).crop_image(
                     image
                 )
-                result = self._ocr_detector.process(cell_block_image).replace(
-                    "\n", ""
-                )
+                result = self._ocr_detector.process(cell_block_image).strip()
 
                 row_text.append(result)
 
@@ -119,7 +117,7 @@ class TableTransformerExtractor(BaseTableExtractor):
 
         return dict(results)
 
-    def _convert_to_segmentation_layout(self, outputs: Dict) -> Layout:
+    def _convert_to_rows_cols(self, outputs: Dict) -> Layout:
         blocks = []
         scores = outputs["scores"]
         labels = outputs["labels"]
@@ -147,8 +145,30 @@ class TableTransformerExtractor(BaseTableExtractor):
 
         return segmented_table_layout
 
-    def process(self, image: np.ndarray) -> Dict:
+    def _return_row_results(
+        self, image: np.ndarray, table_segementation_layout: Layout
+    ):
+        table_blocks = table_segementation_layout.get_blocks()
 
+        table_dict = defaultdict(list)
+
+        for block in table_blocks:
+            if block.type in [
+                "table row",
+                "table column header",
+                "table column",
+            ]:
+                row_image = block.pad(10, 10, 10, 10).crop_image(image)
+                result = self._ocr_detector.process(row_image).strip()
+                if block.type == "table column header":
+                    table_dict["header"].append(result)
+                elif block.type == "table row":
+                    table_dict["rows"].append(result)
+                else:
+                    table_dict["columns"].append(result)
+        return table_dict
+
+    def process(self, image: np.ndarray) -> Dict:
         image_pil = Image.fromarray(image)
         encoding = self._processor(image_pil, return_tensors="pt")
 
@@ -160,12 +180,7 @@ class TableTransformerExtractor(BaseTableExtractor):
             outputs, threshold=0.6, target_sizes=target_sizes
         )[0]
 
-        table_segmentation_layout = self._convert_to_segmentation_layout(
-            results
-        )
+        table_segmentation_layout = self._convert_to_rows_cols(results)
 
-        table_dict = self._process_segmentation_layout(
-            image, table_segmentation_layout
-        )
-
+        table_dict = self._return_row_results(image, table_segmentation_layout)
         return table_dict
