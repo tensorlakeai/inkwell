@@ -1,8 +1,15 @@
 # Inkwell
 
-Inkwell is a modular Python library for extracting information from documents. It is designed to be flexible and easy to extend, with a focus on document layout detection, OCR, and table detection. 
+Inkwell is a modular Python library for extracting information from documents. It is designed to be flexible and easy to extend. You can easily swap out components of the pipeline, and add your own components, using custom models or a cloud-based API. This makes it easy to integrate any open-source or cloud based API for any of the components. 
 
-You can easily swap out components of the pipeline, and add your own components, using custom models or a cloud-based API.  
+We have implemented several open-source models and frameworks (listed below) and we are working on adding more. 
+
+* **Layout Detection**: Faster RCNN, LayoutLMv3, Paddle
+* **Table Detection**: Table Transformer
+* **Table Extraction**: Table Transformer, Paddle, Phi3.5-Vision, Qwen2 VL 2B, OpenAI 4o Mini
+* **OCR**: Tesseract, PaddleOCR, Phi3.5-Vision, Qwen2 VL 2B
+
+![](assets/images/poster_example.png)
 
 ## Installation
 
@@ -32,7 +39,7 @@ sudo apt install libtesseract-dev
 brew install tesseract
 ```
 
-If you want to run the pipeline on GPU, install flash-attn
+If you want to run the pipeline on GPU for the Vision Language Models, install flash attention
 
 ```bash
 pip install flash-attn --no-build-isolation
@@ -82,33 +89,9 @@ config = DefaultGPUPipelineConfig()
 pipeline = Pipeline(config=config)
 ```
 
+### Changing the configuration
+
 If you want to change the default models, you can replace them with models listed below by passing them in the config during pipeline initialization:
-
-#### Layout Detection
-
-* Faster RCNN
-* LayoutLMv3
-* Paddle
-
-#### Table Detection
-
-* Table Transformer
-
-#### Table Extraction
-
-* Table Transformer
-* Paddle 
-* Phi3.5-Vision
-* Qwen2 VL 2B
-* OpenAI 4o Mini (Requires API Key)
-
-
-#### OCR
-
-* Tesseract
-* Phi 3.5-Vision
-* Qwen2 VL 2B
-* PaddleOCR
 
 ```python
 from inkwell.pipeline import PipelineConfig, Pipeline
