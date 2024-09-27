@@ -13,7 +13,7 @@ We have implemented several open-source models and frameworks (listed below) and
 
 * **Layout Detection**: Faster RCNN, LayoutLMv3, Paddle
 * **Table Detection**: Table Transformer
-* **Table Extraction**: Table Transformer, Paddle, Phi3.5-Vision, Qwen2 VL 2B, OpenAI 4o Mini
+* **Table Data Extraction**: Phi3.5-Vision, Qwen2 VL 2B, Table Transformer, OpenAI 4o Mini
 * **OCR**: Tesseract, PaddleOCR, Phi3.5-Vision, Qwen2 VL 2B
 
 ![](assets/images/poster_example.png)
