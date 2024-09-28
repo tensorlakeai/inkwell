@@ -7,7 +7,7 @@ class TableDetectorType(Enum):
 
 class TableExtractorType(Enum):
     TABLE_TRANSFORMER = "table_transformer_extractor"
-    PHI3_VISION = "phi3v_table_extractor"
+    PHI3_VISION = "phi3_vision"
     OPENAI = "openai_table_extractor"
-    QWEN2_VISION = "qwen2_table_extractor"
+    QWEN2_2B_VISION = "qwen2_2b_vision"
     PADDLE = "paddle_table_extractor"

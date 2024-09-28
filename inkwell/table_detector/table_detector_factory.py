@@ -32,7 +32,7 @@ class TableExtractorFactory:
             return Phi3VTableExtractor()
         if table_extractor_type == TableExtractorType.OPENAI:
             return OpenAITableExtractor()
-        if table_extractor_type == TableExtractorType.QWEN2_VISION:
+        if table_extractor_type == TableExtractorType.QWEN2_2B_VISION:
             if is_qwen2_available():
                 from inkwell.table_detector.qwen2_table_extractor import (  # pylint: disable=import-outside-toplevel,unused-import
                     Qwen2TableExtractor,

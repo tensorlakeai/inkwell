@@ -11,15 +11,15 @@ from inkwell.ocr import OCRFactory, OCRType
 from inkwell.ocr.base import BaseOCR
 from inkwell.table_detector.base import BaseTableExtractor
 from inkwell.table_detector.table_detector import TableExtractorType
-from inkwell.table_detector.utils import load_table_detector_config
+from inkwell.table_detector.utils import _load_table_detector_config
 
 
 class TableTransformerExtractor(BaseTableExtractor):
     def __init__(self, ocr_detector: Optional[BaseOCR] = None):
         self._feature_extractor = DetrImageProcessor()
-        self._cfg = load_table_detector_config(
-            TableExtractorType.TABLE_TRANSFORMER
-        )
+        self._cfg = _load_table_detector_config()[
+            TableExtractorType.TABLE_TRANSFORMER.value
+        ]
         self._load_processor()
         self._load_model()
         if ocr_detector:
