@@ -1,0 +1,12 @@
+models:
+  phi3_vision:
+    model_name_hf: "microsoft/Phi-3.5-vision-instruct"
+    generation_args:
+      max_new_tokens: 2048
+      temperature: 0.0
+
+  qwen2_vision:
+    model_name_hf: "Qwen/Qwen2-VL-2B-Instruct"
+    generation_args:
+      max_new_tokens: 2048
+      top_p: 0.95

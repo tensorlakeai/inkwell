@@ -1,3 +1,5 @@
+# pylint: disable=duplicate-code
+
 import numpy as np
 import torch
 from PIL import Image
@@ -10,11 +12,14 @@ from inkwell.utils.env_utils import (
     is_torch_cuda_available,
 )
 
-
 try:
     from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
-except ImportError:
-    raise ImportError("Please install the latest transformers from source to use Qwen2 models")
+except ImportError as e:
+    raise ImportError(
+        "Please install the latest transformers \
+            from source to use Qwen2 models"
+    ) from e
+
 
 class Qwen2VisionOCR(BaseOCR):
     def __init__(self, user_prompt: str = ""):
@@ -26,7 +31,7 @@ class Qwen2VisionOCR(BaseOCR):
         self._load_processor()
 
     def _get_model_cfg(self):
-        return self._cfg["ocr_models"][OCRType.QWEN2_VISION.value]
+        return self._cfg["ocr_models"][OCRType.QWEN2_2B_VISION.value]
 
     def _load_model(self):
         if is_torch_cuda_available():
