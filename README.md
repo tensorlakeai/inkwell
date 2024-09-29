@@ -7,9 +7,9 @@
 
 ### Overview
 
-Inkwell is a modular Python library for extracting information from documents. It is designed to be flexible and easy to extend. You can easily swap out components of the pipeline, and add your own components, using custom models or a cloud-based API. This makes it easy to integrate any open-source or cloud based API for any of the components. 
+Inkwell is a modular Python library for extracting information from PDF documents documents with state of the art Vision Language Models. We make use of layout understanding models to improve accuracy of Vision Language models. You can swap out the layout models or the vision language models pretty easily to create pipelines which work well for specific document layouts.  
 
-We have implemented several open-source models and frameworks (listed below) and we are working on adding more state-of-the-art models. 
+Inkwell uses the following models, with more integrations in the work
 
 * **Layout Detection**: Faster RCNN, LayoutLMv3, Paddle
 * **Table Detection**: Table Transformer
@@ -31,22 +31,22 @@ pip install git+https://github.com/facebookresearch/detectron2.git
 ```
 
 
-Install [Tesseract](https://tesseract-ocr.github.io/tessdoc/Installation.html) for your Operating System 
+Install [Tesseract](https://tesseract-ocr.github.io/tessdoc/Installation.html)
 
-#### Ubuntu
+For Ubuntu - 
 
 ```bash
 sudo apt install tesseract-ocr
 sudo apt install libtesseract-dev
 ```
 
-#### Mac OS
+and, Mac OS
 
 ```bash
 brew install tesseract
 ```
 
-If you want to run the pipeline on GPU for the Vision Language Models, install flash attention
+For GPUs, install flash attention for faster inference.
 
 ```bash
 pip install flash-attn --no-build-isolation
@@ -83,8 +83,6 @@ for page in document.pages:
 ```
 
 ## Models/Frameworks currently available
-
-
 
 Default models: We have defined a config class [here](inkwell/pipeline/pipeline_config.py), and we use the default CPU Config in the pipeline for best results. If you want to use the default GPU pipeline, you can instantiate it with the GPU config class. 
 
