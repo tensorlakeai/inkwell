@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 import numpy as np
+from PIL import Image as PILImage
 
 from inkwell.components import (
     Document,
@@ -46,7 +47,6 @@ class TableFragmentProcessor(FragmentProcessor):
             table_image = table_block.pad(
                 left=5, right=5, top=5, bottom=5
             ).crop_image(image)
-
             if self.table_extractor:
                 table_data = self.table_extractor.process(table_image)
                 table_encoding = TableEncoding.JSON
@@ -55,6 +55,7 @@ class TableFragmentProcessor(FragmentProcessor):
                 table_encoding = TableEncoding.TEXT
 
             table_text = str(table_data)
+            table_image = PILImage.fromarray(table_image)
             table = Table(
                 data=table_data,
                 text=table_text,
@@ -82,6 +83,7 @@ class FigureFragmentProcessor(FragmentProcessor):
                 left=5, right=5, top=5, bottom=5
             ).crop_image(image)
             figure_text = self.ocr_detector.process(figure_image)
+            figure_image = PILImage.fromarray(figure_image)
             figure_fragments.append(
                 PageFragment(
                     fragment_type=PageFragmentType.FIGURE,
@@ -107,6 +109,7 @@ class TextFragmentProcessor(FragmentProcessor):
                 left=5, right=5, top=5, bottom=5
             ).crop_image(image)
             text_data = self.ocr_detector.process(text_image)
+            text_image = PILImage.fromarray(text_image)
             text_fragments.append(
                 PageFragment(
                     fragment_type=PageFragmentType.TEXT,

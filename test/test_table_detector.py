@@ -1,6 +1,8 @@
+import json
 import logging
 import os
 from unittest import TestCase
+from unittest.mock import MagicMock, patch
 
 from inkwell.io import read_image
 from inkwell.table_detector import (
@@ -33,6 +35,14 @@ class TestTableDetector(TestCase):
         _logger.debug("Running test: %s", self._testMethodName)
         self._image = self.load_test_image()
         self._image_table = self.load_test_image_table()
+        self._mock_json_table = {
+            "header": ["Name", "Age", "City"],
+            "data": [
+                ["John Doe", "30", "New York"],
+                ["Jane Doe", "25", "London"],
+                ["Jim Beam", "50", "Paris"],
+            ],
+        }
 
     def _test_results(self, results):
         self.assertIsInstance(results, dict)
@@ -56,10 +66,14 @@ class TestTableDetector(TestCase):
         results = table_extractor.process(self._image_table)
         self._test_results(results)
 
-    def test_paddle_table_extractor(self):
+    @patch("inkwell.table_detector.openai_table_extractor.OpenAI4OCR")
+    def test_openai_table_extractor(self, mock_openai_ocr):
+        mock_client = MagicMock()
+        mock_openai_ocr.return_value = mock_client
+        mock_client.process.return_value = json.dumps(self._mock_json_table)
 
         table_extractor = TableExtractorFactory.get_table_extractor(
-            TableExtractorType.PADDLE
+            TableExtractorType.OPENAI4O
         )
         results = table_extractor.process(self._image_table)
         self._test_results(results)

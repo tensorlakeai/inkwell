@@ -11,3 +11,4 @@ class TableExtractorType(Enum):
     OPENAI = "openai_table_extractor"
     QWEN2_2B_VISION = "qwen2_2b_vision"
     PADDLE = "paddle_table_extractor"
+    OPENAI4O = "openai_table_extractor"

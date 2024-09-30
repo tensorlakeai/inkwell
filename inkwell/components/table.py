@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional, Union
 
-import numpy as np
+from PIL.Image import Image as PILImage
 from pydantic import BaseModel
 
 from inkwell.components.elements import Rectangle
@@ -29,7 +29,7 @@ class Table(BaseModel):
     bbox: Optional[Rectangle] = None
     text: Optional[str] = None
     score: Optional[float] = None
-    image: Optional[np.ndarray] = None
+    image: Optional[PILImage] = None
 
     class Config:
         arbitrary_types_allowed = True

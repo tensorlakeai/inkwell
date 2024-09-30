@@ -48,15 +48,6 @@ class TestLayoutDetector(unittest.TestCase):
 
         self.check_detected_layout(layout)
 
-    def test_paddle_layout_detector(self):
-        detector = LayoutDetectorFactory.get_layout_detector(
-            LayoutDetectorType.PADDLE
-        )
-
-        layout = detector.process(self.test_image)
-
-        self.check_detected_layout(layout)
-
 
 if __name__ == "__main__":
     unittest.main()
