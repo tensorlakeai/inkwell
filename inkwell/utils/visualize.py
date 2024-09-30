@@ -412,7 +412,9 @@ def draw_box(
                 )
 
             start_x, start_y = ele.coordinates[:2]
-            text_w, text_h = font_obj.getsize(text)
+
+            left, top, right, bottom = font_obj.getbbox(text)
+            text_w, text_h = right - left, bottom - top
 
             text_box_object = Rectangle(
                 start_x, start_y, start_x + text_w, start_y + text_h
