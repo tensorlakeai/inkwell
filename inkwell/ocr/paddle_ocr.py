@@ -5,13 +5,12 @@ from typing import List
 import numpy as np
 
 from inkwell.ocr.base import BaseOCR
+from inkwell.utils.env_utils import is_paddleocr_available
 
-try:
+if is_paddleocr_available():
     from paddleocr import PPStructure
-except ImportError as ex:
-    raise ImportError(
-        "paddleocr is not available. Please install it first."
-    ) from ex
+else:
+    raise ImportError("paddleocr is not available. Please install it first.")
 
 
 class PaddleOCR(BaseOCR):

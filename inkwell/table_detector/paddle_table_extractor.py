@@ -4,13 +4,12 @@ import html_to_json
 import numpy as np
 
 from inkwell.table_detector.base import BaseTableExtractor
+from inkwell.utils.env_utils import is_paddleocr_available
 
-try:
+if is_paddleocr_available():
     from paddleocr import PPStructure
-except ImportError as ex:
-    raise ImportError(
-        "paddleocr is not available. Please install it first."
-    ) from ex
+else:
+    raise ImportError("paddleocr is not available. Please install it first.")
 
 
 class PaddleTableExtractor(BaseTableExtractor):

@@ -1,6 +1,8 @@
 # flake8: noqa: E501
 
-from inkwell.table_detector.openai_table_extractor import OpenAITableExtractor
+from inkwell.table_detector.openai_table_extractor import (
+    OpenAI4OTableExtractor,
+)
 from inkwell.table_detector.phi3v_table_extractor import Phi3VTableExtractor
 from inkwell.table_detector.table_detector import (
     TableDetectorType,
@@ -30,8 +32,8 @@ class TableExtractorFactory:
             return TableTransformerExtractor()
         if table_extractor_type == TableExtractorType.PHI3_VISION:
             return Phi3VTableExtractor()
-        if table_extractor_type == TableExtractorType.OPENAI:
-            return OpenAITableExtractor()
+        if table_extractor_type == TableExtractorType.OPENAI4O:
+            return OpenAI4OTableExtractor()
         if table_extractor_type == TableExtractorType.QWEN2_2B_VISION:
             if is_qwen2_available():
                 from inkwell.table_detector.qwen2_table_extractor import (  # pylint: disable=import-outside-toplevel,unused-import

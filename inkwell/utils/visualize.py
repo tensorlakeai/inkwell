@@ -23,7 +23,6 @@ from itertools import cycle
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
-from IPython.display import display
 from PIL import Image, ImageColor, ImageDraw, ImageFont
 
 import inkwell
@@ -41,7 +40,7 @@ def visualize_image(image: Union[np.ndarray, Image.Image]):
     if isinstance(image, np.ndarray):
         image = Image.fromarray(image, "RGB")
 
-    display(image)
+    return image
 
 
 _current_path = os.path.dirname(__file__)

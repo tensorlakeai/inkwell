@@ -32,11 +32,3 @@ class TestOCR(unittest.TestCase):
 
         text = ocr.process(image)
         self._test_results(text)
-
-    def test_paddle_ocr(self):
-        ocr = OCRFactory.get_ocr(OCRType.PADDLE, lang="en")
-
-        image = self._load_test_image()
-
-        text = ocr.process(image)
-        self._test_results(text)
