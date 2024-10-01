@@ -1,18 +1,33 @@
-from PIL import Image
+import json
+import logging
 
-try:
-    from inkwell.ocr.qwen2_ocr import Qwen2VisionOCR
-except ImportError:
-    print("Please install the latest transformers from source to use Qwen2 Vision OCR")
+import numpy as np
 
+from inkwell.models.model_registry import ModelRegistry
+from inkwell.models.models import ModelType
 from inkwell.table_detector.base import BaseTableExtractor
-from inkwell.table_detector.utils import TABLE_EXTRACTOR_PROMPT
+from inkwell.table_detector.utils import (
+    TABLE_EXTRACTOR_PROMPT,
+    _load_table_detector_config,
+)
+
+_logger = logging.getLogger(__name__)
 
 
-class Qwen2TableExtractor(Qwen2VisionOCR, BaseTableExtractor):
+class Qwen2TableExtractor(BaseTableExtractor):
     def __init__(self):
-        super().__init__(user_prompt=TABLE_EXTRACTOR_PROMPT)
+        self._cfg = _load_table_detector_config()
+        self._model_wrapper = ModelRegistry.get_model_wrapper(
+            ModelType.QWEN2_2B_VISION.value
+        )
 
-    def process(self, image: Image.Image) -> str:
-        extracted_text = super().process(image)
-        return extracted_text
+    def process(self, image: np.ndarray) -> dict:
+        _logger.info("Running Qwen2 Vision Table Extractor")
+        system_prompt = self._cfg["table_extraction_prompts"]["system_prompt"]
+        result = self._model_wrapper.process(
+            image, TABLE_EXTRACTOR_PROMPT, system_prompt
+        )
+        formatted_result = result.replace("```json", "").replace("```", "")
+        result_dict = json.loads(formatted_result)
+
+        return result_dict
