@@ -15,3 +15,7 @@ class FasterRCNNLayoutDetector(Detectron2LayoutDetector):
         model_cfg = load_layout_detector_config(LayoutDetectorType.FASTER_RCNN)
         self._config = model_cfg
         self._load_model(**kwargs)
+
+    @property
+    def model_id(self) -> str:
+        return LayoutDetectorType.FASTER_RCNN.value

@@ -4,6 +4,7 @@ import html_to_json
 import numpy as np
 
 from inkwell.table_extractor.base import BaseTableExtractor
+from inkwell.table_extractor.table_extractor import TableExtractorType
 from inkwell.utils.env_utils import is_paddleocr_available
 
 if is_paddleocr_available():
@@ -15,6 +16,10 @@ else:
 class PaddleTableExtractor(BaseTableExtractor):
     def __init__(self):
         self._load_engine()
+
+    @property
+    def model_id(self) -> str:
+        return TableExtractorType.PADDLE.value
 
     def _load_engine(self):
         self._engine = PPStructure(

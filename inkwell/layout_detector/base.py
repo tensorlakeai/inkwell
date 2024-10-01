@@ -45,6 +45,11 @@ class BaseLayoutDetector(ABC):
     Abstract class for layout detection.
     """
 
+    @property
+    @abstractmethod
+    def model_id(self) -> str:
+        pass
+
     @abstractmethod
     def process(self, image: np.ndarray) -> Layout:
         pass

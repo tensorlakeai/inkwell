@@ -58,7 +58,7 @@ class TestTableDetector(TestCase):
         mock_client.process.return_value = json.dumps(self._mock_json_table)
 
         table_extractor = TableExtractorFactory.get_table_extractor(
-            TableExtractorType.OPENAI4O
+            TableExtractorType.OPENAI_GPT4O_MINI
         )
         results = table_extractor.process(self._image_table)
         self._test_results(results)

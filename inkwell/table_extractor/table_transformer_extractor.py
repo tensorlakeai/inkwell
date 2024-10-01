@@ -27,6 +27,10 @@ class TableTransformerExtractor(BaseTableExtractor):
         else:
             self._load_ocr_detector()
 
+    @property
+    def model_id(self) -> str:
+        return TableExtractorType.TABLE_TRANSFORMER.value
+
     def _load_processor(self):
         self._processor = DetrImageProcessor()
 

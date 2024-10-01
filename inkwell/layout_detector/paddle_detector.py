@@ -2,6 +2,7 @@ import numpy as np
 
 from inkwell.components import Layout, LayoutBlock, Rectangle
 from inkwell.layout_detector.base import BaseLayoutDetector
+from inkwell.layout_detector.layout_detector import LayoutDetectorType
 
 try:
     from paddleocr import PPStructure
@@ -53,3 +54,7 @@ class PaddleDetector(BaseLayoutDetector):
         results = self._engine(image)
         layout = self._gather_output(results)
         return layout
+
+    @property
+    def model_id(self) -> str:
+        return LayoutDetectorType.PADDLE.value

@@ -15,5 +15,5 @@ ocr_models:
       max_new_tokens: 2048
       top_p: 0.95
 
-  openai_vision:
+  openai_gpt4o_mini:
     model_name_openai: "gpt-4o-mini"

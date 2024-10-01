@@ -8,3 +8,8 @@ class BaseTableExtractor(ABC):
     @abstractmethod
     def process(self, image: np.ndarray) -> Dict:
         pass
+
+    @property
+    @abstractmethod
+    def model_id(self) -> str:
+        pass
