@@ -188,7 +188,7 @@ class Pipeline:
 
         processed_pages = []
         for idx, (page_image, page_number) in enumerate(pages):
-            _logger.info("Processing page %d/%d", idx, len(pages))
+            _logger.info("Processing page %d/%d", idx+1, len(pages))
             if self.layout_detector:
                 layout = self.layout_detector.process(page_image)
 
