@@ -1,2 +1,0 @@
-table_transformer:
-  model_name_hf: "microsoft/table-transformer-detection"

@@ -10,16 +10,15 @@ from inkwell.components import Layout, LayoutBlock, Rectangle
 from inkwell.ocr import OCRFactory, OCRType
 from inkwell.ocr.base import BaseOCR
 from inkwell.table_extractor.base import BaseTableExtractor
+from inkwell.table_extractor.config import (
+    TABLE_TRANSFORMER_TABLE_EXTRACTOR_CONFIG,
+)
 from inkwell.table_extractor.table_extractor import TableExtractorType
-from inkwell.table_extractor.utils import _load_table_extractor_config
 
 
 class TableTransformerExtractor(BaseTableExtractor):
     def __init__(self, ocr_detector: Optional[BaseOCR] = None):
         self._feature_extractor = DetrImageProcessor()
-        self._cfg = _load_table_extractor_config()[
-            TableExtractorType.TABLE_TRANSFORMER.value
-        ]
         self._load_processor()
         self._load_model()
         if ocr_detector:
@@ -36,7 +35,7 @@ class TableTransformerExtractor(BaseTableExtractor):
 
     def _load_model(self):
         self._model = TableTransformerForObjectDetection.from_pretrained(
-            self._cfg["model_name_hf"]
+            TABLE_TRANSFORMER_TABLE_EXTRACTOR_CONFIG.model_name_hf
         )
 
     def _load_ocr_detector(self):

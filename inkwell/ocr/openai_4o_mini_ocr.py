@@ -1,24 +1,24 @@
 import base64
 import os
 from io import BytesIO
+from typing import Optional
 
 import numpy as np
 import openai
 from PIL import Image
 
 from inkwell.ocr.base import BaseOCR
+from inkwell.ocr.config import OPENAI_OCR_MODEL_CONFIG, _load_ocr_prompts
 from inkwell.ocr.ocr import OCRType
-from inkwell.ocr.utils import _load_ocr_config
 
 OPENAI_API_KEY_NAME = "OPENAI_API_KEY"
 
 
-class OpenAI4OCR(BaseOCR):
+class OpenAI4OMiniOCR(BaseOCR):
     def __init__(self):
-        self._cfg = _load_ocr_config()
-        self._model_cfg = self._cfg["ocr_models"][
-            OCRType.OPENAI_GPT4O_MINI.value
-        ]
+        self._default_prompts = _load_ocr_prompts()
+        self._model_cfg = OPENAI_OCR_MODEL_CONFIG
+
         self._load_client()
 
     @property
@@ -56,16 +56,22 @@ class OpenAI4OCR(BaseOCR):
             },
         ]
 
-    def process(self, image: np.ndarray, user_prompt: str = None) -> str:
+    def process(
+        self,
+        image: np.ndarray,
+        user_prompt: Optional[str] = None,
+        system_prompt: Optional[str] = None,
+    ) -> str:
         if not user_prompt:
-            user_prompt = self._cfg["ocr_prompts"]["ocr_user_prompt"]
+            user_prompt = self._default_prompts.ocr_user_prompt
 
-        messages = self._create_message(
-            self._cfg["ocr_prompts"]["system_prompt"], user_prompt, image
-        )
+        if not system_prompt:
+            system_prompt = self._default_prompts.system_prompt
+
+        messages = self._create_message(system_prompt, user_prompt, image)
 
         response = self._client.chat.completions.create(
-            model=self._model_cfg["model_name_openai"], messages=messages
+            model=self._model_cfg.model_name_openai, messages=messages
         )
         response_content = response.choices[0].message.content
         return response_content

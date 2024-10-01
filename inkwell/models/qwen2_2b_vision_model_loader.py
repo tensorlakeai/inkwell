@@ -1,3 +1,5 @@
+# pylint: disable=duplicate-code
+
 import logging
 
 import numpy as np
@@ -5,9 +7,9 @@ import torch
 from PIL import Image
 
 from inkwell.models.base import BaseVisionModelWrapper
+from inkwell.models.config import QWEN2_VISION_MODEL_CONFIG
 from inkwell.models.model_registry import ModelRegistry
 from inkwell.models.models import ModelType
-from inkwell.models.utils import _load_models_config
 from inkwell.utils.env_utils import (
     is_flash_attention_available,
     is_torch_cuda_available,
@@ -26,13 +28,9 @@ _logger = logging.getLogger(__name__)
 
 class Qwen2VL2VModelWrapper(BaseVisionModelWrapper):
     def __init__(self):
-        self._cfg = _load_models_config()
-        self._model_cfg = self._get_model_cfg()
+        self._model_cfg = QWEN2_VISION_MODEL_CONFIG
 
         self._load_model()
-
-    def _get_model_cfg(self):
-        return self._cfg["models"][ModelType.QWEN2_2B_VISION.value]
 
     def _load_model(self):
         model_kwargs = {}
@@ -58,10 +56,10 @@ class Qwen2VL2VModelWrapper(BaseVisionModelWrapper):
             )
 
         self._model = Qwen2VLForConditionalGeneration.from_pretrained(
-            self._model_cfg["model_name_hf"], **model_kwargs
+            self._model_cfg.model_name_hf, **model_kwargs
         )
         self._processor = AutoProcessor.from_pretrained(
-            self._model_cfg["model_name_hf"],
+            self._model_cfg.model_name_hf,
         )
 
     @staticmethod
@@ -100,7 +98,7 @@ class Qwen2VL2VModelWrapper(BaseVisionModelWrapper):
         return inputs
 
     def _load_generation_args(self):
-        return self._model_cfg["generation_args"]
+        return self._model_cfg.generation_args
 
     def process(
         self, image: np.ndarray, user_prompt: str, system_prompt: str

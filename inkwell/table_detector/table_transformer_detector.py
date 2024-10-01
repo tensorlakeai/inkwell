@@ -7,16 +7,16 @@ from transformers import DetrImageProcessor, TableTransformerForObjectDetection
 
 from inkwell.components import Layout, LayoutBlock, Rectangle
 from inkwell.table_detector.base import BaseTableDetector
+from inkwell.table_detector.config import (
+    TABLE_TRANSFORMER_TABLE_DETECTOR_CONFIG,
+)
 from inkwell.table_detector.table_detector import TableDetectorType
-from inkwell.table_extractor.utils import _load_table_extractor_config
 
 
 class TableTransformerDetector(BaseTableDetector):
     def __init__(self, **kwargs):
         self._feature_extractor = DetrImageProcessor()
-        self._cfg = _load_table_extractor_config()[
-            TableDetectorType.TABLE_TRANSFORMER.value
-        ]
+        self._cfg = TABLE_TRANSFORMER_TABLE_DETECTOR_CONFIG
         self._load_processor()
         self._load_model()
 
@@ -28,7 +28,7 @@ class TableTransformerDetector(BaseTableDetector):
 
     def _load_model(self):
         self._model = TableTransformerForObjectDetection.from_pretrained(
-            self._cfg["model_name_hf"]
+            self._cfg.model_name_hf
         )
 
     def _load_processor(self):

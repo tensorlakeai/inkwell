@@ -5,9 +5,9 @@ from PIL import Image
 from transformers import AutoModelForCausalLM, AutoProcessor
 
 from inkwell.models.base import BaseVisionModelWrapper
+from inkwell.models.config import PHI3_VISION_MODEL_CONFIG
 from inkwell.models.model_registry import ModelRegistry
 from inkwell.models.models import ModelType
-from inkwell.models.utils import _load_models_config
 from inkwell.utils.env_utils import (
     is_flash_attention_available,
     is_torch_cuda_available,
@@ -22,13 +22,9 @@ NUM_IMAGES = 1  # Change this later if we want to support multiple images
 class Phi3VisionModelWrapper(BaseVisionModelWrapper):
 
     def __init__(self):
-        self._cfg = _load_models_config()
-        self._model_cfg = self._get_cfg()
 
+        self._model_cfg = PHI3_VISION_MODEL_CONFIG
         self._load_model()
-
-    def _get_cfg(self):
-        return self._cfg["models"][ModelType.PHI3_VISION.value]
 
     def _load_model(self):
         model_kwargs = {}
@@ -55,10 +51,10 @@ class Phi3VisionModelWrapper(BaseVisionModelWrapper):
         )
 
         self._model = AutoModelForCausalLM.from_pretrained(
-            self._model_cfg["model_name_hf"], **model_kwargs
+            self._model_cfg.model_name_hf, **model_kwargs
         )
         self._processor = AutoProcessor.from_pretrained(
-            self._model_cfg["model_name_hf"],
+            self._model_cfg.model_name_hf,
             trust_remote_code=True,
             num_crops=4,
         )
@@ -103,7 +99,7 @@ class Phi3VisionModelWrapper(BaseVisionModelWrapper):
         return inputs
 
     def _load_generation_args(self):
-        return self._model_cfg["generation_args"]
+        return PHI3_VISION_MODEL_CONFIG.generation_args
 
     def process(
         self, image: np.ndarray, user_prompt: str, system_prompt: str
