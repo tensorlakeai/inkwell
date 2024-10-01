@@ -8,7 +8,7 @@ from inkwell.components.elements import (
     Quadrilateral,
     Rectangle,
 )
-from inkwell.components.image import Image
+from inkwell.components.figure import Figure
 from inkwell.components.layout import Layout
 from inkwell.components.page import (
     Document,
@@ -32,7 +32,7 @@ __all__ = [
     "Layout",
     "Table",
     "TableEncoding",
-    "Image",
+    "Figure",
     "PageFragment",
     "PageFragmentType",
     "Page",

@@ -9,7 +9,7 @@ from test.utils import (
 from unittest.mock import patch
 
 from inkwell.components import Document
-from inkwell.pipeline import DefaultCPUPipelineConfig, Pipeline
+from inkwell.pipeline import DefaultPipelineConfig, Pipeline
 
 _PDF_URL = "https://pub-5dc4d0c0254749378ccbcfffa4bd2a1e.r2.dev/sample_ratings_report.pdf"  # noqa: E501, pylint: disable=line-too-long
 _IMG_PATH = "./data/sample.png"
@@ -27,7 +27,7 @@ class TestPipeline(unittest.TestCase):
 
     def setUp(self):
         _logger.debug("Running test: %s", self._testMethodName)
-        self._pipeline = Pipeline(DefaultCPUPipelineConfig())
+        self._pipeline = Pipeline(DefaultPipelineConfig())
         self._document_url = _PDF_URL
         self._image_path = self._load_test_image_path()
 
@@ -62,5 +62,5 @@ class TestPipeline(unittest.TestCase):
         self.assertIsInstance(processed_document, Document)
         self.assertEqual(len(processed_document.pages), 1)
         self.assertIsNotNone(processed_document.pages[0].table_fragments())
-        self.assertIsNotNone(processed_document.pages[0].image_fragments())
+        self.assertIsNotNone(processed_document.pages[0].figure_fragments())
         self.assertIsNotNone(processed_document.pages[0].text_fragments())

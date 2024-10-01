@@ -15,6 +15,16 @@ class PipelineConfig(BaseModel):
     table_extractor: Union[TableExtractorType, None] = None
 
 
+class DefaultPipelineConfig(PipelineConfig):
+    table_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
+    layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
+
+    layout_detector: LayoutDetectorType = LayoutDetectorType.FASTER_RCNN
+    ocr_detector: OCRType = OCRType.TESSERACT
+    table_detector: TableDetectorType = None
+    table_extractor: TableExtractorType = TableExtractorType.TABLE_TRANSFORMER
+
+
 class DefaultGPUPipelineConfig(PipelineConfig):
     table_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
     layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
@@ -23,13 +33,3 @@ class DefaultGPUPipelineConfig(PipelineConfig):
     ocr_detector: OCRType = OCRType.PHI3_VISION
     table_detector: TableDetectorType = None
     table_extractor: TableExtractorType = TableExtractorType.PHI3_VISION
-
-
-class DefaultCPUPipelineConfig(PipelineConfig):
-    table_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
-    layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
-
-    layout_detector: LayoutDetectorType = LayoutDetectorType.FASTER_RCNN
-    ocr_detector: OCRType = OCRType.TESSERACT
-    table_detector: TableDetectorType = None
-    table_extractor: TableExtractorType = TableExtractorType.TABLE_TRANSFORMER

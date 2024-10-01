@@ -3,7 +3,7 @@ from typing import List, Union
 
 from pydantic import BaseModel
 
-from inkwell.components.image import Image
+from inkwell.components.figure import Figure
 from inkwell.components.layout import Layout
 from inkwell.components.table import Table
 from inkwell.components.text import TextBox
@@ -21,7 +21,7 @@ class PageFragmentType(str, Enum):
 
 class PageFragment(BaseModel):
     fragment_type: PageFragmentType
-    content: Union[TextBox, Table, Image]
+    content: Union[TextBox, Table, Figure]
 
 
 class Page(BaseModel):
@@ -47,7 +47,7 @@ class Page(BaseModel):
             if fragment.fragment_type == PageFragmentType.TABLE
         ]
 
-    def image_fragments(self) -> List[Image]:
+    def figure_fragments(self) -> List[Figure]:
         return [
             fragment
             for fragment in self.page_fragments

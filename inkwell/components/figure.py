@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from inkwell.components.elements import Rectangle
 
 
-class Image(BaseModel):
+class Figure(BaseModel):
     """
     Figure in a document.
     """
@@ -20,4 +20,4 @@ class Image(BaseModel):
         arbitrary_types_allowed = True
 
     def __repr__(self):
-        return f"Image(bbox={self.bbox}, score={self.score})"
+        return f"Figure(bbox={self.bbox}, score={self.score})"
