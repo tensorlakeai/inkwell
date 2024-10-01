@@ -23,8 +23,10 @@ from inkwell.pipeline.pipeline_config import (
     DefaultCPUPipelineConfig,
     PipelineConfig,
 )
-from inkwell.table_detector import TableDetectorFactory, TableExtractorFactory
-from inkwell.table_detector.base import BaseTableDetector, BaseTableExtractor
+from inkwell.table_detector import TableDetectorFactory
+from inkwell.table_detector.base import BaseTableDetector
+from inkwell.table_extractor import TableExtractorFactory
+from inkwell.table_extractor.base import BaseTableExtractor
 
 _logger = logging.getLogger(__name__)
 

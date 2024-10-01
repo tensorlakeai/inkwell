@@ -15,7 +15,7 @@ from inkwell.components import (
     TextBox,
 )
 from inkwell.ocr.base import BaseOCR
-from inkwell.table_detector.base import BaseTableExtractor
+from inkwell.table_extractor.base import BaseTableExtractor
 
 
 class DocumentProcessor(ABC):
