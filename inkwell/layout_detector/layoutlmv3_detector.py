@@ -77,3 +77,7 @@ class LayoutLMv3Detector(Detectron2LayoutDetector):
         # effective update steps would be MAX_ITER/GRADIENT_ACCUMULATION_STEPS
         # maybe need to set MAX_ITER *= GRADIENT_ACCUMULATION_STEPS
         _cfg.SOLVER.GRADIENT_ACCUMULATION_STEPS = 1
+
+    @property
+    def model_id(self) -> str:
+        return LayoutDetectorType.LAYOUTLMV3.value

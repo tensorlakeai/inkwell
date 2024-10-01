@@ -5,6 +5,7 @@ from typing import List
 import numpy as np
 
 from inkwell.ocr.base import BaseOCR
+from inkwell.ocr.ocr import OCRType
 from inkwell.utils.env_utils import is_paddleocr_available
 
 if is_paddleocr_available():
@@ -17,6 +18,10 @@ class PaddleOCR(BaseOCR):
     def __init__(self, lang: str = "en"):
         self._lang = lang
         self._load_engine()
+
+    @property
+    def model_id(self) -> str:
+        return OCRType.PADDLE.value
 
     def _load_engine(self):
         self._engine = PPStructure(

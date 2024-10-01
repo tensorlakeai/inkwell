@@ -6,6 +6,7 @@ import numpy as np
 from inkwell.models.model_registry import ModelRegistry
 from inkwell.models.models import ModelType
 from inkwell.table_extractor.base import BaseTableExtractor
+from inkwell.table_extractor.table_extractor import TableExtractorType
 from inkwell.table_extractor.utils import (
     TABLE_EXTRACTOR_PROMPT,
     _load_table_extractor_config,
@@ -20,6 +21,10 @@ class Qwen2TableExtractor(BaseTableExtractor):
         self._model_wrapper = ModelRegistry.get_model_wrapper(
             ModelType.QWEN2_2B_VISION.value
         )
+
+    @property
+    def model_id(self) -> str:
+        return TableExtractorType.QWEN2_2B_VISION.value
 
     def process(self, image: np.ndarray) -> dict:
         _logger.info("Running Qwen2 Vision Table Extractor")

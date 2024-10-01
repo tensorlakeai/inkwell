@@ -126,7 +126,7 @@ class Qwen2VL2VModelWrapper(BaseVisionModelWrapper):
         return output_text[0]
 
 
-# Register the Phi3 model loader
+# Register the Qwen2 VL model loader
 ModelRegistry.register_wrapper_loader(
     model_name=ModelType.QWEN2_2B_VISION.value, loader=Qwen2VL2VModelWrapper
 )

@@ -18,7 +18,7 @@ class TableExtractorFactory:
             return TableTransformerExtractor()
         if table_extractor_type == TableExtractorType.PHI3_VISION:
             return Phi3VTableExtractor()
-        if table_extractor_type == TableExtractorType.OPENAI4O:
+        if table_extractor_type == TableExtractorType.OPENAI_GPT4O_MINI:
             return OpenAI4OTableExtractor()
         if table_extractor_type == TableExtractorType.QWEN2_2B_VISION:
             if is_qwen2_available():

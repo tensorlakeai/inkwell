@@ -16,8 +16,14 @@ OPENAI_API_KEY_NAME = "OPENAI_API_KEY"
 class OpenAI4OCR(BaseOCR):
     def __init__(self):
         self._cfg = _load_ocr_config()
-        self._model_cfg = self._cfg["ocr_models"][OCRType.OPENAI4O.value]
+        self._model_cfg = self._cfg["ocr_models"][
+            OCRType.OPENAI_GPT4O_MINI.value
+        ]
         self._load_client()
+
+    @property
+    def model_id(self) -> str:
+        return OCRType.OPENAI_GPT4O_MINI.value
 
     def _load_client(self):
         self._client = openai.OpenAI(api_key=os.getenv(OPENAI_API_KEY_NAME))

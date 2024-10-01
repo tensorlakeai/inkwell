@@ -14,15 +14,15 @@ class OCRFactory:
             return TesseractOCR(**kwargs)
         if ocr_type == OCRType.PHI3_VISION:
             return Phi3VisionOCR(**kwargs)
-        if ocr_type == OCRType.OPENAI4O:
+        if ocr_type == OCRType.OPENAI_GPT4O_MINI:
             return OpenAI4OCR(**kwargs)
         if ocr_type == OCRType.QWEN2_2B_VISION:
             if is_qwen2_available():
                 from inkwell.ocr.qwen2_ocr import (  # pylint: disable=import-outside-toplevel
-                    Qwen2VisionOCR,
+                    Qwen2OCR,
                 )
 
-                return Qwen2VisionOCR(**kwargs)
+                return Qwen2OCR(**kwargs)
             raise ValueError(
                 "Please install the latest transformers from \
                     source to use Qwen2 Vision OCR"

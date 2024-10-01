@@ -4,12 +4,17 @@ import numpy as np
 
 from inkwell.ocr.openai_ocr import OpenAI4OCR
 from inkwell.table_extractor.base import BaseTableExtractor
+from inkwell.table_extractor.table_extractor import TableExtractorType
 from inkwell.table_extractor.utils import TABLE_EXTRACTOR_PROMPT
 
 
 class OpenAI4OTableExtractor(BaseTableExtractor):
     def __init__(self):
         self._load_client()
+
+    @property
+    def model_id(self) -> str:
+        return TableExtractorType.OPENAI_GPT4O_MINI.value
 
     def _load_client(self):
         self._client = OpenAI4OCR()

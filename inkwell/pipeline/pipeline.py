@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Optional
 
 from inkwell.components import (
     Document,
@@ -41,21 +41,12 @@ class Pipeline:
         table_extractor: BaseTableExtractor = None,
     ):
         self.config = config
+        self._model_ids = {}
 
-        self._initialize_layout_detector()
-        self._initialize_ocr_detector()
-        self._initialize_table_detector()
-        self._initialize_table_segmentation_detector()
-
-        # Passing custom components replaces the default components
-        if layout_detector:
-            self.layout_detector = layout_detector
-        if ocr_detector:
-            self.ocr_detector = ocr_detector
-        if table_detector:
-            self.table_detector = table_detector
-        if table_extractor:
-            self.table_extractor = table_extractor
+        self._initialize_layout_detector(layout_detector)
+        self._initialize_ocr_detector(ocr_detector)
+        self._initialize_table_detector(table_detector)
+        self._initialize_table_extractor(table_extractor)
 
         self.table_fragment_processor = TableFragmentProcessor(
             ocr_detector=self.ocr_detector,
@@ -70,28 +61,62 @@ class Pipeline:
             ocr_detector=self.ocr_detector
         )
 
-    def _initialize_layout_detector(self):
-        if self.config.layout_detector:
+    def _initialize_layout_detector(
+        self, layout_detector: Optional[BaseLayoutDetector] = None
+    ):
+        if layout_detector:
+            self.layout_detector = layout_detector
+        elif self.config.layout_detector:
             self.layout_detector = LayoutDetectorFactory.get_layout_detector(
                 self.config.layout_detector,
                 **self.config.layout_detector_kwargs,
             )
+        else:
+            self.layout_detector = None
 
-    def _initialize_ocr_detector(self):
-        if self.config.ocr_detector:
+        if self.layout_detector:
+            self._model_ids["layout_detector"] = self.layout_detector.model_id
+
+    def _initialize_ocr_detector(self, ocr_detector: Optional[BaseOCR] = None):
+        if ocr_detector:
+            self.ocr_detector = ocr_detector
+        elif self.config.ocr_detector:
             self.ocr_detector = OCRFactory.get_ocr(self.config.ocr_detector)
+        else:
+            self.ocr_detector = None
 
-    def _initialize_table_detector(self):
-        if self.config.table_detector:
+        if self.ocr_detector:
+            self._model_ids["ocr_detector"] = self.ocr_detector.model_id
+
+    def _initialize_table_detector(
+        self, table_detector: Optional[BaseTableDetector] = None
+    ):
+        if table_detector:
+            self.table_detector = table_detector
+        elif self.config.table_detector:
             self.table_detector = TableDetectorFactory.get_table_detector(
                 self.config.table_detector, **self.config.table_detector_kwargs
             )
+        else:
+            self.table_detector = None
 
-    def _initialize_table_segmentation_detector(self):
-        if self.config.table_extractor:
+        if self.table_detector:
+            self._model_ids["table_detector"] = self.table_detector.model_id
+
+    def _initialize_table_extractor(
+        self, table_extractor: Optional[BaseTableExtractor] = None
+    ):
+        if table_extractor:
+            self.table_extractor = table_extractor
+        elif self.config.table_extractor:
             self.table_extractor = TableExtractorFactory.get_table_extractor(
                 self.config.table_extractor
             )
+        else:
+            self.table_extractor = None
+
+        if self.table_extractor:
+            self._model_ids["table_extractor"] = self.table_extractor.model_id
 
     def _is_native_pdf(self, path: str) -> bool:
         return path.endswith(".pdf")
@@ -137,9 +162,23 @@ class Pipeline:
 
         return figure_blocks, table_blocks, text_blocks
 
+    def model_ids(self):
+        return self._model_ids
+
+    def _str_repr(self):
+        config_str = "\nPipeline Configuration\n"
+        for extractor, model_uid in self._model_ids.items():
+            config_str += f"{extractor}: {model_uid}\n"
+        return config_str
+
+    def __repr__(self):
+        return self._str_repr()
+
     def process(
         self, document_path: str, pages_to_parse: List[int] = None
     ) -> Document:
+
+        _logger.info(self._str_repr())
 
         if self._is_native_pdf(document_path):
             document = self._read_pdf(document_path)

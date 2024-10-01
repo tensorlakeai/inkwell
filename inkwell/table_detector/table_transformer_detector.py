@@ -22,6 +22,10 @@ class TableTransformerDetector(BaseTableDetector):
 
         self._detection_threshold = kwargs.get("detection_threshold", 0.5)
 
+    @property
+    def model_id(self) -> str:
+        return TableDetectorType.TABLE_TRANSFORMER.value
+
     def _load_model(self):
         self._model = TableTransformerForObjectDetection.from_pretrained(
             self._cfg["model_name_hf"]
