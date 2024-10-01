@@ -6,7 +6,7 @@ from PIL import Image as PILImage
 
 from inkwell.components import (
     Document,
-    Image,
+    Figure,
     Layout,
     PageFragment,
     PageFragmentType,
@@ -87,7 +87,7 @@ class FigureFragmentProcessor(FragmentProcessor):
             figure_fragments.append(
                 PageFragment(
                     fragment_type=PageFragmentType.FIGURE,
-                    content=Image(
+                    content=Figure(
                         image=figure_image,
                         bbox=figure_block.rectangle,
                         score=figure_block.score,

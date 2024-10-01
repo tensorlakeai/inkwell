@@ -20,7 +20,7 @@ from inkwell.pipeline.fragment_processor import (
     TextFragmentProcessor,
 )
 from inkwell.pipeline.pipeline_config import (
-    DefaultCPUPipelineConfig,
+    DefaultPipelineConfig,
     PipelineConfig,
 )
 from inkwell.table_detector import TableDetectorFactory
@@ -34,7 +34,7 @@ _logger = logging.getLogger(__name__)
 class Pipeline:
     def __init__(
         self,
-        config: PipelineConfig = DefaultCPUPipelineConfig(),
+        config: PipelineConfig = DefaultPipelineConfig(),
         layout_detector: BaseLayoutDetector = None,
         ocr_detector: BaseOCR = None,
         table_detector: BaseTableDetector = None,
@@ -188,7 +188,7 @@ class Pipeline:
 
         processed_pages = []
         for idx, (page_image, page_number) in enumerate(pages):
-            _logger.info("Processing page %d/%d", idx+1, len(pages))
+            _logger.info("Processing page %d/%d", idx + 1, len(pages))
             if self.layout_detector:
                 layout = self.layout_detector.process(page_image)
 
