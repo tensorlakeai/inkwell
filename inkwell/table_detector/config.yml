@@ -1,11 +1,2 @@
-table_extraction_prompts:
-  system_prompt: "You are a helpful AI assistant specialized in extracting table data from images."
-
-table_transformer_detector:
+table_transformer:
   model_name_hf: "microsoft/table-transformer-detection"
-
-table_transformer_extractor:
-  model_name_hf: "microsoft/table-transformer-structure-recognition"
-
-phi3v_table_extractor:
-  model_name_hf: "microsoft/Phi-3.5-vision-instruct"

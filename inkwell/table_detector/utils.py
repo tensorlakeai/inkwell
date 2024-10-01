@@ -1,18 +1,10 @@
+# pylint: disable=duplicate-code
+
 import pathlib
 
 import yaml
 
 CFG = "config.yml"
-
-TABLE_EXTRACTOR_PROMPT = """Extract information from the table image
-into the following json format:
-
-{
-    "header": List[str] # list of header names
-    "data": List[List[str]] # list of rows, each row is a list of strings
-}
-
-Strictly return the json output only, and nothing else."""
 
 
 def _load_table_detector_config() -> dict:

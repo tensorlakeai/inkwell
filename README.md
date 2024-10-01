@@ -100,7 +100,7 @@ If you want to change the default models, you can replace them with models liste
 from inkwell.pipeline import PipelineConfig, Pipeline
 from inkwell.layout_detector import LayoutDetectorType
 from inkwell.ocr import OCRType
-from inkwell.table_detector import TableDetectorType, TableExtractorType
+from inkwell.table_extractor import TableExtractorType
 
 config = PipelineConfig(
     layout_detector=LayoutDetectorType.FASTER_RCNN,

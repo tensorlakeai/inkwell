@@ -4,7 +4,8 @@ from pydantic import BaseModel
 
 from inkwell.layout_detector import LayoutDetectorType
 from inkwell.ocr import OCRType
-from inkwell.table_detector import TableDetectorType, TableExtractorType
+from inkwell.table_detector import TableDetectorType
+from inkwell.table_extractor import TableExtractorType
 
 
 class PipelineConfig(BaseModel):
