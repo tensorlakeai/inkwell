@@ -52,14 +52,41 @@ For GPUs, install flash attention for faster inference.
 pip install flash-attn --no-build-isolation
 ```
 
-### Basic Usage
+## Basic Usage
+
+### Parse Pages 
 
 ```python
 from inkwell.pipeline import Pipeline
 
 pipeline = Pipeline()
 document = pipeline.process("/path/to/file.pdf")
+```
 
+### Extract Page Elements
+```python
+pages = document.pages
+for page in pages:
+   # Page Number
+   print(page.page_number)
+```
+
+Every Page has the following objects -
+1. Images
+2. Tables
+3. Text
+
+#### Image 
+
+#### Table 
+
+#### Text 
+
+
+### Complete Example
+We will take the following PDF and extract text, tables and images from this separtely. 
+
+```python
 for page in document.pages:
 
     figures = page.image_fragments()
@@ -81,6 +108,12 @@ for page in document.pages:
         text_block_image = text_block.content.image
         print(f"Text block detected: {text_block.content.text}")
 ```
+
+## Using Qwen2 
+
+### Using Qwen2
+
+### Using Phi3
 
 ## Models/Frameworks currently available
 
