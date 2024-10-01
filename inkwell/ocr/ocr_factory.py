@@ -1,7 +1,7 @@
 # flake8: noqa: E501
 
 from inkwell.ocr.ocr import OCRType
-from inkwell.ocr.openai_ocr import OpenAI4OCR
+from inkwell.ocr.openai_4o_mini_ocr import OpenAI4OMiniOCR
 from inkwell.ocr.phi3_ocr import Phi3VisionOCR
 from inkwell.ocr.tesseract_ocr import TesseractOCR
 from inkwell.utils.env_utils import is_paddleocr_available, is_qwen2_available
@@ -15,7 +15,7 @@ class OCRFactory:
         if ocr_type == OCRType.PHI3_VISION:
             return Phi3VisionOCR(**kwargs)
         if ocr_type == OCRType.OPENAI_GPT4O_MINI:
-            return OpenAI4OCR(**kwargs)
+            return OpenAI4OMiniOCR(**kwargs)
         if ocr_type == OCRType.QWEN2_2B_VISION:
             if is_qwen2_available():
                 from inkwell.ocr.qwen2_ocr import (  # pylint: disable=import-outside-toplevel

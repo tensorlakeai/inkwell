@@ -51,7 +51,9 @@ class TestTableDetector(TestCase):
         results = table_extractor.process(self._image_table)
         self._test_results(results)
 
-    @patch("inkwell.table_extractor.openai_table_extractor.OpenAI4OCR")
+    @patch(
+        "inkwell.table_extractor.openai_4o_mini_table_extractor.OpenAI4OMiniOCR"  # pylint: disable=line-too-long
+    )
     def test_openai_table_extractor(self, mock_openai_ocr):
         mock_client = MagicMock()
         mock_openai_ocr.return_value = mock_client
