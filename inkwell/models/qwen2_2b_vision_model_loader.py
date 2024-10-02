@@ -109,7 +109,7 @@ class Qwen2VL2VModelWrapper(BaseVisionModelWrapper):
         if is_torch_cuda_available():
             inputs = inputs.to("cuda")
 
-        output_ids = self._model.generate(**inputs, **generation_args)
+        output_ids = self._model.generate(**inputs, **dict(generation_args))
         generated_ids = [
             output_ids[len(input_ids) :]
             for input_ids, output_ids in zip(inputs.input_ids, output_ids)
