@@ -32,8 +32,4 @@ class Phi3VTableExtractor(BaseTableExtractor):
         user_prompt = self._prompt.user_prompt
         result = self._model_wrapper.process(image, user_prompt, system_prompt)
 
-<<<<<<< HEAD
         return result.strip()
-=======
-        return result.strip()
->>>>>>> b6f94fb (Phi3.5 and Qwen2 VL fixe)
