@@ -113,7 +113,7 @@ class Phi3VisionModelWrapper(BaseVisionModelWrapper):
         generate_ids = self._model.generate(
             **inputs,
             eos_token_id=self._processor.tokenizer.eos_token_id,
-            **generation_args,
+            **dict(generation_args),
         )
 
         generate_ids = generate_ids[:, inputs["input_ids"].shape[1] :]
