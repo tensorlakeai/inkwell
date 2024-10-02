@@ -57,7 +57,7 @@ class TestLayoutDetector(unittest.TestCase):
         )
 
         layout = detector.process(test_images)
-        assert len(layout) == len(test_images)
+        self.assertEqual(len(layout), len(test_images))
         for layout_image in layout:
             self.check_detected_layout(layout_image)
 

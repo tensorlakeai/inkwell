@@ -1,7 +1,7 @@
 import base64
 import os
 from io import BytesIO
-from typing import Optional
+from typing import List, Optional, Union
 
 import numpy as np
 import openai
@@ -56,22 +56,43 @@ class OpenAI4OMiniOCR(BaseOCR):
             },
         ]
 
+    def _call_client(self, system_prompt, user_prompt, img) -> str:
+        messages = self._create_message(system_prompt, user_prompt, img)
+        response = self._client.chat.completions.create(
+            model=self._model_cfg.model_name_openai, messages=messages
+        )
+        return response.choices[0].message.content
+
     def process(
         self,
-        image: np.ndarray,
+        image: Union[np.ndarray, List[np.ndarray]],
         user_prompt: Optional[str] = None,
         system_prompt: Optional[str] = None,
-    ) -> str:
+    ) -> Union[str, List[str]]:
+        """
+        Processes the image(s) and returns the text(s) detected.
+
+        Args:
+            image (np.ndarray or list[np.ndarray]): The image(s) to process.
+            user_prompt (str, optional): The user prompt. Defaults to None.
+            system_prompt (str, optional): The system prompt. Defaults to None.
+
+        Returns:
+            str or list[str]: The text(s) detected.
+        """
         if not user_prompt:
             user_prompt = self._default_prompts.ocr_user_prompt
 
         if not system_prompt:
             system_prompt = self._default_prompts.system_prompt
 
-        messages = self._create_message(system_prompt, user_prompt, image)
-
-        response = self._client.chat.completions.create(
-            model=self._model_cfg.model_name_openai, messages=messages
-        )
-        response_content = response.choices[0].message.content
+        if isinstance(image, list):
+            results = []
+            for img in image:
+                response_content = self._call_client(
+                    system_prompt, user_prompt, img
+                )
+                results.append(response_content)
+            return results
+        response_content = self._call_client(system_prompt, user_prompt, image)
         return response_content
