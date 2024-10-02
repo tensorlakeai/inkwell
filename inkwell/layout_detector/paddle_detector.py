@@ -1,3 +1,5 @@
+from typing import List, Union
+
 import numpy as np
 
 from inkwell.components import Layout, LayoutBlock, Rectangle
@@ -50,10 +52,13 @@ class PaddleDetector(BaseLayoutDetector):
             layout.append(cur_block)
         return layout
 
-    def process(self, image: np.ndarray) -> Layout:
-        results = self._engine(image)
-        layout = self._gather_output(results)
-        return layout
+    def process(
+        self, image_batch: Union[np.ndarray, List[np.ndarray]]
+    ) -> Union[Layout, List[Layout]]:
+        results = self._engine(image_batch)
+        if isinstance(image_batch, list):
+            return [self._gather_output(result) for result in results]
+        return self._gather_output(results)
 
     @property
     def model_id(self) -> str:
