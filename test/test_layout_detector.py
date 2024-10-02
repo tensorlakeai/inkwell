@@ -31,6 +31,7 @@ class TestLayoutDetector(unittest.TestCase):
         return image_path
 
     def test_faster_rcnn_layout_detector(self):
+
         detector = LayoutDetectorFactory.get_layout_detector(
             LayoutDetectorType.FASTER_RCNN
         )
@@ -47,6 +48,18 @@ class TestLayoutDetector(unittest.TestCase):
         layout = detector.process(self.test_image)
 
         self.check_detected_layout(layout)
+
+    def test_faster_rcnn_batch_predictor(self):
+
+        test_images = [self.test_image] * 5
+        detector = LayoutDetectorFactory.get_layout_detector(
+            LayoutDetectorType.FASTER_RCNN
+        )
+
+        layout = detector.process(test_images)
+        assert len(layout) == len(test_images)
+        for layout_image in layout:
+            self.check_detected_layout(layout_image)
 
 
 if __name__ == "__main__":

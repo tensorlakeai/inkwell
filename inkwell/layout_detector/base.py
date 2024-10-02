@@ -51,5 +51,7 @@ class BaseLayoutDetector(ABC):
         pass
 
     @abstractmethod
-    def process(self, image: np.ndarray) -> Layout:
+    def process(
+        self, image_batch: Union[np.ndarray, List[np.ndarray]]
+    ) -> Union[Layout, List[Layout]]:
         pass

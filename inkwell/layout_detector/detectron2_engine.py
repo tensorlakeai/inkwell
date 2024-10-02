@@ -2,9 +2,10 @@
 
 import os
 from pathlib import Path
-from typing import Callable, Optional, Union
+from typing import Callable, List, Optional, Union
 
 import numpy as np
+import torch
 from PIL import Image
 
 from inkwell.components import Layout, LayoutBlock, Rectangle
@@ -18,6 +19,43 @@ from inkwell.utils.env_utils import (
 if is_detectron2_available():
     import detectron2.config  # pylint: disable=import-outside-toplevel
     import detectron2.engine  # pylint: disable=import-outside-toplevel
+
+
+class BatchPredictor(detectron2.engine.DefaultPredictor):
+    """Run d2 on a list of images."""
+
+    def __call__(
+        self, images: Union[np.ndarray, List[np.ndarray]]
+    ) -> List[dict]:
+        """Run d2 on an image or a list of images.
+
+        Args:
+            images (list): BGR images of the expected shape: 720x1280
+        """
+        batch_size = len(images)
+        if isinstance(images, np.ndarray):
+            images = [images]
+            batch_size = 1
+
+        with torch.no_grad():
+            transformed_images = []
+            for image in images:
+                if self.input_format == "RGB":
+                    image = image[:, :, ::-1]
+                height, width = image.shape[:2]
+                image = self.aug.get_transform(image).apply_image(image)
+                image = torch.from_numpy(
+                    image.astype("float32").transpose(2, 0, 1)
+                )
+                image.to(self.cfg.MODEL.DEVICE)
+                inputs = {"image": image, "height": height, "width": width}
+                transformed_images.append(inputs)
+
+        preds = self.model(transformed_images)
+
+        if batch_size == 1:
+            return preds[0]
+        return preds
 
 
 class Detectron2LayoutEngine(BaseLayoutEngine):
@@ -93,7 +131,7 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
         self._cfg = cfg
 
     def _create_model(self):
-        self._model = detectron2.engine.DefaultPredictor(self._cfg)
+        self._model = BatchPredictor(self._cfg)
 
     def _gather_output(self, outputs: dict) -> Layout:
         instance_pred = outputs["instances"].to("cpu")
@@ -112,21 +150,27 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
 
         return layout
 
-    def detect(self, image: np.ndarray) -> Layout:
+    def detect(
+        self, image: Union[np.ndarray, Image.Image]
+    ) -> Union[Layout, List[Layout]]:
         """Detect the layout of a given image.
 
         Args:
-            image (:obj:`np.ndarray` or `PIL.Image`):
+            image_batch (:obj:`np.ndarray` or `PIL.Image`):
             The input image to detect.
 
         Returns:
             :obj:`Layout`: The detected layout of the input image
         """
 
-        image = self.image_loader(image)
-        outputs = self._model(image)
-        layout = self._gather_output(outputs)
-        return layout
+        if isinstance(image, list):
+            preprocessed_images = [self.image_loader(img) for img in image]
+            outputs = self._model(preprocessed_images)
+            return [self._gather_output(output) for output in outputs]
+
+        preprocessed_images = self.image_loader(image)
+        outputs = self._model(preprocessed_images)
+        return self._gather_output(outputs)
 
     def image_loader(
         self, image: Union[np.ndarray, Image.Image]
@@ -186,5 +230,22 @@ class Detectron2LayoutDetector(BaseLayoutDetector):
             **kwargs,
         )
 
-    def process(self, image: np.ndarray) -> Layout:
-        return self._model.detect(image)
+    def process(
+        self, image_batch: Union[np.ndarray, List[np.ndarray]]
+    ) -> Union[Layout, List[Layout]]:
+        """
+        Detect the layout of a given image or a batch of images.
+
+        Args:
+            image_batch (:obj:`np.ndarray`
+            or `PIL.Image`
+            or `list[np.ndarray]`
+            or `list[PIL.Image]`):
+            The input image or list of images to detect.
+
+        Returns:
+            :obj:`Layout`
+            or `list[Layout]`:
+            The detected layout of the input image or list of images.
+        """
+        return self._model.detect(image_batch)
