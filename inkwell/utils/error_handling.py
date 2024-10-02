@@ -1,8 +1,9 @@
 import json
-from functools import wraps
 import logging
+from functools import wraps
 
 _logger = logging.getLogger(__name__)
+
 
 def convert_markdown_to_json(func):
     @wraps(func)
@@ -12,6 +13,9 @@ def convert_markdown_to_json(func):
             cleaned_result = result.replace("json", "").replace("```", "")
             return json.loads(cleaned_result)
         except json.JSONDecodeError:
-            _logger.warning(f"Error decoding JSON, returning original result as str: {result}")
+            _logger.warning(
+                "Error decoding JSON, returning result as str: %s", result
+            )
             return result
+
     return wrapper
