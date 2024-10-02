@@ -18,7 +18,7 @@ class Phi3VTableExtractor(BaseTableExtractor):
     def __init__(self):
         self._prompt = _load_table_extractor_prompt()
         self._model_wrapper = ModelRegistry.get_model_wrapper(
-            ModelType.PHI3_VISION.value
+            ModelType.PHI3_VISION_VLLM.value
         )
 
     @property

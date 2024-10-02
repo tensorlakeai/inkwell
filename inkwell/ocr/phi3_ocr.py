@@ -18,7 +18,7 @@ class Phi3VisionOCR(BaseOCR):
     def __init__(self):
         self._ocr_prompts = _load_ocr_prompts()
         self._model_wrapper = ModelRegistry.get_model_wrapper(
-            ModelType.PHI3_VISION.value
+            ModelType.PHI3_VISION_VLLM.value
         )
 
     @property
