@@ -1,5 +1,3 @@
-import json
-
 import numpy as np
 
 from inkwell.ocr.openai_4o_mini_ocr import OpenAI4OMiniOCR
