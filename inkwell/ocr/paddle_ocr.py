@@ -1,6 +1,6 @@
 # pylint: disable=duplicate-code
 
-from typing import List
+from typing import List, Union
 
 import numpy as np
 
@@ -32,15 +32,29 @@ class PaddleOCR(BaseOCR):
             return_ocr_result_in_table=True,
         )
 
-    def _detect(self, image: np.ndarray) -> List[str]:
+    def _detect(self, image: np.ndarray) -> str:
         text_results = []
         results = self._engine(image)
         for result in results:
             for text_box in result["res"]:
                 text = text_box["text"]
                 text_results.append(text)
-        return text_results
 
-    def process(self, image: np.ndarray) -> str:
-        results = self._detect(image)
-        return "\n".join(results)
+        text_str = "\n".join(text_results)
+        return text_str
+
+    def process(
+        self, image: Union[np.ndarray, List[np.ndarray]]
+    ) -> Union[str, List[str]]:
+        """
+        Processes the image(s) and returns the text(s) detected.
+
+        Args:
+            image (np.ndarray or list[np.ndarray]): The image(s) to process.
+
+        Returns:
+            str or list[str]: The text(s) detected.
+        """
+        if isinstance(image, list):
+            return [self._detect(img) for img in image]
+        return self._detect(image)

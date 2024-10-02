@@ -32,3 +32,15 @@ class TestOCR(unittest.TestCase):
 
         text = ocr.process(image)
         self._test_results(text)
+
+    def test_tesseract_ocr_batch(self):
+
+        image = self._load_test_image()
+        images = [image] * 5
+        ocr = OCRFactory.get_ocr(OCRType.TESSERACT, lang="eng")
+
+        texts = ocr.process(images)
+
+        self.assertEqual(len(texts), len(images))
+        for text in texts:
+            self._test_results(text)
