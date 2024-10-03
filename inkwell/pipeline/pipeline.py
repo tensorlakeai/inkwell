@@ -1,14 +1,9 @@
 import logging
 from typing import List, Optional
 
-from inkwell.components import (
-    Document,
-    Layout,
-    LayoutBlock,
-    Page,
-    PageFragment,
-    PageFragmentType,
-)
+from PIL import Image as PILImage
+
+from inkwell.components import Document, Layout, LayoutBlock, Page
 from inkwell.io import convert_page_to_image, read_image, read_pdf_document
 from inkwell.layout_detector import LayoutDetectorFactory
 from inkwell.layout_detector.base import BaseLayoutDetector
@@ -81,7 +76,10 @@ class Pipeline:
         if ocr_detector:
             self.ocr_detector = ocr_detector
         elif self.config.ocr_detector:
-            self.ocr_detector = OCRFactory.get_ocr(self.config.ocr_detector)
+            self.ocr_detector = OCRFactory.get_ocr(
+                self.config.ocr_detector,
+                **{"inference_backend": self.config.inference_backend},
+            )
         else:
             self.ocr_detector = None
 
@@ -110,7 +108,8 @@ class Pipeline:
             self.table_extractor = table_extractor
         elif self.config.table_extractor:
             self.table_extractor = TableExtractorFactory.get_table_extractor(
-                self.config.table_extractor
+                self.config.table_extractor,
+                **{"inference_backend": self.config.inference_backend},
             )
         else:
             self.table_extractor = None
@@ -174,17 +173,21 @@ class Pipeline:
     def __repr__(self):
         return self._str_repr()
 
+    def _get_pages(self, document_path: str, pages_to_parse: List[int] = None):
+        if self._is_native_pdf(document_path):
+            document = self._read_pdf(document_path)
+            pages = self._preprocess_native_pdf(document, pages_to_parse)
+        else:
+            pages = [(self._read_image(document_path), 1)]
+        return pages
+
     def process(
         self, document_path: str, pages_to_parse: List[int] = None
     ) -> Document:
 
         _logger.info(self._str_repr())
 
-        if self._is_native_pdf(document_path):
-            document = self._read_pdf(document_path)
-            pages = self._preprocess_native_pdf(document, pages_to_parse)
-        else:
-            pages = [(self._read_image(document_path), 1)]
+        pages = self._get_pages(document_path, pages_to_parse)
 
         processed_pages = []
         for idx, (page_image, page_number) in enumerate(pages):
@@ -227,17 +230,14 @@ class Pipeline:
                     "No layout detector configured, \
                     doing OCR on the whole image"
                 )
-                fragments = [
-                    PageFragment(
-                        fragment_type=PageFragmentType.TEXT,
-                        content=self.ocr_detector.process(page_image),
-                    )
-                ]
-
+                fragments = self.text_fragment_processor.process(
+                    page_image, None
+                )
                 layout = None
 
             processed_pages.append(
                 Page(
+                    page_image=PILImage.fromarray(page_image),
                     page_number=page_number,
                     page_fragments=fragments,
                     layout=layout,

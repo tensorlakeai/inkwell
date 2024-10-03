@@ -13,11 +13,13 @@ from inkwell.utils.env_utils import is_paddleocr_available, is_qwen2_available
 
 class TableExtractorFactory:
     @staticmethod
-    def get_table_extractor(table_extractor_type: TableExtractorType):
+    def get_table_extractor(
+        table_extractor_type: TableExtractorType, **kwargs
+    ):
         if table_extractor_type == TableExtractorType.TABLE_TRANSFORMER:
             return TableTransformerExtractor()
         if table_extractor_type == TableExtractorType.PHI3_VISION:
-            return Phi3VTableExtractor()
+            return Phi3VTableExtractor(**kwargs)
         if table_extractor_type == TableExtractorType.OPENAI_GPT4O_MINI:
             return OpenAI4OMiniTableExtractor()
         if table_extractor_type == TableExtractorType.QWEN2_2B_VISION:

@@ -15,8 +15,8 @@ else:
 
 
 class PaddleOCR(BaseOCR):
-    def __init__(self, lang: str = "en"):
-        self._lang = lang
+    def __init__(self, **kwargs):
+        self._lang = kwargs.get("lang", "en")
         self._load_engine()
 
     @property

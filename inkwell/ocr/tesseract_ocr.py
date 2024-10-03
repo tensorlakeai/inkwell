@@ -9,8 +9,8 @@ from inkwell.ocr.ocr import OCRType
 
 class TesseractOCR(BaseOCR):
 
-    def __init__(self, lang: str = "eng"):
-        self._lang = lang
+    def __init__(self, **kwargs):
+        self._lang = kwargs.get("lang", "eng")
 
     @property
     def model_id(self) -> str:

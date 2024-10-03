@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import List, Union
 
+from PIL import Image
 from pydantic import BaseModel
 
 from inkwell.components.figure import Figure
@@ -32,6 +33,7 @@ class Page(BaseModel):
     page_number: int
     page_fragments: List[PageFragment]
     layout: Layout
+    page_image: Image.Image
 
     def text_fragments(self) -> List[TextBox]:
         return [
