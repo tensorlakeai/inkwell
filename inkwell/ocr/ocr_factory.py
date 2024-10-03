@@ -15,7 +15,7 @@ class OCRFactory:
         if ocr_type == OCRType.PHI3_VISION:
             return Phi3VisionOCR(**kwargs)
         if ocr_type == OCRType.OPENAI_GPT4O_MINI:
-            return OpenAI4OMiniOCR(**kwargs)
+            return OpenAI4OMiniOCR()
         if ocr_type == OCRType.QWEN2_2B_VISION:
             if is_qwen2_available():
                 from inkwell.ocr.qwen2_ocr import (  # pylint: disable=import-outside-toplevel

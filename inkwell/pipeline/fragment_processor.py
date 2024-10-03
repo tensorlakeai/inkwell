@@ -146,6 +146,7 @@ class TextFragmentProcessor(FragmentProcessor):
             return text_fragments
 
         text_images = []
+        text_fragments = []
         for text_block in layout:
             text_image = text_block.pad(
                 left=5, right=5, top=5, bottom=5
