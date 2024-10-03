@@ -22,10 +22,14 @@ class HuggingFaceOCRModelConfig(BaseModel):
 
 PHI3_VISION_MODEL_CONFIG = HuggingFaceOCRModelConfig(
     model_name_hf="microsoft/Phi-3.5-vision-instruct",
-    generation_args=GenerationArgs(max_new_tokens=2048, temperature=0.0),
+    generation_args=GenerationArgs(
+        max_new_tokens=2048, temperature=0.2, top_p=0.95
+    ),
 )
 
 QWEN2_VISION_MODEL_CONFIG = HuggingFaceOCRModelConfig(
     model_name_hf="Qwen/Qwen2-VL-2B-Instruct",
-    generation_args=GenerationArgs(max_new_tokens=2048, top_p=0.95),
+    generation_args=GenerationArgs(
+        max_new_tokens=2048, temperature=0.2, top_p=0.95
+    ),
 )
