@@ -21,6 +21,12 @@ class OpenAI4OMiniTableExtractor(BaseTableExtractor):
 
     @convert_markdown_to_json
     def process(self, image: np.ndarray) -> dict:
+        if isinstance(image, list):
+            results = [self._process_image(img) for img in image]
+            return results
+        return self._process_image(image)
+
+    def _process_image(self, image: np.ndarray) -> dict:
         result = self._client.process(
             image,
             user_prompt=self._prompt.user_prompt,

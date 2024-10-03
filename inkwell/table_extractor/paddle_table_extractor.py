@@ -1,5 +1,7 @@
 # pylint: disable=duplicate-code
 
+from typing import List, Union
+
 import html_to_json
 import numpy as np
 
@@ -37,6 +39,10 @@ class PaddleTableExtractor(BaseTableExtractor):
         table_json = html_to_json.convert_tables(table_html)
         return {"data": table_json}
 
-    def process(self, image: np.ndarray) -> dict:
-        results = self._detect(image)
-        return results
+    def process(
+        self, image: Union[np.ndarray, List[np.ndarray]]
+    ) -> Union[dict, List[dict]]:
+        if isinstance(image, list):
+            results = [self._detect(img) for img in image]
+            return results
+        return self._detect(image)
