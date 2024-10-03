@@ -3,7 +3,7 @@ import logging
 import numpy as np
 
 from inkwell.models.model_registry import ModelRegistry
-from inkwell.models.models import ModelType
+from inkwell.models.models import InferenceBackend, ModelType
 from inkwell.table_extractor.base import BaseTableExtractor
 from inkwell.table_extractor.config import _load_table_extractor_prompt
 from inkwell.table_extractor.table_extractor import TableExtractorType
@@ -13,10 +13,18 @@ _logger = logging.getLogger(__name__)
 
 
 class Qwen2TableExtractor(BaseTableExtractor):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._prompt = _load_table_extractor_prompt()
+        self._inference_backend = kwargs.get(
+            "inference_backend", InferenceBackend.VLLM
+        )
+        self._model_wrapper = (
+            ModelType.PHI3_VISION_VLLM.value
+            if self._inference_backend == InferenceBackend.VLLM
+            else ModelType.PHI3_VISION.value
+        )
         self._model_wrapper = ModelRegistry.get_model_wrapper(
-            ModelType.QWEN2_2B_VISION.value
+            self._model_wrapper
         )
 
     @property

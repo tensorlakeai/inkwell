@@ -1,10 +1,12 @@
+# pylint: disable=duplicate-code
+
 import logging
 from typing import List, Union
 
 import numpy as np
 
 from inkwell.models.model_registry import ModelRegistry
-from inkwell.models.models import ModelType
+from inkwell.models.models import InferenceBackend, ModelType
 from inkwell.ocr.base import BaseOCR
 from inkwell.ocr.config import _load_ocr_prompts
 from inkwell.ocr.ocr import OCRType
@@ -13,10 +15,18 @@ _logger = logging.getLogger(__name__)
 
 
 class Qwen2OCR(BaseOCR):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._ocr_prompts = _load_ocr_prompts()
+        self._inference_backend = kwargs.get(
+            "inference_backend", InferenceBackend.VLLM
+        )
+        self._model_wrapper = (
+            ModelType.PHI3_VISION_VLLM.value
+            if self._inference_backend == InferenceBackend.VLLM
+            else ModelType.PHI3_VISION.value
+        )
         self._model_wrapper = ModelRegistry.get_model_wrapper(
-            ModelType.QWEN2_2B_VISION.value
+            self._model_wrapper
         )
 
     @property
@@ -30,11 +40,4 @@ class Qwen2OCR(BaseOCR):
 
         system_prompt = self._ocr_prompts.system_prompt
         user_prompt = self._ocr_prompts.ocr_user_prompt
-
-        if isinstance(image, list):
-            return [
-                self._model_wrapper.process(img, user_prompt, system_prompt)
-                for img in image
-            ]
-
         return self._model_wrapper.process(image, user_prompt, system_prompt)
