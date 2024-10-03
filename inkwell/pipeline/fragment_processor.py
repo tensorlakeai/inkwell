@@ -1,6 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import numpy as np
 from PIL import Image as PILImage
@@ -31,7 +31,9 @@ class DocumentProcessor(ABC):
 
 class FragmentProcessor(ABC):
     @abstractmethod
-    def process(self, image: np.ndarray, layout: Layout) -> List[PageFragment]:
+    def process(
+        self, image: np.ndarray, layout: Union[Layout, None] = None
+    ) -> List[PageFragment]:
         pass
 
 
@@ -44,7 +46,9 @@ class TableFragmentProcessor(FragmentProcessor):
         self.ocr_detector = ocr_detector
         self.table_extractor = table_extractor
 
-    def process(self, image: np.ndarray, layout: Layout) -> List[PageFragment]:
+    def process(
+        self, image: np.ndarray, layout: Union[Layout, None] = None
+    ) -> List[PageFragment]:
         _logger.info("Processing %d table fragments in page", len(layout))
         table_fragments = []
         table_images = []
@@ -86,7 +90,9 @@ class FigureFragmentProcessor(FragmentProcessor):
     def __init__(self, ocr_detector: BaseOCR):
         self.ocr_detector = ocr_detector
 
-    def process(self, image: np.ndarray, layout: Layout) -> List[PageFragment]:
+    def process(
+        self, image: np.ndarray, layout: Union[Layout, None] = None
+    ) -> List[PageFragment]:
         _logger.info("Processing %d figure fragments in page", len(layout))
         figure_fragments = []
         figure_images = []
@@ -118,9 +124,27 @@ class TextFragmentProcessor(FragmentProcessor):
     def __init__(self, ocr_detector: BaseOCR):
         self.ocr_detector = ocr_detector
 
-    def process(self, image: np.ndarray, layout: Layout) -> List[PageFragment]:
+    def process(
+        self, image: np.ndarray, layout: Union[Layout, None] = None
+    ) -> List[PageFragment]:
         _logger.info("Processing %d text fragments in page", len(layout))
-        text_fragments = []
+
+        if layout is None:
+            ocr_results = self.ocr_detector.process([image])
+            text_fragments = [
+                PageFragment(
+                    fragment_type=PageFragmentType.TEXT,
+                    content=TextBox(
+                        text=ocr_results[0],
+                        text_type="text",
+                        bbox=None,
+                        score=None,
+                        image=PILImage.fromarray(image),
+                    ),
+                )
+            ]
+            return text_fragments
+
         text_images = []
         for text_block in layout:
             text_image = text_block.pad(

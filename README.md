@@ -46,10 +46,11 @@ and, Mac OS
 brew install tesseract
 ```
 
-For GPUs, install flash attention for faster inference.
+For GPUs, install flash attention and vllm for faster inference.
 
 ```bash
 pip install flash-attn --no-build-isolation
+pip install vllm
 ```
 
 ## Basic Usage

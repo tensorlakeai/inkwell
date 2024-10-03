@@ -1,4 +1,5 @@
 from inkwell.models.model_registry import ModelRegistry
+from inkwell.models.models import InferenceBackend
 from inkwell.models.phi3_vision_model_loader import Phi3VisionModelWrapper
 from inkwell.models.phi3_vision_model_loader_vllm import (
     Phi3VisionModelWrapperVLLM,
@@ -10,4 +11,5 @@ __all__ = [
     "Qwen2VL2VModelWrapper",
     "ModelRegistry",
     "Phi3VisionModelWrapperVLLM",
+    "InferenceBackend",
 ]
