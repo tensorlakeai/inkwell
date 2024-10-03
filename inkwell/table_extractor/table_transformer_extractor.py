@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import numpy as np
 import torch
@@ -171,19 +171,33 @@ class TableTransformerExtractor(BaseTableExtractor):
                     table_dict["columns"].append(result)
         return table_dict
 
-    def process(self, image: np.ndarray) -> Dict:
-        image_pil = Image.fromarray(image)
-        encoding = self._processor(image_pil, return_tensors="pt")
+    def process(
+        self, image: Union[np.ndarray, List[np.ndarray]]
+    ) -> Union[Dict, List[Dict]]:
 
-        with torch.no_grad():
-            outputs = self._model(**encoding)
+        table_results = []
+        if not isinstance(image, list):
+            image = [image]
 
-        target_sizes = [image_pil.size[::-1]]
-        results = self._processor.post_process_object_detection(
-            outputs, threshold=0.6, target_sizes=target_sizes
-        )[0]
+        for img in image:
+            image_pil = Image.fromarray(img)
+            encoding = self._processor(image_pil, return_tensors="pt")
 
-        table_segmentation_layout = self._convert_to_rows_cols(results)
+            with torch.no_grad():
+                outputs = self._model(**encoding)
 
-        table_dict = self._return_row_results(image, table_segmentation_layout)
-        return table_dict
+            target_sizes = [image_pil.size[::-1]]
+            results = self._processor.post_process_object_detection(
+                outputs, threshold=0.6, target_sizes=target_sizes
+            )[0]
+
+            table_segmentation_layout = self._convert_to_rows_cols(results)
+
+            table_dict = self._return_row_results(
+                img, table_segmentation_layout
+            )
+            table_results.append(table_dict)
+
+        if len(table_results) == 1:
+            return table_results[0]
+        return table_results

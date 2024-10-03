@@ -32,4 +32,4 @@ class Phi3VTableExtractor(BaseTableExtractor):
         user_prompt = self._prompt.user_prompt
         result = self._model_wrapper.process(image, user_prompt, system_prompt)
 
-        return result.strip()
+        return result

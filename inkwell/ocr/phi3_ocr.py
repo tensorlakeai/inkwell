@@ -28,13 +28,6 @@ class Phi3VisionOCR(BaseOCR):
     def process(
         self, image: Union[np.ndarray, List[np.ndarray]]
     ) -> Union[str, List[str]]:
-        _logger.info("Running Phi3 Vision OCR")
         system_prompt = self._ocr_prompts.system_prompt
         user_prompt = self._ocr_prompts.ocr_user_prompt
-
-        if isinstance(image, list):
-            return [
-                self._model_wrapper.process(img, user_prompt, system_prompt)
-                for img in image
-            ]
         return self._model_wrapper.process(image, user_prompt, system_prompt)

@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
@@ -16,6 +17,8 @@ from inkwell.components import (
 )
 from inkwell.ocr.base import BaseOCR
 from inkwell.table_extractor.base import BaseTableExtractor
+
+_logger = logging.getLogger(__name__)
 
 
 class DocumentProcessor(ABC):
@@ -42,18 +45,25 @@ class TableFragmentProcessor(FragmentProcessor):
         self.table_extractor = table_extractor
 
     def process(self, image: np.ndarray, layout: Layout) -> List[PageFragment]:
+        _logger.info("Processing %d table fragments in page", len(layout))
         table_fragments = []
+        table_images = []
         for table_block in layout:
             table_image = table_block.pad(
                 left=5, right=5, top=5, bottom=5
             ).crop_image(image)
-            if self.table_extractor:
-                table_data = self.table_extractor.process(table_image)
-                table_encoding = TableEncoding.JSON
-            else:
-                table_data = self.ocr_detector.process(table_image)
-                table_encoding = TableEncoding.TEXT
+            table_images.append(table_image)
 
+        if self.table_extractor:
+            table_data = self.table_extractor.process(table_images)
+            table_encoding = TableEncoding.JSON
+        else:
+            table_data = self.ocr_detector.process(table_images)
+            table_encoding = TableEncoding.TEXT
+
+        for table_data, table_block, table_image in zip(
+            table_data, layout, table_images
+        ):
             table_text = str(table_data)
             table_image = PILImage.fromarray(table_image)
             table = Table(
@@ -77,21 +87,27 @@ class FigureFragmentProcessor(FragmentProcessor):
         self.ocr_detector = ocr_detector
 
     def process(self, image: np.ndarray, layout: Layout) -> List[PageFragment]:
+        _logger.info("Processing %d figure fragments in page", len(layout))
         figure_fragments = []
+        figure_images = []
         for figure_block in layout:
             figure_image = figure_block.pad(
                 left=5, right=5, top=5, bottom=5
             ).crop_image(image)
-            figure_text = self.ocr_detector.process(figure_image)
-            figure_image = PILImage.fromarray(figure_image)
+            figure_images.append(figure_image)
+
+        ocr_results = self.ocr_detector.process(figure_images)
+        for ocr_result, figure_block, figure_image in zip(
+            ocr_results, layout, figure_images
+        ):
             figure_fragments.append(
                 PageFragment(
                     fragment_type=PageFragmentType.FIGURE,
                     content=Figure(
-                        image=figure_image,
+                        image=PILImage.fromarray(figure_image),
                         bbox=figure_block.rectangle,
                         score=figure_block.score,
-                        text=figure_text,
+                        text=ocr_result,
                     ),
                 )
             )
@@ -103,22 +119,28 @@ class TextFragmentProcessor(FragmentProcessor):
         self.ocr_detector = ocr_detector
 
     def process(self, image: np.ndarray, layout: Layout) -> List[PageFragment]:
+        _logger.info("Processing %d text fragments in page", len(layout))
         text_fragments = []
+        text_images = []
         for text_block in layout:
             text_image = text_block.pad(
                 left=5, right=5, top=5, bottom=5
             ).crop_image(image)
-            text_data = self.ocr_detector.process(text_image)
-            text_image = PILImage.fromarray(text_image)
+            text_images.append(text_image)
+
+        ocr_results = self.ocr_detector.process(text_images)
+        for ocr_result, text_block, text_image in zip(
+            ocr_results, layout, text_images
+        ):
             text_fragments.append(
                 PageFragment(
                     fragment_type=PageFragmentType.TEXT,
                     content=TextBox(
-                        text=text_data,
+                        text=ocr_result,
                         text_type=text_block.type,
                         bbox=text_block.rectangle,
                         score=text_block.score,
-                        image=text_image,
+                        image=PILImage.fromarray(text_image),
                     ),
                 )
             )

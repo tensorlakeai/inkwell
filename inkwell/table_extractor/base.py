@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, List, Union
 
 import numpy as np
 
 
 class BaseTableExtractor(ABC):
     @abstractmethod
-    def process(self, image: np.ndarray) -> Dict:
+    def process(
+        self, image: Union[np.ndarray, List[np.ndarray]]
+    ) -> Union[Dict, List[Dict]]:
         pass
 
     @property
