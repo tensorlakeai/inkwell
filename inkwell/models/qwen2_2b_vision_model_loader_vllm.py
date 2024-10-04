@@ -11,16 +11,21 @@ from inkwell.models.models import ModelType
 from inkwell.utils.env_utils import (
     is_flash_attention_available,
     is_torch_cuda_available,
+    is_vllm_available,
 )
 
 
-class Qwen2VL2VModelWrapper(BaseVisionModelWrapper):
+class Qwen2VL2VModelWrapperVLLM(BaseVisionModelWrapper):
     def __init__(self):
         self._model_cfg = QWEN2_VISION_MODEL_CONFIG
         self._load_model()
 
     def _load_model(self):
-        if not (is_torch_cuda_available() and is_flash_attention_available()):
+        if not (
+            is_torch_cuda_available()
+            and is_flash_attention_available()
+            and is_vllm_available()
+        ):
             raise ValueError(
                 "vLLM based models work best with \
             flash-attention and modern GPUs"
@@ -97,5 +102,5 @@ class Qwen2VL2VModelWrapper(BaseVisionModelWrapper):
 # Register the Qwen2 2B VL VLLM model loader
 ModelRegistry.register_wrapper_loader(
     model_name=ModelType.QWEN2_2B_VISION_VLLM.value,
-    loader=Qwen2VL2VModelWrapper,
+    loader=Qwen2VL2VModelWrapperVLLM,
 )
