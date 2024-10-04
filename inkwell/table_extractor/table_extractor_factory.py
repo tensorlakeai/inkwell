@@ -8,7 +8,11 @@ from inkwell.table_extractor.table_extractor import TableExtractorType
 from inkwell.table_extractor.table_transformer_extractor import (
     TableTransformerExtractor,
 )
-from inkwell.utils.env_utils import is_paddleocr_available, is_qwen2_available
+from inkwell.utils.env_utils import (
+    is_paddleocr_available,
+    is_qwen2_available,
+    is_vllm_available,
+)
 
 
 class TableExtractorFactory:
@@ -18,12 +22,16 @@ class TableExtractorFactory:
     ):
         if table_extractor_type == TableExtractorType.TABLE_TRANSFORMER:
             return TableTransformerExtractor()
-        if table_extractor_type == TableExtractorType.PHI3_VISION:
-            return Phi3VTableExtractor(**kwargs)
+
+        if is_vllm_available():
+            if table_extractor_type == TableExtractorType.PHI3_VISION:
+                return Phi3VTableExtractor(**kwargs)
+
         if table_extractor_type == TableExtractorType.OPENAI_GPT4O_MINI:
             return OpenAI4OMiniTableExtractor()
+
         if table_extractor_type == TableExtractorType.QWEN2_2B_VISION:
-            if is_qwen2_available():
+            if is_qwen2_available() and is_vllm_available():
                 from inkwell.table_extractor.qwen2_table_extractor import (  # pylint: disable=import-outside-toplevel,unused-import
                     Qwen2TableExtractor,
                 )

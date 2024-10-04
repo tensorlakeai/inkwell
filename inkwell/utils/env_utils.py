@@ -63,3 +63,10 @@ def is_paddleocr_available():
     Check if PaddleOCR is available.
     """
     return importlib.util.find_spec("paddleocr") is not None
+
+
+def is_vllm_available():
+    """
+    Check if VLLM is available.
+    """
+    return importlib.util.find_spec("vllm") is not None

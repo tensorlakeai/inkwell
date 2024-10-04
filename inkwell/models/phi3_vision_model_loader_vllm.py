@@ -1,3 +1,6 @@
+# pylint: disable=duplicate-code
+
+
 import logging
 from typing import Union
 
@@ -12,6 +15,7 @@ from inkwell.models.models import ModelType
 from inkwell.utils.env_utils import (
     is_flash_attention_available,
     is_torch_cuda_available,
+    is_vllm_available,
 )
 
 _logger = logging.getLogger(__name__)
@@ -28,7 +32,11 @@ class Phi3VisionModelWrapperVLLM(BaseVisionModelWrapper):
         self._load_model()
 
     def _load_model(self):
-        if not (is_torch_cuda_available() and is_flash_attention_available()):
+        if not (
+            is_torch_cuda_available()
+            and is_flash_attention_available()
+            and is_vllm_available()
+        ):
             raise ValueError(
                 "vLLM based models work best with \
             flash-attention and modern GPUs"
