@@ -1,3 +1,4 @@
+import logging
 from typing import List, Union
 
 import numpy as np
@@ -14,10 +15,13 @@ from inkwell.utils.env_utils import (
     is_vllm_available,
 )
 
+_logger = logging.getLogger(__name__)
+
 
 class Qwen2VL2VModelWrapperVLLM(BaseVisionModelWrapper):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._model_cfg = QWEN2_VISION_MODEL_CONFIG
+        self._model_path = kwargs.get("model_path", None)
         self._load_model()
 
     def _load_model(self):
@@ -31,8 +35,10 @@ class Qwen2VL2VModelWrapperVLLM(BaseVisionModelWrapper):
             flash-attention and modern GPUs"
             )
 
+        model_path = self._model_path or self._model_cfg.model_name_hf
+        _logger.info("Loading model from path: %s", model_path)
         self._model = LLM(
-            model=self._model_cfg.model_name_hf,
+            model=model_path,
             quantization="fp8",
             dtype="bfloat16",
         )

@@ -137,8 +137,7 @@ class Pipeline:
             ]
 
         pages = [
-            (convert_page_to_image(page), page.page_number + 1)
-            for page in pages
+            (convert_page_to_image(page), page.page_number) for page in pages
         ]
 
         return pages

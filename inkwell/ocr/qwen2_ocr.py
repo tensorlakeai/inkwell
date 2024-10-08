@@ -20,13 +20,14 @@ class Qwen2OCR(BaseOCR):
         self._inference_backend = kwargs.get(
             "inference_backend", InferenceBackend.VLLM
         )
-        self._model_wrapper = (
-            ModelType.PHI3_VISION_VLLM.value
+        self._model_path = kwargs.get("model_path", None)
+        self._model_name = (
+            ModelType.QWEN2_2B_VISION_VLLM.value
             if self._inference_backend == InferenceBackend.VLLM
-            else ModelType.PHI3_VISION.value
+            else ModelType.QWEN2_2B_VISION.value
         )
         self._model_wrapper = ModelRegistry.get_model_wrapper(
-            self._model_wrapper
+            self._model_name, **{"model_path": self._model_path}
         )
 
     @property

@@ -16,13 +16,14 @@ class OCRFactory:
         if ocr_type == OCRType.TESSERACT:
             return TesseractOCR(**kwargs)
 
-        if is_vllm_available():
-            from inkwell.ocr.phi3_ocr import (  # pylint: disable=import-outside-toplevel
-                Phi3VisionOCR,
-            )
+        if ocr_type == OCRType.PHI3_VISION:
+            if is_vllm_available():
+                from inkwell.ocr.phi3_ocr import (  # pylint: disable=import-outside-toplevel
+                    Phi3VisionOCR,
+                )
 
-            if ocr_type == OCRType.PHI3_VISION:
                 return Phi3VisionOCR(**kwargs)
+
         if ocr_type == OCRType.OPENAI_GPT4O_MINI:
             return OpenAI4OMiniOCR()
         if ocr_type == OCRType.QWEN2_2B_VISION:
