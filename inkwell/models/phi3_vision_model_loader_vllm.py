@@ -26,9 +26,10 @@ NUM_IMAGES = 1
 
 class Phi3VisionModelWrapperVLLM(BaseVisionModelWrapper):
 
-    def __init__(self):
+    def __init__(self, **kwargs):
 
         self._model_cfg = PHI3_VISION_MODEL_CONFIG
+        self._model_path = kwargs.get("model_path", None)
         self._load_model()
 
     def _load_model(self):
@@ -42,8 +43,12 @@ class Phi3VisionModelWrapperVLLM(BaseVisionModelWrapper):
             flash-attention and modern GPUs"
             )
 
+        model_path = self._model_path or self._model_cfg.model_name_hf
+
+        _logger.info("Loading model from path: %s", model_path)
+
         self._model = LLM(
-            model=self._model_cfg.model_name_hf,
+            model=model_path,
             trust_remote_code=True,
             quantization="fp8",
             max_model_len=10000,
