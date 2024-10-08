@@ -1,5 +1,6 @@
 # pylint: disable=used-before-assignment
 
+import logging
 import os
 from pathlib import Path
 from typing import Callable, List, Optional, Union
@@ -19,6 +20,8 @@ from inkwell.utils.env_utils import (
 if is_detectron2_available():
     import detectron2.config  # pylint: disable=import-outside-toplevel
     import detectron2.engine  # pylint: disable=import-outside-toplevel
+
+_logger = logging.getLogger(__name__)
 
 
 class BatchPredictor(detectron2.engine.DefaultPredictor):
@@ -209,7 +212,8 @@ class Detectron2LayoutDetector(BaseLayoutDetector):
             / self._config["WEIGHTS_FILE"]
         )
 
-        model_path = kwargs.get("model_path", default_model_path)
+        model_path = kwargs.pop("model_path", default_model_path)
+        model_path = Path(model_path)
 
         if not model_path.exists():
 
@@ -222,6 +226,8 @@ class Detectron2LayoutDetector(BaseLayoutDetector):
         config_path = (
             Path(self._config["cfg_dir"]) / self._config["CONFIG_FILE"]
         )
+
+        _logger.info("Loading Layout Detector model from %s", model_path)
 
         self._model = Detectron2LayoutEngine(
             model_path=str(model_path),
