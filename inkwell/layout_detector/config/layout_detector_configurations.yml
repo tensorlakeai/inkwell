@@ -9,17 +9,6 @@ faster_rcnn:
     3: "Table"
     4: "Figure"
 
-dit:
-  WEIGHTS_URL: "https://huggingface.co/tensorlake/dit_cascade-publaynet/resolve/main/publaynet_dit-b_cascade.pth"
-  WEIGHTS_FILE: "dit_cascade-publaynet.pth"
-  CONFIG_FILE: "cascade_dit_base.yml"
-  LABEL_MAP:
-    0: "Text"
-    1: "Title"
-    2: "List"
-    3: "Table"
-    4: "Figure"
-
 layoutlmv3:
   WEIGHTS_URL: "https://huggingface.co/tensorlake/layoutlmv3-publaynet/resolve/main/model_final.pth"
   WEIGHTS_FILE: "model_final.pth"
