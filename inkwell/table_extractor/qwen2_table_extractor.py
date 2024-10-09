@@ -2,8 +2,7 @@ import logging
 
 import numpy as np
 
-from inkwell.models.model_registry import ModelRegistry
-from inkwell.models.models import InferenceBackend, ModelType
+from inkwell.ocr.qwen2_ocr import Qwen2OCR
 from inkwell.table_extractor.base import BaseTableExtractor
 from inkwell.table_extractor.config import _load_table_extractor_prompt
 from inkwell.table_extractor.table_extractor import TableExtractorType
@@ -15,18 +14,7 @@ _logger = logging.getLogger(__name__)
 class Qwen2TableExtractor(BaseTableExtractor):
     def __init__(self, **kwargs):
         self._prompt = _load_table_extractor_prompt()
-        self._inference_backend = kwargs.get(
-            "inference_backend", InferenceBackend.VLLM
-        )
-        self._model_path = kwargs.get("model_path", None)
-        self._model_name = (
-            ModelType.QWEN2_2B_VISION_VLLM.value
-            if self._inference_backend == InferenceBackend.VLLM
-            else ModelType.QWEN2_2B_VISION.value
-        )
-        self._model_wrapper = ModelRegistry.get_model_wrapper(
-            self._model_name, **{"model_path": self._model_path}
-        )
+        self._ocr_client = Qwen2OCR(**kwargs)
 
     @property
     def model_id(self) -> str:
@@ -37,6 +25,5 @@ class Qwen2TableExtractor(BaseTableExtractor):
         _logger.info("Running Qwen2 Vision Table Extractor")
         system_prompt = self._prompt.system_prompt
         user_prompt = self._prompt.user_prompt
-        result = self._model_wrapper.process(image, user_prompt, system_prompt)
-
+        result = self._ocr_client.process(image, user_prompt, system_prompt)
         return result

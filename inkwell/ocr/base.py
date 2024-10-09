@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Union
+from typing import List, Optional, Union
 
 import numpy as np
 
@@ -13,6 +13,9 @@ class BaseOCR(ABC):
 
     @abstractmethod
     def process(
-        self, image: Union[np.ndarray, List[np.ndarray]]
+        self,
+        image: Union[np.ndarray, List[np.ndarray]],
+        user_prompt: Optional[str] = None,
+        system_prompt: Optional[str] = None,
     ) -> Union[str, List[str]]:
         pass

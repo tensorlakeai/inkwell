@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 import numpy as np
 import pytesseract
@@ -21,7 +21,10 @@ class TesseractOCR(BaseOCR):
         return text
 
     def process(
-        self, image: Union[np.ndarray, List[np.ndarray]]
+        self,
+        image: Union[np.ndarray, List[np.ndarray]],
+        user_prompt: Optional[str] = None,
+        system_prompt: Optional[str] = None,
     ) -> Union[str, List[str]]:
         """
         Processes the image(s) and returns the text(s) detected.
@@ -32,6 +35,7 @@ class TesseractOCR(BaseOCR):
         Returns:
             str or list[str]: The text(s) detected.
         """
+        _, _ = user_prompt, system_prompt
         if isinstance(image, list):
             return [self._detect(img) for img in image]
         return self._detect(image)
