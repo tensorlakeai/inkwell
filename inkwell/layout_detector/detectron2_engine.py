@@ -212,8 +212,12 @@ class Detectron2LayoutDetector(BaseLayoutDetector):
             / self._config["WEIGHTS_FILE"]
         )
 
-        model_path = kwargs.pop("model_path", default_model_path)
-        model_path = Path(model_path)
+        if "model_path" in kwargs:
+            model_path = (
+                Path(kwargs.pop("model_path")) / self._config["WEIGHTS_FILE"]
+            )
+        else:
+            model_path = Path(default_model_path)
 
         if not model_path.exists():
 

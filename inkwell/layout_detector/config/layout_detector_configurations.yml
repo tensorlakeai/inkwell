@@ -1,6 +1,6 @@
 faster_rcnn:
   WEIGHTS_URL: "https://huggingface.co/tensorlake/faster_rcnn-publaynet/resolve/main/model_final.pth"
-  WEIGHTS_FILE: "faster_rcnn-publaynet.pth"
+  WEIGHTS_FILE: "model_final.pth"
   CONFIG_FILE: "faster_rcnn_detectron2_cfg.yml" 
   LABEL_MAP:
     0: "Text"
