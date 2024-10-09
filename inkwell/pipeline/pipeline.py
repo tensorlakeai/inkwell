@@ -4,6 +4,8 @@ from typing import List, Optional
 from PIL import Image as PILImage
 
 from inkwell.components import Document, Layout, LayoutBlock, Page
+from inkwell.figure_extractor import FigureExtractorFactory
+from inkwell.figure_extractor.base import BaseFigureExtractor
 from inkwell.io import convert_page_to_image, read_image, read_pdf_document
 from inkwell.layout_detector import LayoutDetectorFactory
 from inkwell.layout_detector.base import BaseLayoutDetector
@@ -34,6 +36,7 @@ class Pipeline:
         ocr_detector: BaseOCR = None,
         table_detector: BaseTableDetector = None,
         table_extractor: BaseTableExtractor = None,
+        figure_extractor: BaseFigureExtractor = None,
     ):
         self.config = config
         self._model_ids = {}
@@ -42,6 +45,7 @@ class Pipeline:
         self._initialize_ocr_detector(ocr_detector)
         self._initialize_table_detector(table_detector)
         self._initialize_table_extractor(table_extractor)
+        self._initialize_figure_extractor(figure_extractor)
 
         self.table_fragment_processor = TableFragmentProcessor(
             ocr_detector=self.ocr_detector,
@@ -49,7 +53,8 @@ class Pipeline:
         )
 
         self.figure_fragment_processor = FigureFragmentProcessor(
-            ocr_detector=self.ocr_detector
+            ocr_detector=self.ocr_detector,
+            figure_extractor=self.figure_extractor,
         )
 
         self.text_fragment_processor = TextFragmentProcessor(
@@ -116,6 +121,25 @@ class Pipeline:
 
         if self.table_extractor:
             self._model_ids["table_extractor"] = self.table_extractor.model_id
+
+    def _initialize_figure_extractor(
+        self, figure_extractor: Optional[BaseFigureExtractor] = None
+    ):
+        if figure_extractor:
+            self.figure_extractor = figure_extractor
+        elif self.config.figure_extractor:
+            self.figure_extractor = (
+                FigureExtractorFactory.get_figure_extractor(
+                    self.config.figure_extractor
+                )
+            )
+        else:
+            self.figure_extractor = None
+
+        if self.figure_extractor:
+            self._model_ids["figure_extractor"] = (
+                self.figure_extractor.model_id
+            )
 
     def _is_native_pdf(self, path: str) -> bool:
         return path.endswith(".pdf")
