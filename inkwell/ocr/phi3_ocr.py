@@ -1,7 +1,7 @@
 # pylint: disable=duplicate-code
 
 import logging
-from typing import List, Union
+from typing import List, Optional, Union
 
 import numpy as np
 
@@ -35,8 +35,13 @@ class Phi3VisionOCR(BaseOCR):
         return OCRType.PHI3_VISION.value
 
     def process(
-        self, image: Union[np.ndarray, List[np.ndarray]]
+        self,
+        image: Union[np.ndarray, List[np.ndarray]],
+        user_prompt: Optional[str] = None,
+        system_prompt: Optional[str] = None,
     ) -> Union[str, List[str]]:
-        system_prompt = self._ocr_prompts.system_prompt
-        user_prompt = self._ocr_prompts.ocr_user_prompt
+        if not user_prompt:
+            user_prompt = self._ocr_prompts.ocr_user_prompt
+        if not system_prompt:
+            system_prompt = self._ocr_prompts.system_prompt
         return self._model_wrapper.process(image, user_prompt, system_prompt)
