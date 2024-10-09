@@ -127,7 +127,8 @@ class TextFragmentProcessor(FragmentProcessor):
     def process(
         self, image: np.ndarray, layout: Union[Layout, None] = None
     ) -> List[PageFragment]:
-        _logger.info("Processing %d text fragments in page", len(layout))
+        num_fragments = 1 if layout is None else len(layout)
+        _logger.info("Processing %d text fragments in page", num_fragments)
 
         if layout is None:
             ocr_results = self.ocr_detector.process([image])

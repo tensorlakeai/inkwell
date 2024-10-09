@@ -189,12 +189,12 @@ class Pipeline:
         pages = self._get_pages(document_path, pages_to_parse)
 
         processed_pages = []
+        layout = None
+        fragments = []
         for idx, (page_image, page_number) in enumerate(pages):
             _logger.info("Processing page %d/%d", idx + 1, len(pages))
             if self.layout_detector:
                 layout = self.layout_detector.process(page_image)
-
-                fragments = []
                 figure_blocks, table_blocks, text_blocks = (
                     self._categorize_blocks(layout.get_blocks())
                 )
@@ -229,10 +229,10 @@ class Pipeline:
                     "No layout detector configured, \
                     doing OCR on the whole image"
                 )
-                fragments = self.text_fragment_processor.process(
-                    page_image, None
-                )
-                layout = None
+            full_page_text_fragments = self.text_fragment_processor.process(
+                page_image, None
+            )
+            fragments.extend(full_page_text_fragments)
 
             processed_pages.append(
                 Page(
