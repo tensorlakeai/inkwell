@@ -15,10 +15,7 @@ from inkwell.components import (
     TableEncoding,
     TextBox,
 )
-from inkwell.figure_extractor.prompts import (
-    FIGURE_EXTRACTOR_SYSTEM_PROMPT,
-    FIGURE_EXTRACTOR_USER_PROMPT,
-)
+from inkwell.figure_extractor.base import BaseFigureExtractor
 from inkwell.ocr.base import BaseOCR
 from inkwell.table_extractor.base import BaseTableExtractor
 
@@ -89,8 +86,11 @@ class TableFragmentProcessor(FragmentProcessor):
 
 
 class FigureFragmentProcessor(FragmentProcessor):
-    def __init__(self, ocr_detector: BaseOCR):
+    def __init__(
+        self, ocr_detector: BaseOCR, figure_extractor: BaseFigureExtractor
+    ):
         self.ocr_detector = ocr_detector
+        self.figure_extractor = figure_extractor
 
     def process(
         self, image: np.ndarray, layout: Union[Layout, None] = None
@@ -102,11 +102,11 @@ class FigureFragmentProcessor(FragmentProcessor):
             figure_image = figure_block.pad_ratio(0.05).crop_image(image)
             figure_images.append(figure_image)
 
-        ocr_results = self.ocr_detector.process(
-            figure_images,
-            user_prompt=FIGURE_EXTRACTOR_USER_PROMPT,
-            system_prompt=FIGURE_EXTRACTOR_SYSTEM_PROMPT,
-        )
+        if self.figure_extractor:
+            ocr_results = self.figure_extractor.process(figure_images)
+        else:
+            ocr_results = self.ocr_detector.process(figure_images)
+
         for ocr_result, figure_block, figure_image in zip(
             ocr_results, layout, figure_images
         ):
