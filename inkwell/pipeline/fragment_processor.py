@@ -57,9 +57,7 @@ class TableFragmentProcessor(FragmentProcessor):
         table_fragments = []
         table_images = []
         for table_block in layout:
-            table_image = table_block.pad(
-                left=5, right=5, top=5, bottom=5
-            ).crop_image(image)
+            table_image = table_block.pad_ratio(0.05).crop_image(image)
             table_images.append(table_image)
 
         if self.table_extractor:
@@ -101,9 +99,7 @@ class FigureFragmentProcessor(FragmentProcessor):
         figure_fragments = []
         figure_images = []
         for figure_block in layout:
-            figure_image = figure_block.pad(
-                left=5, right=5, top=5, bottom=5
-            ).crop_image(image)
+            figure_image = figure_block.pad_ratio(0.05).crop_image(image)
             figure_images.append(figure_image)
 
         ocr_results = self.ocr_detector.process(
@@ -157,9 +153,7 @@ class TextFragmentProcessor(FragmentProcessor):
         text_images = []
         text_fragments = []
         for text_block in layout:
-            text_image = text_block.pad(
-                left=5, right=5, top=5, bottom=5
-            ).crop_image(image)
+            text_image = text_block.pad_ratio(0.05).crop_image(image)
             text_images.append(text_image)
 
         ocr_results = self.ocr_detector.process(text_images)
