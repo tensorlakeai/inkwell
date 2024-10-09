@@ -773,6 +773,18 @@ class Rectangle(BaseCoordElement):
 
         return self.__class__(x_1, y_1, x_2, y_2)
 
+    def pad_ratio(self, ratio: float = 0.05):
+
+        if not 0 < ratio < 1:
+            raise ValueError("Ratio should be between 0 and 1")
+
+        return self.pad(
+            left=self.width * ratio,
+            right=self.width * ratio,
+            top=self.height * ratio,
+            bottom=self.height * ratio,
+        )
+
     def shift(self, shift_distance=0):
 
         if not isinstance(shift_distance, Iterable):
@@ -1354,6 +1366,10 @@ class LayoutBlock(BaseLayoutElement):
     @mixin_layoutblock_meta
     def pad(self, left=0, right=0, top=0, bottom=0, safe_mode=True):
         return self.block.pad(left, right, top, bottom, safe_mode)
+
+    @mixin_layoutblock_meta
+    def pad_ratio(self, ratio: float = 0.05):
+        return self.block.pad_ratio(ratio)
 
     @mixin_layoutblock_meta
     def scale(self, scale_factor):
