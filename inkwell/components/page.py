@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Union
+from typing import List, Optional, Union
 
 from PIL import Image
 from pydantic import BaseModel
@@ -32,7 +32,7 @@ class Page(BaseModel):
 
     page_number: int
     page_fragments: List[PageFragment]
-    layout: Layout
+    layout: Optional[Layout]
     page_image: Image.Image
 
     def text_fragments(self) -> List[TextBox]:

@@ -22,17 +22,25 @@ class DefaultPipelineConfig(PipelineConfig):
     layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
     inference_backend: InferenceBackend = InferenceBackend.VLLM
 
-    layout_detector: LayoutDetectorType = LayoutDetectorType.FASTER_RCNN
-    ocr_detector: OCRType = OCRType.TESSERACT
-    table_detector: TableDetectorType = None
-    table_extractor: TableExtractorType = TableExtractorType.TABLE_TRANSFORMER
+    layout_detector: Union[LayoutDetectorType, None] = (
+        LayoutDetectorType.FASTER_RCNN
+    )
+    ocr_detector: Union[OCRType, None] = OCRType.TESSERACT
+    table_detector: Union[TableDetectorType, None] = None
+    table_extractor: Union[TableExtractorType, None] = (
+        TableExtractorType.TABLE_TRANSFORMER
+    )
 
 
 class DefaultGPUPipelineConfig(PipelineConfig):
     table_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
     layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
     inference_backend: InferenceBackend = InferenceBackend.VLLM
-    layout_detector: LayoutDetectorType = LayoutDetectorType.FASTER_RCNN
-    ocr_detector: OCRType = OCRType.PHI3_VISION
-    table_detector: TableDetectorType = None
-    table_extractor: TableExtractorType = TableExtractorType.PHI3_VISION
+    layout_detector: Union[LayoutDetectorType, None] = (
+        LayoutDetectorType.FASTER_RCNN
+    )
+    ocr_detector: Union[OCRType, None] = OCRType.PHI3_VISION
+    table_detector: Union[TableDetectorType, None] = None
+    table_extractor: Union[TableExtractorType, None] = (
+        TableExtractorType.PHI3_VISION
+    )
