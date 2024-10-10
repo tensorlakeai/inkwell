@@ -30,6 +30,6 @@ PHI3_VISION_MODEL_CONFIG = HuggingFaceOCRModelConfig(
 QWEN2_VISION_MODEL_CONFIG = HuggingFaceOCRModelConfig(
     model_name_hf="Qwen/Qwen2-VL-2B-Instruct",
     generation_args=GenerationArgs(
-        max_new_tokens=2048, temperature=0.2, top_p=0.95
+        max_new_tokens=2048, temperature=0.2, top_p=0.95, top_k=-1
     ),
 )
