@@ -24,6 +24,14 @@ class OCRFactory:
 
                 return Phi3VisionOCR(**kwargs)
 
+        if ocr_type == OCRType.MINI_CPM:
+            if is_vllm_available():
+                from inkwell.ocr.minicpm_ocr import (  # pylint: disable=import-outside-toplevel
+                    MiniCPMOCR,
+                )
+
+                return MiniCPMOCR(**kwargs)
+
         if ocr_type == OCRType.OPENAI_GPT4O_MINI:
             return OpenAI4OMiniOCR()
         if ocr_type == OCRType.QWEN2_2B_VISION:

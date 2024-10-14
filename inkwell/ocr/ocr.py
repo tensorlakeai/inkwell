@@ -7,3 +7,4 @@ class OCRType(Enum):
     QWEN2_2B_VISION = "qwen2_2b_vision"
     PADDLE = "paddle"
     OPENAI_GPT4O_MINI = "openai_gpt4o_mini"
+    MINI_CPM = "minicpm"
