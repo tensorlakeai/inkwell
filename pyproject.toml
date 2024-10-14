@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "py-inkwell"
-version = "0.0.15"
+version = "0.0.16"
 description = "Python library for document processing"
 authors = ["Mohit Raghavendra <mohithmitra@gmail.com>"]
 license = "Apache 2.0"
@@ -14,7 +14,7 @@ packages = [{ include = "inkwell"}]
 python = "^3.9"
 pydantic = "^2.8"
 torch = "^2.3.1"
-torchvision = "^0.19.1"
+torchvision = "^0.19"
 Pillow = "^9.5.0"
 pandas = "^2.2.2"
 iopath = "^0.1.9"
