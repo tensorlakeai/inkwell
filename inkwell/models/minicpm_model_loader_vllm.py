@@ -1,6 +1,3 @@
-# pylint: disable=duplicate-code
-
-
 import logging
 from typing import Union
 
@@ -9,7 +6,7 @@ from PIL import Image
 from vllm import LLM, SamplingParams
 
 from inkwell.models.base import BaseVisionModelWrapper
-from inkwell.models.config import PHI3_VISION_MODEL_CONFIG
+from inkwell.models.config import MINI_CPM_MODEL_CONFIG
 from inkwell.models.model_registry import ModelRegistry
 from inkwell.models.models import ModelType
 from inkwell.utils.env_utils import (
@@ -20,15 +17,14 @@ from inkwell.utils.env_utils import (
 
 _logger = logging.getLogger(__name__)
 
-IMAGE_PLACEHOLDER = "<|image_{i}|>\n"
-NUM_IMAGES = 1
+IMAGE_PLACEHOLDER = "(<image>./</image>)"
+STOP_TOKENS = ["<|im_end|>", "<|endoftext|>"]
 
 
-class Phi3VisionModelWrapperVLLM(BaseVisionModelWrapper):
+class MiniCPMModelWrapperVLLM(BaseVisionModelWrapper):
 
     def __init__(self, **kwargs):
-
-        self._model_cfg = PHI3_VISION_MODEL_CONFIG
+        self._model_cfg = MINI_CPM_MODEL_CONFIG
         self._model_path = kwargs.get("model_path", None)
         self._load_model()
 
@@ -48,10 +44,7 @@ class Phi3VisionModelWrapperVLLM(BaseVisionModelWrapper):
         _logger.info("Loading model from path: %s", model_path)
 
         self._model = LLM(
-            model=model_path,
-            trust_remote_code=True,
-            quantization="fp8",
-            max_model_len=10000,
+            model=model_path, trust_remote_code=True, max_model_len=10000
         )
 
     def _get_messages(
@@ -62,20 +55,17 @@ class Phi3VisionModelWrapperVLLM(BaseVisionModelWrapper):
             {"role": "user", "content": image_placeholder + user_prompt},
         ]
 
-    def _preprocess_image_placeholder(self, num_images: int):
-        return "".join(
-            [IMAGE_PLACEHOLDER.format(i=i + 1) for i in range(num_images)]
+    def _preprocess_input(self, system_prompt: str, user_prompt: str) -> str:
+        messages = self._get_messages(
+            system_prompt, IMAGE_PLACEHOLDER, user_prompt
         )
-
-    def _get_llm_input(self, messages):
-        prompt = self._model.get_tokenizer().apply_chat_template(
+        inputs = self._model.get_tokenizer().apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
-
-        return prompt
+        return inputs
 
     def _load_generation_args(self):
-        generation_args = dict(PHI3_VISION_MODEL_CONFIG.generation_args)
+        generation_args = dict(MINI_CPM_MODEL_CONFIG.generation_args)
         if "max_new_tokens" in generation_args:
             generation_args["max_tokens"] = generation_args.pop(
                 "max_new_tokens"
@@ -87,14 +77,11 @@ class Phi3VisionModelWrapperVLLM(BaseVisionModelWrapper):
 
         return generation_args
 
-    def _preprocess_input(self, system_prompt: str, user_prompt: str) -> str:
-
-        image_placeholder = self._preprocess_image_placeholder(NUM_IMAGES)
-        messages = self._get_messages(
-            system_prompt, image_placeholder, user_prompt
-        )
-        inputs = self._get_llm_input(messages)
-        return inputs
+    def _stop_tokens(self):
+        return [
+            self._model.get_tokenizer().convert_tokens_to_ids(i)
+            for i in STOP_TOKENS
+        ]
 
     def process(
         self,
@@ -105,7 +92,9 @@ class Phi3VisionModelWrapperVLLM(BaseVisionModelWrapper):
 
         prompts = self._preprocess_input(system_prompt, user_prompt)
         generation_args = self._load_generation_args()
-        sampling_params = SamplingParams(**generation_args)
+        sampling_params = SamplingParams(
+            **generation_args, stop_token_ids=self._stop_tokens()
+        )
 
         if isinstance(image, list):
             data = [
@@ -128,8 +117,8 @@ class Phi3VisionModelWrapperVLLM(BaseVisionModelWrapper):
         return outputs[0].outputs[0].text
 
 
-# Register the Phi3 model loader
+# Register the MiniCPM model loader
 ModelRegistry.register_wrapper_loader(
-    model_name=ModelType.PHI3_VISION_VLLM.value,
-    loader=Phi3VisionModelWrapperVLLM,
+    model_name=ModelType.MINI_CPM_VLLM.value,
+    loader=MiniCPMModelWrapperVLLM,
 )

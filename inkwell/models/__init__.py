@@ -15,6 +15,9 @@ __all__ = [
 ]
 
 if is_vllm_available():
+    from inkwell.models.minicpm_model_loader_vllm import (
+        MiniCPMModelWrapperVLLM,
+    )
     from inkwell.models.phi3_vision_model_loader_vllm import (
         Phi3VisionModelWrapperVLLM,
     )
@@ -26,5 +29,6 @@ if is_vllm_available():
         [
             "Phi3VisionModelWrapperVLLM",
             "Qwen2VL2VModelWrapperVLLM",
+            "MiniCPMModelWrapperVLLM",
         ]
     )
