@@ -30,9 +30,9 @@ class Page(BaseModel):
     """
 
     page_number: int
-    page_fragments: List[PageFragment]
-    layout: Optional[dict]
-    page_image: str
+    page_fragments: Optional[List[PageFragment]] = []
+    layout: Optional[dict] = {}
+    page_image: Optional[str] = None
 
     def text_fragments(self) -> List[TextBox]:
         return [
