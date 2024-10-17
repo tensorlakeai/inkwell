@@ -1,9 +1,8 @@
 import logging
 from typing import List, Optional
 
-from PIL import Image as PILImage
-
-from inkwell.components import Document, Layout, LayoutBlock, Page
+from inkwell.api.page import Document, Page
+from inkwell.components import Layout, LayoutBlock
 from inkwell.figure_extractor import FigureExtractorFactory
 from inkwell.figure_extractor.base import BaseFigureExtractor
 from inkwell.io import convert_page_to_image, read_image, read_pdf_document
@@ -260,10 +259,10 @@ class Pipeline:
 
             processed_pages.append(
                 Page(
-                    page_image=PILImage.fromarray(page_image),
+                    page_image=Page.encode_image(page_image.tobytes()),
                     page_number=page_number,
                     page_fragments=fragments,
-                    layout=layout,
+                    layout=layout.to_dict(),
                 )
             )
 

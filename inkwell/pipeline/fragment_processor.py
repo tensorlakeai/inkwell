@@ -4,16 +4,11 @@ from typing import List, Optional, Union
 
 import numpy as np
 
-from inkwell.components import (
-    Document,
-    Figure,
-    Layout,
-    PageFragment,
-    PageFragmentType,
-    Table,
-    TableEncoding,
-    TextBox,
-)
+from inkwell.api.figure import Figure
+from inkwell.api.page import Document, PageFragment, PageFragmentType
+from inkwell.api.table import Table, TableEncoding
+from inkwell.api.text import TextBox
+from inkwell.components import Layout
 from inkwell.figure_extractor.base import BaseFigureExtractor
 from inkwell.ocr.base import BaseOCR
 from inkwell.table_extractor.base import BaseTableExtractor

@@ -1,13 +1,9 @@
 import numpy as np
 
-from inkwell.components import (
-    Figure,
-    PageFragment,
-    PageFragmentType,
-    Table,
-    TableEncoding,
-    TextBox,
-)
+from inkwell.api.figure import Figure
+from inkwell.api.page import PageFragment, PageFragmentType
+from inkwell.api.table import Table, TableEncoding
+from inkwell.api.text import TextBox
 
 
 def get_mock_text_fragment():

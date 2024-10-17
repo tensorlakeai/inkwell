@@ -291,6 +291,11 @@ class Layout(MutableSequence):
             "blocks": [ele.to_dict() for ele in self],
         }
 
+    @classmethod
+    def from_dict(cls, data):
+        blocks = [LayoutBlock.from_dict(block) for block in data["blocks"]]
+        return cls(blocks=blocks, page_data=data["page_data"])
+
     def get_homogeneous_blocks(self) -> List[BaseLayoutElement]:
         """Convert all elements into blocks of the same type based
         on the type casting rule::

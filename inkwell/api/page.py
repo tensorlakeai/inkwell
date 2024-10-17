@@ -1,13 +1,12 @@
+from base64 import b64encode
 from enum import Enum
 from typing import List, Optional, Union
 
-from PIL import Image
 from pydantic import BaseModel
 
-from inkwell.components.figure import Figure
-from inkwell.components.layout import Layout
-from inkwell.components.table import Table
-from inkwell.components.text import TextBox
+from inkwell.api.figure import Figure
+from inkwell.api.table import Table
+from inkwell.api.text import TextBox
 
 
 class PageFragmentType(str, Enum):
@@ -32,8 +31,8 @@ class Page(BaseModel):
 
     page_number: int
     page_fragments: List[PageFragment]
-    layout: Optional[Layout]
-    page_image: Image.Image
+    layout: Optional[dict]
+    page_image: str
 
     def text_fragments(self) -> List[TextBox]:
         return [
@@ -58,6 +57,11 @@ class Page(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
+
+    @staticmethod
+    def encode_image(image_bytes: bytes) -> str:
+        """Convert image bytes to base64 encoded string."""
+        return b64encode(image_bytes).decode("utf-8")
 
 
 class Document(BaseModel):
