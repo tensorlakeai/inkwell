@@ -21,7 +21,7 @@ Inkwell uses the following models, with more integrations in the work
 ## Installation
 
 ```bash
-pip install py-inkwell
+pip install py-inkwell[inference]
 ```
 
 In addition, install detectron2

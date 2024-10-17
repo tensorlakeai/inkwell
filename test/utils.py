@@ -1,14 +1,9 @@
 import numpy as np
-from PIL import Image as PILImage
 
-from inkwell.components import (
-    Figure,
-    PageFragment,
-    PageFragmentType,
-    Table,
-    TableEncoding,
-    TextBox,
-)
+from inkwell.api.figure import Figure
+from inkwell.api.page import PageFragment, PageFragmentType
+from inkwell.api.table import Table, TableEncoding
+from inkwell.api.text import TextBox
 
 
 def get_mock_text_fragment():
@@ -41,7 +36,7 @@ def get_mock_figure_fragment():
         PageFragment(
             fragment_type=PageFragmentType.FIGURE,
             content=Figure(
-                image=PILImage.fromarray(np.zeros((5, 5))),
+                image=Figure.encode_image(np.zeros((5, 5)).tobytes()),
                 text="Mock value",
             ),
         )

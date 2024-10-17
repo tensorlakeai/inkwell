@@ -9,24 +9,48 @@ homepage = "https://github.com/tensorlakeai/indexify"
 repository = "https://github.com/tensorlakeai/inkwell"
 packages = [{ include = "inkwell"}]
 
-
 [tool.poetry.dependencies]
 python = "^3.9"
+
+# Core dependencies for py-inkwell[api]
 pydantic = "^2.8"
-torch = "^2.3.1"
-torchvision = "^0.19"
-Pillow = "^9.5.0"
-pandas = "^2.2.2"
-iopath = "^0.1.9"
-timm = "^1.0.9"
-transformers = "^4.44.2"
-pytesseract = "^0.3.13"
-pdfplumber = "^0.11.4"
-openai = "^1.46.1"
-accelerate = "^0.34.2"
-albumentations = "^1.4.16"
-numpy = "<2.0.0"
-opencv-python = "^4.10.0.84"
+pyyaml = "^6.0.2"
+
+
+# Full dependencies for py-inkwell
+torch = { version = "^2.3.1", optional = true }
+torchvision = { version = "^0.19", optional = true }
+Pillow = { version = "^9.5.0", optional = true }
+pandas = { version = "^2.2.2", optional = true }
+iopath = { version = "^0.1.9", optional = true }
+timm = { version = "^1.0.9", optional = true }
+transformers = { version = "^4.44.2", optional = true }
+pytesseract = { version = "^0.3.13", optional = true }
+pdfplumber = { version = "^0.11.4", optional = true }
+openai = { version = "^1.46.1", optional = true }
+accelerate = { version = "^0.34.2", optional = true }
+albumentations = { version = "^1.4.16", optional = true }
+numpy = { version = "<2.0.0", optional = true }
+opencv-python = { version = "^4.10.0.84", optional = true }
+
+[tool.poetry.extras]
+api = []
+inference = [
+    "torch",
+    "torchvision",
+    "Pillow",
+    "pandas",
+    "iopath",
+    "timm",
+    "transformers",
+    "pytesseract",
+    "pdfplumber",
+    "openai",
+    "accelerate",
+    "albumentations",
+    "numpy",
+    "opencv-python"
+]
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"   

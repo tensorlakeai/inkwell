@@ -1,5 +1,6 @@
 import logging
 import os
+import pickle
 import unittest
 from test.utils import (
     get_mock_figure_fragment,
@@ -8,7 +9,7 @@ from test.utils import (
 )
 from unittest.mock import patch
 
-from inkwell.components import Document
+from inkwell.api.page import Document
 from inkwell.pipeline import DefaultPipelineConfig, Pipeline
 
 _PDF_URL = "https://pub-5dc4d0c0254749378ccbcfffa4bd2a1e.r2.dev/sample_ratings_report.pdf"  # noqa: E501, pylint: disable=line-too-long
@@ -64,3 +65,13 @@ class TestPipeline(unittest.TestCase):
         self.assertIsNotNone(processed_document.pages[0].table_fragments())
         self.assertIsNotNone(processed_document.pages[0].figure_fragments())
         self.assertIsNotNone(processed_document.pages[0].text_fragments())
+
+        try:
+            pickle.dumps(processed_document)
+            is_serializable = True
+        except (pickle.PicklingError, TypeError):
+            is_serializable = False
+
+        self.assertTrue(
+            is_serializable, "Processed document should be serializable"
+        )

@@ -16,6 +16,7 @@
 # pylint: skip-file
 
 import functools
+import json
 import warnings
 from collections.abc import Iterable
 from copy import copy
@@ -833,6 +834,53 @@ class Rectangle(BaseCoordElement):
 
     def to_quadrilateral(self):
         return Quadrilateral(self.points)
+
+    def to_dict(self):
+        """
+        Convert the Rectangle object to a dictionary.
+        """
+        return {
+            "block_type": self._name,
+            "x_1": self.x_1,
+            "y_1": self.y_1,
+            "x_2": self.x_2,
+            "y_2": self.y_2,
+        }
+
+    def to_json(self):
+        """
+        Convert the Rectangle object to a JSON string.
+        """
+        return json.dumps(self.to_dict())
+
+    @classmethod
+    def from_dict(cls, data):
+        """
+        Create a Rectangle object from a dictionary.
+        """
+        return cls(data["x_1"], data["y_1"], data["x_2"], data["y_2"])
+
+    @classmethod
+    def from_json(cls, json_str):
+        """
+        Create a Rectangle object from a JSON string.
+        """
+        data = json.loads(json_str)
+        return cls.from_dict(data)
+
+    def bbox_dict(self):
+        return {
+            "x_1": self.x_1,
+            "y_1": self.y_1,
+            "x_2": self.x_2,
+            "y_2": self.y_2,
+        }
+
+    def __repr__(self):
+        """
+        Return a string representation of the Rectangle.
+        """
+        return f"Rectangle(x_1={self.x_1}, y_1={self.y_1}, x_2={self.x_2}, y_2={self.y_2})"
 
 
 @inherit_docstrings
