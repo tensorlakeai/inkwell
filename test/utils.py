@@ -1,5 +1,4 @@
 import numpy as np
-from PIL import Image as PILImage
 
 from inkwell.components import (
     Figure,
@@ -41,7 +40,7 @@ def get_mock_figure_fragment():
         PageFragment(
             fragment_type=PageFragmentType.FIGURE,
             content=Figure(
-                image=PILImage.fromarray(np.zeros((5, 5))),
+                image=Figure.encode_image(np.zeros((5, 5)).tobytes()),
                 text="Mock value",
             ),
         )

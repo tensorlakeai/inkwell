@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
 import numpy as np
-from PIL import Image as PILImage
 
 from inkwell.components import (
     Document,
@@ -68,13 +67,13 @@ class TableFragmentProcessor(FragmentProcessor):
             table_data, layout, table_images
         ):
             table_text = str(table_data)
-            table_image = PILImage.fromarray(table_image)
+            table_image_bytes = table_image.tobytes()
             table = Table(
                 data=table_data,
                 text=table_text,
-                bbox=table_block.rectangle,
+                bbox=table_block.rectangle.bbox_dict(),
                 score=table_block.score,
-                image=table_image,
+                image=Table.encode_image(table_image_bytes),
                 encoding=table_encoding,
             )
             table_fragments.append(
@@ -114,8 +113,8 @@ class FigureFragmentProcessor(FragmentProcessor):
                 PageFragment(
                     fragment_type=PageFragmentType.FIGURE,
                     content=Figure(
-                        image=PILImage.fromarray(figure_image),
-                        bbox=figure_block.rectangle,
+                        image=Figure.encode_image(figure_image.tobytes()),
+                        bbox=figure_block.rectangle.bbox_dict(),
                         score=figure_block.score,
                         text=ocr_result,
                     ),
@@ -144,7 +143,7 @@ class TextFragmentProcessor(FragmentProcessor):
                         text_type="text",
                         bbox=None,
                         score=None,
-                        image=PILImage.fromarray(image),
+                        image=TextBox.encode_image(image.tobytes()),
                     ),
                 )
             ]
@@ -166,9 +165,9 @@ class TextFragmentProcessor(FragmentProcessor):
                     content=TextBox(
                         text=ocr_result,
                         text_type=text_block.type,
-                        bbox=text_block.rectangle,
+                        bbox=text_block.rectangle.bbox_dict(),
                         score=text_block.score,
-                        image=PILImage.fromarray(text_image),
+                        image=TextBox.encode_image(text_image.tobytes()),
                     ),
                 )
             )
