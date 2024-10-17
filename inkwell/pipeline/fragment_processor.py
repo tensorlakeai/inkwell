@@ -4,8 +4,9 @@ from typing import List, Optional, Union
 
 import numpy as np
 
+from inkwell.api.document import Document
 from inkwell.api.figure import Figure
-from inkwell.api.page import Document, PageFragment, PageFragmentType
+from inkwell.api.page import PageFragment, PageFragmentType
 from inkwell.api.table import Table, TableEncoding
 from inkwell.api.text import TextBox
 from inkwell.components import Layout

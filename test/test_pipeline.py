@@ -9,7 +9,7 @@ from test.utils import (
 )
 from unittest.mock import patch
 
-from inkwell.api.page import Document
+from inkwell.api.document import Document
 from inkwell.pipeline import DefaultPipelineConfig, Pipeline
 
 _PDF_URL = "https://pub-5dc4d0c0254749378ccbcfffa4bd2a1e.r2.dev/sample_ratings_report.pdf"  # noqa: E501, pylint: disable=line-too-long
