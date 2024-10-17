@@ -19,8 +19,6 @@ from collections.abc import Iterable, MutableSequence
 from copy import copy
 from typing import Any, Dict, List, Optional
 
-import pandas as pd
-
 from inkwell.components.base import BaseLayoutElement
 from inkwell.components.elements import (
     ALL_BASECOORD_ELEMENTS,
@@ -349,29 +347,6 @@ class Layout(MutableSequence):
             ]
 
         return new_blocks
-
-    def to_dataframe(self, enforce_same_type=False) -> pd.DataFrame:
-        """Convert the layout object into the dataframe.
-        Warning: the page data won't be exported.
-
-        Args:
-            enforce_same_type (:obj:`bool`, optional):
-                If true, it will convert all the contained blocks to
-                the maximal compatible data type.
-                Defaults to False.
-
-        Returns:
-            pd.DataFrame:
-                The dataframe representation of layout object
-        """
-        if enforce_same_type:
-            blocks = self.get_homogeneous_blocks()
-        else:
-            blocks = self
-
-        df = pd.DataFrame([ele.to_dict() for ele in blocks])
-
-        return df
 
     def get_blocks(self) -> List[LayoutBlock]:
         return self._blocks
