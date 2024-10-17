@@ -1,7 +1,8 @@
 import logging
 from typing import List, Optional
 
-from inkwell.api.page import Document, Page
+from inkwell.api.document import Document
+from inkwell.api.page import Page
 from inkwell.components import Layout, LayoutBlock
 from inkwell.figure_extractor import FigureExtractorFactory
 from inkwell.figure_extractor.base import BaseFigureExtractor

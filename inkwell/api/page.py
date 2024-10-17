@@ -1,6 +1,6 @@
 from base64 import b64encode
 from enum import Enum
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
@@ -22,6 +22,12 @@ class PageFragmentType(str, Enum):
 class PageFragment(BaseModel):
     fragment_type: PageFragmentType
     content: Union[TextBox, Table, Figure]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "fragment_type": self.fragment_type,
+            "content": self.content.to_dict(),
+        }
 
 
 class Page(BaseModel):
@@ -63,10 +69,12 @@ class Page(BaseModel):
         """Convert image bytes to base64 encoded string."""
         return b64encode(image_bytes).decode("utf-8")
 
-
-class Document(BaseModel):
-    """
-    Document in a document.
-    """
-
-    pages: List[Page]
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "page_number": self.page_number,
+            "page_fragments": [
+                fragment.to_dict() for fragment in self.page_fragments
+            ],
+            "layout": self.layout,
+            "page_image": self.page_image,
+        }
