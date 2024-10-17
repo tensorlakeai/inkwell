@@ -39,3 +39,13 @@ class Table(BaseModel):
     def encode_image(image_bytes: bytes) -> str:
         """Convert image bytes to base64 encoded string."""
         return b64encode(image_bytes).decode("utf-8")
+
+    def to_dict(self) -> dict:
+        return {
+            "fragment_type": "table",
+            "data": self.data,
+            "encoding": self.encoding,
+            "bbox": self.bbox,
+            "text": self.text,
+            "score": self.score,
+        }
