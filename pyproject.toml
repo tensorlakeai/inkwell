@@ -14,6 +14,8 @@ python = "^3.9"
 
 # Core dependencies for py-inkwell[api]
 pydantic = "^2.8"
+pyyaml = "^6.0.2"
+
 
 # Full dependencies for py-inkwell
 torch = { version = "^2.3.1", optional = true }

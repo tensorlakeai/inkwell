@@ -2001,7 +2001,7 @@ files = [
 name = "pyyaml"
 version = "6.0.2"
 description = "YAML parser and emitter for Python"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "PyYAML-6.0.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:0a9a2848a5b7feac301353437eb7d5957887edbf81d56e903999a75a3d743086"},
@@ -3008,9 +3008,9 @@ files = [
 
 [extras]
 api = []
-full = ["Pillow", "accelerate", "albumentations", "iopath", "numpy", "openai", "opencv-python", "pandas", "pdfplumber", "pytesseract", "timm", "torch", "torchvision", "transformers"]
+inference = ["Pillow", "accelerate", "albumentations", "iopath", "numpy", "openai", "opencv-python", "pandas", "pdfplumber", "pytesseract", "timm", "torch", "torchvision", "transformers"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "6e2cec24553a550210499f68d486198a094557bc976cf6d10708c9074a90303e"
+content-hash = "a1291c96f4c27e5385dfe808d6e3350e2a76b057590e1181d584de15c4618413"
