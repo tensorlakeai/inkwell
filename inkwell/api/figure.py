@@ -23,7 +23,7 @@ class Figure(BaseModel):
     @staticmethod
     def encode_image(image_bytes: bytes) -> str:
         """Convert image bytes to base64 encoded string."""
-        return b64encode(image_bytes).decode("utf-8")
+        return b64encode(image_bytes)
 
     def to_dict(self) -> dict:
         return {
