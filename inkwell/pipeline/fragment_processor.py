@@ -1,6 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
+import io
 
 import numpy as np
 
@@ -13,6 +14,7 @@ from inkwell.components import Layout
 from inkwell.figure_extractor.base import BaseFigureExtractor
 from inkwell.ocr.base import BaseOCR
 from inkwell.table_extractor.base import BaseTableExtractor
+from PIL import Image
 
 _logger = logging.getLogger(__name__)
 
@@ -105,11 +107,14 @@ class FigureFragmentProcessor(FragmentProcessor):
         for ocr_result, figure_block, figure_image in zip(
             ocr_results, layout, figure_images
         ):
+            figure_image = Image.fromarray(figure_image)
+            img_bytes = io.BytesIO()
+            figure_image.save(img_bytes, format="PNG")
             figure_fragments.append(
                 PageFragment(
                     fragment_type=PageFragmentType.FIGURE,
                     content=Figure(
-                        image=Figure.encode_image(figure_image.tobytes()),
+                        image=Figure.encode_image(img_bytes.getvalue()),
                         bbox=figure_block.rectangle.bbox_dict(),
                         score=figure_block.score,
                         text=ocr_result,
