@@ -20,6 +20,8 @@ from inkwell.pipeline.pipeline_config import (
     DefaultPipelineConfig,
     PipelineConfig,
 )
+from inkwell.reading_order import ReadingOrderDetectorFactory
+from inkwell.reading_order.base import BaseReadingOrderDetector
 from inkwell.table_detector import TableDetectorFactory
 from inkwell.table_detector.base import BaseTableDetector
 from inkwell.table_extractor import TableExtractorFactory
@@ -37,6 +39,7 @@ class Pipeline:
         table_detector: BaseTableDetector = None,
         table_extractor: BaseTableExtractor = None,
         figure_extractor: BaseFigureExtractor = None,
+        reading_order_detector: BaseReadingOrderDetector = None,
     ):
         self.config = config
         self._model_ids = {}
@@ -46,7 +49,7 @@ class Pipeline:
         self._initialize_table_detector(table_detector)
         self._initialize_table_extractor(table_extractor)
         self._initialize_figure_extractor(figure_extractor)
-
+        self._initialize_reading_order_detector(reading_order_detector)
         self.table_fragment_processor = TableFragmentProcessor(
             ocr_detector=self.ocr_detector,
             table_extractor=self.table_extractor,
@@ -141,6 +144,25 @@ class Pipeline:
                 self.figure_extractor.model_id
             )
 
+    def _initialize_reading_order_detector(
+        self, reading_order_detector: Optional[BaseReadingOrderDetector] = None
+    ):
+        if reading_order_detector:
+            self.reading_order_detector = reading_order_detector
+        elif self.config.reading_order_detector:
+            self.reading_order_detector = (
+                ReadingOrderDetectorFactory.get_reading_order_detector(
+                    self.config.reading_order_detector
+                )
+            )
+        else:
+            self.reading_order_detector = None
+
+        if self.reading_order_detector:
+            self._model_ids["reading_order_detector"] = (
+                self.reading_order_detector.model_id
+            )
+
     def _is_native_pdf(self, path: str) -> bool:
         return path.endswith(".pdf")
 
@@ -219,24 +241,27 @@ class Pipeline:
             _logger.info("Processing page %d/%d", idx + 1, len(pages))
             if self.layout_detector:
                 layout = self.layout_detector.process(page_image)
+                if self.reading_order_detector:
+                    layout = self.reading_order_detector.process(layout)
+
                 figure_blocks, table_blocks, text_blocks = (
                     self._categorize_blocks(layout.get_blocks())
                 )
 
                 figure_fragments = self.figure_fragment_processor.process(
-                    page_image, figure_blocks
+                    page_image, Layout(blocks=figure_blocks)
                 )
                 fragments.extend(figure_fragments)
 
                 text_fragments = self.text_fragment_processor.process(
-                    page_image, text_blocks
+                    page_image, Layout(blocks=text_blocks)
                 )
                 fragments.extend(text_fragments)
 
                 if self.config.table_detector:
                     table_layout = self.table_detector.process(page_image)
                     table_fragments = self.table_fragment_processor.process(
-                        page_image, table_layout
+                        page_image, Layout(blocks=table_layout.get_blocks())
                     )
                 else:
                     table_fragments = self.table_fragment_processor.process(

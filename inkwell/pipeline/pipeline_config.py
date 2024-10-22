@@ -6,6 +6,7 @@ from inkwell.figure_extractor import FigureExtractorType
 from inkwell.layout_detector import LayoutDetectorType
 from inkwell.models import InferenceBackend
 from inkwell.ocr import OCRType
+from inkwell.reading_order import ReadingOrderDetectorType
 from inkwell.table_detector import TableDetectorType
 from inkwell.table_extractor import TableExtractorType
 
@@ -16,13 +17,13 @@ class PipelineConfig(BaseModel):
     table_detector: Union[TableDetectorType, None] = None
     table_extractor: Union[TableExtractorType, None] = None
     inference_backend: Union[InferenceBackend, None] = None
+    reading_order_detector: Union[ReadingOrderDetectorType, None] = None
 
 
 class DefaultPipelineConfig(PipelineConfig):
     table_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
     layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
     inference_backend: InferenceBackend = InferenceBackend.VLLM
-
     layout_detector: Union[LayoutDetectorType, None] = (
         LayoutDetectorType.FASTER_RCNN
     )

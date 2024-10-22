@@ -1303,6 +1303,8 @@ class LayoutBlock(BaseLayoutElement):
             The id of the next block.
         score (:obj:`numeric`, defaults to `None`):
             The prediction confidence of the block
+        reading_order_index (:obj:`int`, `optional`, defaults to `None`):
+            The index of the block in the reading order.
     """
 
     _name = "layoutblock"
@@ -1317,6 +1319,7 @@ class LayoutBlock(BaseLayoutElement):
         parent=None,
         next=None,
         score=None,
+        reading_order_index=None,
     ):
 
         assert isinstance(block, BaseCoordElement)
@@ -1328,6 +1331,7 @@ class LayoutBlock(BaseLayoutElement):
         self.parent = parent
         self.next = next
         self.score = score
+        self.reading_order_index = reading_order_index
 
     @property
     def height(self):
