@@ -121,6 +121,7 @@ class FigureFragmentProcessor(FragmentProcessor):
                         score=figure_block.score,
                         text=ocr_result,
                     ),
+                    reading_order_index=figure_block.reading_order_index,
                 )
             )
         return figure_fragments
@@ -148,6 +149,7 @@ class TextFragmentProcessor(FragmentProcessor):
                         score=None,
                         image=TextBox.encode_image(image.tobytes()),
                     ),
+                    reading_order_index=None,
                 )
             ]
             return text_fragments
@@ -172,6 +174,7 @@ class TextFragmentProcessor(FragmentProcessor):
                         score=text_block.score,
                         image=TextBox.encode_image(text_image.tobytes()),
                     ),
+                    reading_order_index=text_block.reading_order_index,
                 )
             )
         return text_fragments
