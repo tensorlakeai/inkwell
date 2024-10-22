@@ -29,7 +29,7 @@ class TestTableDetector(TestCase):
         return image
 
     def setUp(self):
-        _logger.debug("Running test: %s", self._testMethodName)
+        _logger.info("Running test: %s", self._testMethodName)
         self._image = self.load_test_image()
         self._image_table = self.load_test_image_table()
         self._mock_json_table = {
@@ -48,8 +48,8 @@ class TestTableDetector(TestCase):
         table_extractor = TableExtractorFactory.get_table_extractor(
             TableExtractorType.TABLE_TRANSFORMER
         )
-        results = table_extractor.process(self._image_table)
-        self._test_results(results)
+        results = table_extractor.process([self._image_table])
+        self._test_results(results[0])
 
     @patch(
         "inkwell.table_extractor.openai_4o_mini_table_extractor.OpenAI4OMiniOCR"  # pylint: disable=line-too-long
@@ -57,10 +57,10 @@ class TestTableDetector(TestCase):
     def test_openai_table_extractor(self, mock_openai_ocr):
         mock_client = MagicMock()
         mock_openai_ocr.return_value = mock_client
-        mock_client.process.return_value = json.dumps(self._mock_json_table)
+        mock_client.process.return_value = [json.dumps(self._mock_json_table)]
 
         table_extractor = TableExtractorFactory.get_table_extractor(
             TableExtractorType.OPENAI_GPT4O_MINI
         )
-        results = table_extractor.process(self._image_table)
-        self._test_results(results)
+        results = table_extractor.process([self._image_table])
+        self._test_results(results[0])

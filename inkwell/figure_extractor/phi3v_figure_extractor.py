@@ -21,10 +21,10 @@ class Phi3VFigureExtractor(BaseFigureExtractor):
     def model_id(self) -> str:
         return FigureExtractorType.PHI3_VISION.value
 
-    def process(self, image: np.ndarray) -> dict:
+    def process(self, image_batch: list[np.ndarray]) -> list[dict]:
         _logger.info("Running Phi3 Vision Figure Extractor")
         result = self._ocr_client.process(
-            image,
+            image_batch=image_batch,
             user_prompt=self._prompt.user_prompt,
             system_prompt=self._prompt.system_prompt,
         )

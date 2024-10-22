@@ -1,5 +1,6 @@
+# pylint: disable=duplicate-code
+
 import logging
-from typing import List, Union
 
 import numpy as np
 from PIL import Image
@@ -74,35 +75,24 @@ class Qwen2VL2VModelWrapperVLLM(BaseVisionModelWrapper):
 
     def process(
         self,
-        image: Union[np.ndarray, List[np.ndarray]],
+        image_batch: list[np.ndarray],
         user_prompt: str,
         system_prompt: str,
-    ) -> Union[str, List[str]]:
+    ) -> list[str]:
         text_prompt = self._preprocess_input(system_prompt, user_prompt)
         generation_args = self._load_generation_args()
         sampling_params = SamplingParams(**generation_args)
 
-        if isinstance(image, list):
-            data = [
-                {
-                    "prompt": text_prompt,
-                    "multi_modal_data": {"image": Image.fromarray(img)},
-                }
-                for img in image
-            ]
-            outputs = self._model.generate(
-                data, sampling_params=sampling_params
-            )
-
-            return [output.outputs[0].text for output in outputs]
-
-        data = {
-            "prompt": text_prompt,
-            "multi_modal_data": {"image": Image.fromarray(image)},
-        }
+        data = [
+            {
+                "prompt": text_prompt,
+                "multi_modal_data": {"image": Image.fromarray(img)},
+            }
+            for img in image_batch
+        ]
         outputs = self._model.generate(data, sampling_params=sampling_params)
 
-        return outputs[0].outputs[0].text
+        return [output.outputs[0].text for output in outputs]
 
 
 # Register the Qwen2 2B VL VLLM model loader

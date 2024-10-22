@@ -2,7 +2,6 @@
 
 
 import logging
-from typing import Union
 
 import numpy as np
 from PIL import Image
@@ -98,34 +97,25 @@ class Phi3VisionModelWrapperVLLM(BaseVisionModelWrapper):
 
     def process(
         self,
-        image: Union[np.ndarray, list[np.ndarray]],
+        image_batch: list[np.ndarray],
         user_prompt: str,
         system_prompt: str,
-    ) -> Union[str, list[str]]:
+    ) -> list[str]:
 
         prompts = self._preprocess_input(system_prompt, user_prompt)
         generation_args = self._load_generation_args()
         sampling_params = SamplingParams(**generation_args)
 
-        if isinstance(image, list):
-            data = [
-                {
-                    "prompt": prompts,
-                    "multi_modal_data": {"image": Image.fromarray(img)},
-                }
-                for img in image
-            ]
-        else:
-            data = {
+        data = [
+            {
                 "prompt": prompts,
-                "multi_modal_data": {"image": Image.fromarray(image)},
+                "multi_modal_data": {"image": Image.fromarray(img)},
             }
+            for img in image_batch
+        ]
 
         outputs = self._model.generate(data, sampling_params=sampling_params)
-
-        if isinstance(image, list):
-            return [output.outputs[0].text for output in outputs]
-        return outputs[0].outputs[0].text
+        return [output.outputs[0].text for output in outputs]
 
 
 # Register the Phi3 model loader

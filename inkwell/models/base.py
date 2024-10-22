@@ -6,6 +6,9 @@ import numpy as np
 class BaseVisionModelWrapper(ABC):
     @abstractmethod
     def process(
-        self, image: np.ndarray, user_prompt: str, system_prompt: str
-    ) -> str:
+        self,
+        image_batch: list[np.ndarray],
+        user_prompt: str,
+        system_prompt: str,
+    ) -> list[str]:
         pass

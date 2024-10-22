@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Dict, List, Optional, Union
+from typing import Optional
 
 import numpy as np
 import torch
@@ -41,10 +41,10 @@ class TableTransformerExtractor(BaseTableExtractor):
     def _load_ocr_detector(self):
         self._ocr_detector = OCRFactory.get_ocr(OCRType.TESSERACT)
 
-    def _get_cell_coordinates_by_row(self, table_blocks: List[LayoutBlock]):
+    def _get_cell_coordinates_by_row(self, table_blocks: list[LayoutBlock]):
 
-        rows: List[LayoutBlock] = []
-        columns: List[LayoutBlock] = []
+        rows: list[LayoutBlock] = []
+        columns: list[LayoutBlock] = []
 
         for block in table_blocks:
             if block.type in ["table row", "table column header"]:
@@ -109,7 +109,9 @@ class TableTransformerExtractor(BaseTableExtractor):
                 cell_block_image = cell_block.pad(10, 10, 10, 10).crop_image(
                     image
                 )
-                result = self._ocr_detector.process(cell_block_image).strip()
+                result = self._ocr_detector.process([cell_block_image])[
+                    0
+                ].strip()
 
                 row_text.append(result)
 
@@ -120,7 +122,7 @@ class TableTransformerExtractor(BaseTableExtractor):
 
         return dict(results)
 
-    def _convert_to_rows_cols(self, outputs: Dict) -> Layout:
+    def _convert_to_rows_cols(self, outputs: dict) -> Layout:
         blocks = []
         scores = outputs["scores"]
         labels = outputs["labels"]
@@ -162,7 +164,7 @@ class TableTransformerExtractor(BaseTableExtractor):
                 "table column",
             ]:
                 row_image = block.pad(10, 10, 10, 10).crop_image(image)
-                result = self._ocr_detector.process(row_image).strip()
+                result = self._ocr_detector.process([row_image])[0].strip()
                 if block.type == "table column header":
                     table_dict["header"].append(result)
                 elif block.type == "table row":
@@ -171,15 +173,10 @@ class TableTransformerExtractor(BaseTableExtractor):
                     table_dict["columns"].append(result)
         return table_dict
 
-    def process(
-        self, image: Union[np.ndarray, List[np.ndarray]]
-    ) -> Union[Dict, List[Dict]]:
+    def process(self, image_batch: list[np.ndarray]) -> list[dict]:
 
         table_results = []
-        if not isinstance(image, list):
-            image = [image]
-
-        for img in image:
+        for img in image_batch:
             image_pil = Image.fromarray(img)
             encoding = self._processor(image_pil, return_tensors="pt")
 
@@ -198,6 +195,4 @@ class TableTransformerExtractor(BaseTableExtractor):
             )
             table_results.append(table_dict)
 
-        if len(table_results) == 1:
-            return table_results[0]
         return table_results

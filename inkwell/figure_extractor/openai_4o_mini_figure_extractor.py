@@ -22,16 +22,13 @@ class OpenAI4OMiniFigureExtractor(BaseFigureExtractor):
     def _load_client(self):
         self._client = OpenAI4OMiniOCR()
 
-    def process(self, image: np.ndarray) -> str:
-        if isinstance(image, list):
-            results = [self._process_image(img) for img in image]
-            return results
-        return self._process_image(image)
+    def process(self, image_batch: list[np.ndarray]) -> list[dict]:
+        return self._process_images(image_batch)
 
-    def _process_image(self, image: np.ndarray) -> dict:
+    def _process_images(self, image_batch: list[np.ndarray]) -> list[dict]:
         _logger.info("Running OpenAI GPT-4o Mini Figure Extractor")
         result = self._client.process(
-            image,
+            image_batch=image_batch,
             user_prompt=self._prompt.user_prompt,
             system_prompt=self._prompt.system_prompt,
         )

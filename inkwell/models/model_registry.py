@@ -1,13 +1,15 @@
 import logging
-from typing import Any, Callable, Dict
+from typing import Callable
+
+from inkwell.models.base import BaseVisionModelWrapper
 
 _logger = logging.getLogger(__name__)
 
 
 class ModelRegistry:
     _instance = None
-    _model_wrappers: Dict[str, Any] = {}
-    _wrapper_loaders: Dict[str, Callable] = {}
+    _model_wrappers: dict[str, BaseVisionModelWrapper] = {}
+    _wrapper_loaders: dict[str, Callable] = {}
 
     def __new__(cls):
         if cls._instance is None:

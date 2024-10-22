@@ -23,10 +23,10 @@ class Phi3VTableExtractor(BaseTableExtractor):
         return TableExtractorType.PHI3_VISION.value
 
     @convert_markdown_to_json
-    def process(self, image: np.ndarray) -> dict:
+    def process(self, image_batch: list[np.ndarray]) -> list[dict]:
         _logger.info("Running Phi3 Vision Table Extractor")
         system_prompt = self._prompt.system_prompt
         user_prompt = self._prompt.user_prompt
-        result = self._ocr_client.process(image, user_prompt, system_prompt)
-
-        return result
+        return self._ocr_client.process(
+            image_batch, user_prompt, system_prompt
+        )

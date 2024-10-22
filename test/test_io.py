@@ -13,7 +13,7 @@ _IMAGE_URL = "https://pub-5dc4d0c0254749378ccbcfffa4bd2a1e.r2.dev/sample.png"
 class TestIO(unittest.TestCase):
 
     def setUp(self):
-        _logger.debug("Running test: %s", self._testMethodName)
+        _logger.info("Running test: %s", self._testMethodName)
         curr_path = os.path.dirname(__file__)
         self._image_path = os.path.join(curr_path, "./data/sample.png")
         self._pdf_path = os.path.join(curr_path, "./data/sample_2.pdf")
