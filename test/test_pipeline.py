@@ -27,7 +27,7 @@ class TestPipeline(unittest.TestCase):
         return image_path
 
     def setUp(self):
-        _logger.debug("Running test: %s", self._testMethodName)
+        _logger.info("Running test: %s", self._testMethodName)
         self._pipeline = Pipeline(DefaultPipelineConfig())
         self._document_url = _PDF_URL
         self._image_path = self._load_test_image_path()

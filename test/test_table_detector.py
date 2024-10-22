@@ -25,14 +25,14 @@ class TestTableDetector(TestCase):
         return image
 
     def setUp(self):
-        _logger.debug("Running test: %s", self._testMethodName)
+        _logger.info("Running test: %s", self._testMethodName)
         self._image = self.load_test_image()
 
     def test_table_transformer_detector(self):
         table_detector = TableDetectorFactory.get_table_detector(
             TableDetectorType.TABLE_TRANSFORMER
         )
-        table_block = table_detector.process(self._image)
+        table_block = table_detector.process([self._image])[0]
 
         table_blocks = [
             block for block in table_block if block.type == "table"

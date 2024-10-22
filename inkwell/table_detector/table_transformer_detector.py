@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict
 
 import numpy as np
 import torch
@@ -57,12 +57,8 @@ class TableTransformerDetector(BaseTableDetector):
         table_block = Layout(blocks=blocks)
         return table_block
 
-    def process(
-        self, image: Union[np.ndarray, List[np.ndarray]]
-    ) -> Union[Layout, List[Layout]]:
-        if isinstance(image, list):
-            return [self._process_image(img) for img in image]
-        return self._process_image(image)
+    def process(self, image: list[np.ndarray]) -> list[Layout]:
+        return [self._process_image(img) for img in image]
 
     def _process_image(self, image: np.ndarray) -> Layout:
         image_pil = Image.fromarray(image)

@@ -2,7 +2,7 @@
 
 
 from abc import ABC, abstractmethod
-from typing import List, Union
+from typing import Union
 
 import numpy as np
 from PIL import Image
@@ -27,7 +27,9 @@ class BaseLayoutEngine(ABC):
         pass
 
     @abstractmethod
-    def detect(self, image: Union[np.ndarray, Image.Image]) -> List[Layout]:
+    def detect(
+        self, image_batch: Union[list[np.ndarray], list[Image.Image]]
+    ) -> list[Layout]:
         pass
 
     @abstractmethod
@@ -51,7 +53,5 @@ class BaseLayoutDetector(ABC):
         pass
 
     @abstractmethod
-    def process(
-        self, image_batch: Union[np.ndarray, List[np.ndarray]]
-    ) -> Union[Layout, List[Layout]]:
+    def process(self, image_batch: list[np.ndarray]) -> list[Layout]:
         pass

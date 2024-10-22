@@ -918,4 +918,3 @@ if __name__ == "__main__":
     output1 = model(input1)
     output2 = model(input2)
     output3 = model(input3)
-    print("all done")

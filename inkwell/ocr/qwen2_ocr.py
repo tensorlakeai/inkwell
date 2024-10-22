@@ -1,7 +1,7 @@
 # pylint: disable=duplicate-code
 
 import logging
-from typing import List, Optional, Union
+from typing import Optional
 
 import numpy as np
 
@@ -36,14 +36,16 @@ class Qwen2OCR(BaseOCR):
 
     def process(
         self,
-        image: Union[np.ndarray, List[np.ndarray]],
+        image_batch: list[np.ndarray],
         user_prompt: Optional[str] = None,
         system_prompt: Optional[str] = None,
-    ) -> Union[str, List[str]]:
+    ) -> list[str]:
         _logger.info("Running Qwen2 OCR")
 
         if not user_prompt:
             user_prompt = self._ocr_prompts.ocr_user_prompt
         if not system_prompt:
             system_prompt = self._ocr_prompts.system_prompt
-        return self._model_wrapper.process(image, user_prompt, system_prompt)
+        return self._model_wrapper.process(
+            image_batch, user_prompt, system_prompt
+        )

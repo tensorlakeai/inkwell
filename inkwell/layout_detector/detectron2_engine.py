@@ -3,7 +3,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Callable, List, Optional, Union
+from typing import Callable, Optional, Union
 
 import numpy as np
 import torch
@@ -27,19 +27,12 @@ _logger = logging.getLogger(__name__)
 class BatchPredictor(detectron2.engine.DefaultPredictor):
     """Run d2 on a list of images."""
 
-    def __call__(
-        self, images: Union[np.ndarray, List[np.ndarray]]
-    ) -> List[dict]:
+    def __call__(self, images: list[np.ndarray]) -> list[dict]:
         """Run d2 on an image or a list of images.
 
         Args:
             images (list): BGR images of the expected shape: 720x1280
         """
-        batch_size = len(images)
-        if isinstance(images, np.ndarray):
-            images = [images]
-            batch_size = 1
-
         with torch.no_grad():
             transformed_images = []
             for image in images:
@@ -55,9 +48,6 @@ class BatchPredictor(detectron2.engine.DefaultPredictor):
                 transformed_images.append(inputs)
 
         preds = self.model(transformed_images)
-
-        if batch_size == 1:
-            return preds[0]
         return preds
 
 
@@ -153,9 +143,7 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
 
         return layout
 
-    def detect(
-        self, image: Union[np.ndarray, Image.Image]
-    ) -> Union[Layout, List[Layout]]:
+    def detect(self, image_batch: list[np.ndarray]) -> list[Layout]:
         """Detect the layout of a given image.
 
         Args:
@@ -166,14 +154,9 @@ class Detectron2LayoutEngine(BaseLayoutEngine):
             :obj:`Layout`: The detected layout of the input image
         """
 
-        if isinstance(image, list):
-            preprocessed_images = [self.image_loader(img) for img in image]
-            outputs = self._model(preprocessed_images)
-            return [self._gather_output(output) for output in outputs]
-
-        preprocessed_images = self.image_loader(image)
+        preprocessed_images = [self.image_loader(img) for img in image_batch]
         outputs = self._model(preprocessed_images)
-        return self._gather_output(outputs)
+        return [self._gather_output(output) for output in outputs]
 
     def image_loader(
         self, image: Union[np.ndarray, Image.Image]
@@ -240,9 +223,7 @@ class Detectron2LayoutDetector(BaseLayoutDetector):
             **kwargs,
         )
 
-    def process(
-        self, image_batch: Union[np.ndarray, List[np.ndarray]]
-    ) -> Union[Layout, List[Layout]]:
+    def process(self, image_batch: list[np.ndarray]) -> list[Layout]:
         """
         Detect the layout of a given image or a batch of images.
 

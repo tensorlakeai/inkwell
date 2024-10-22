@@ -2,6 +2,7 @@ import logging
 import os
 import unittest
 
+from inkwell.components.layout import Layout
 from inkwell.io import read_image
 from inkwell.layout_detector import LayoutDetectorFactory, LayoutDetectorType
 
@@ -11,16 +12,18 @@ _logger = logging.getLogger(__name__)
 class TestLayoutDetector(unittest.TestCase):
 
     def setUp(self):
-        _logger.debug("Running test: %s", self._testMethodName)
+        _logger.info("Running test: %s", self._testMethodName)
         self.test_image = read_image(self.load_test_image())
 
     @staticmethod
-    def check_detected_layout(layout):
-        figures = [fig for fig in layout if fig.type == "Figure"]
-        tables = [table for table in layout if table.type == "Table"]
-        texts = [text for text in layout if text.type == "Text"]
+    def check_detected_layout(layout: Layout):
+        figures = [fig for fig in layout.get_blocks() if fig.type == "Figure"]
+        tables = [
+            table for table in layout.get_blocks() if table.type == "Table"
+        ]
+        texts = [text for text in layout.get_blocks() if text.type == "Text"]
 
-        assert len(layout) > 0
+        assert len(layout.get_blocks()) > 0
         assert len(figures) > 0 or len(tables) > 0
         assert len(texts) > 0
 
@@ -36,7 +39,7 @@ class TestLayoutDetector(unittest.TestCase):
             LayoutDetectorType.FASTER_RCNN
         )
 
-        layout = detector.process(self.test_image)
+        layout = detector.process([self.test_image])[0]
 
         self.check_detected_layout(layout)
 
@@ -45,7 +48,7 @@ class TestLayoutDetector(unittest.TestCase):
             LayoutDetectorType.LAYOUTLMV3
         )
 
-        layout = detector.process(self.test_image)
+        layout = detector.process([self.test_image])[0]
 
         self.check_detected_layout(layout)
 
@@ -56,10 +59,10 @@ class TestLayoutDetector(unittest.TestCase):
             LayoutDetectorType.FASTER_RCNN
         )
 
-        layout = detector.process(test_images)
-        self.assertEqual(len(layout), len(test_images))
-        for layout_image in layout:
-            self.check_detected_layout(layout_image)
+        layouts = detector.process(test_images)
+        self.assertEqual(len(layouts), len(test_images))
+        for layout in layouts:
+            self.check_detected_layout(layout)
 
 
 if __name__ == "__main__":

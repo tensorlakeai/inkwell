@@ -29,17 +29,19 @@ class TestTableDetector(TestCase):
         return image
 
     def setUp(self):
-        _logger.debug("Running test: %s", self._testMethodName)
+        _logger.info("Running test: %s", self._testMethodName)
         self._image = self.load_test_image()
         self._image_table = self.load_test_image_table()
-        self._mock_json_table = {
-            "header": ["Name", "Age", "City"],
-            "data": [
-                ["John Doe", "30", "New York"],
-                ["Jane Doe", "25", "London"],
-                ["Jim Beam", "50", "Paris"],
-            ],
-        }
+        self._mock_json_table = [
+            {
+                "header": ["Name", "Age", "City"],
+                "data": [
+                    ["John Doe", "30", "New York"],
+                    ["Jane Doe", "25", "London"],
+                    ["Jim Beam", "50", "Paris"],
+                ],
+            }
+        ]
 
     def _test_results(self, results):
         self.assertIsInstance(results, dict)
@@ -48,8 +50,8 @@ class TestTableDetector(TestCase):
         table_extractor = TableExtractorFactory.get_table_extractor(
             TableExtractorType.TABLE_TRANSFORMER
         )
-        results = table_extractor.process(self._image_table)
-        self._test_results(results)
+        results = table_extractor.process([self._image_table])
+        self._test_results(results[0])
 
     @patch(
         "inkwell.table_extractor.openai_4o_mini_table_extractor.OpenAI4OMiniOCR"  # pylint: disable=line-too-long
@@ -62,5 +64,5 @@ class TestTableDetector(TestCase):
         table_extractor = TableExtractorFactory.get_table_extractor(
             TableExtractorType.OPENAI_GPT4O_MINI
         )
-        results = table_extractor.process(self._image_table)
-        self._test_results(results)
+        results = table_extractor.process([self._image_table])
+        self._test_results(results[0])

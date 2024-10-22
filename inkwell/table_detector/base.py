@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import List, Union
 
 import numpy as np
 
@@ -8,9 +7,7 @@ from inkwell.components import Layout
 
 class BaseTableDetector(ABC):
     @abstractmethod
-    def process(
-        self, image: Union[np.ndarray, List[np.ndarray]]
-    ) -> Union[Layout, List[Layout]]:
+    def process(self, image: list[np.ndarray]) -> list[Layout]:
         pass
 
     @property

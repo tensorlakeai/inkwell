@@ -1,7 +1,7 @@
 import base64
 import os
 from io import BytesIO
-from typing import List, Optional, Union
+from typing import Optional
 
 import numpy as np
 import openai
@@ -56,7 +56,9 @@ class OpenAI4OMiniOCR(BaseOCR):
             },
         ]
 
-    def _call_client(self, system_prompt, user_prompt, img) -> str:
+    def _call_client(
+        self, system_prompt: str, user_prompt: str, img: np.ndarray
+    ) -> str:
         messages = self._create_message(system_prompt, user_prompt, img)
         response = self._client.chat.completions.create(
             model=self._model_cfg.model_name_openai, messages=messages
@@ -65,10 +67,10 @@ class OpenAI4OMiniOCR(BaseOCR):
 
     def process(
         self,
-        image: Union[np.ndarray, List[np.ndarray]],
+        image_batch: list[np.ndarray],
         user_prompt: Optional[str] = None,
         system_prompt: Optional[str] = None,
-    ) -> Union[str, List[str]]:
+    ) -> list[str]:
         """
         Processes the image(s) and returns the text(s) detected.
 
@@ -86,13 +88,10 @@ class OpenAI4OMiniOCR(BaseOCR):
         if not system_prompt:
             system_prompt = self._default_prompts.system_prompt
 
-        if isinstance(image, list):
-            results = []
-            for img in image:
-                response_content = self._call_client(
-                    system_prompt, user_prompt, img
-                )
-                results.append(response_content)
-            return results
-        response_content = self._call_client(system_prompt, user_prompt, image)
-        return response_content
+        results = []
+        for img in image_batch:
+            response_content = self._call_client(
+                system_prompt, user_prompt, img
+            )
+            results.append(response_content)
+        return results

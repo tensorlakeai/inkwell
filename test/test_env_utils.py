@@ -2,11 +2,17 @@
 
 # pylint: disable=import-outside-toplevel
 
+import logging
 import unittest
 from unittest.mock import patch
 
+_logger = logging.getLogger(__name__)
+
 
 class TestEnvUtils(unittest.TestCase):
+
+    def setUp(self):
+        _logger.info("Running test: %s", self._testMethodName)
 
     @patch("inkwell.utils.env_utils.is_vllm_available", return_value=False)
     def test_is_vllm_available(self, mock_is_vllm_available):

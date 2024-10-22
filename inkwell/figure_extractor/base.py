@@ -1,14 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Union
 
 import numpy as np
 
 
 class BaseFigureExtractor(ABC):
     @abstractmethod
-    def process(
-        self, image: Union[np.ndarray, List[np.ndarray]]
-    ) -> Union[Dict, List[Dict]]:
+    def process(self, image_batch: list[np.ndarray]) -> list[dict]:
         pass
 
     @property
