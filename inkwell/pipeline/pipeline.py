@@ -241,12 +241,13 @@ class Pipeline:
             _logger.info("Processing page %d/%d", idx + 1, len(pages))
             if self.layout_detector:
                 layout = self.layout_detector.process([page_image])
+                layout = layout[0]
+
                 if self.reading_order_detector:
                     layout = self.reading_order_detector.process(
                         [page_image], [layout]
                     )
 
-                layout = layout[0]
                 figure_blocks, table_blocks, text_blocks = (
                     self._categorize_blocks(layout.get_blocks())
                 )
