@@ -32,16 +32,14 @@ class TestTableDetector(TestCase):
         _logger.info("Running test: %s", self._testMethodName)
         self._image = self.load_test_image()
         self._image_table = self.load_test_image_table()
-        self._mock_json_table = [
-            {
-                "header": ["Name", "Age", "City"],
-                "data": [
-                    ["John Doe", "30", "New York"],
-                    ["Jane Doe", "25", "London"],
-                    ["Jim Beam", "50", "Paris"],
-                ],
-            }
-        ]
+        self._mock_json_table = {
+            "header": ["Name", "Age", "City"],
+            "data": [
+                ["John Doe", "30", "New York"],
+                ["Jane Doe", "25", "London"],
+                ["Jim Beam", "50", "Paris"],
+            ],
+        }
 
     def _test_results(self, results):
         self.assertIsInstance(results, dict)
@@ -59,7 +57,7 @@ class TestTableDetector(TestCase):
     def test_openai_table_extractor(self, mock_openai_ocr):
         mock_client = MagicMock()
         mock_openai_ocr.return_value = mock_client
-        mock_client.process.return_value = json.dumps(self._mock_json_table)
+        mock_client.process.return_value = [json.dumps(self._mock_json_table)]
 
         table_extractor = TableExtractorFactory.get_table_extractor(
             TableExtractorType.OPENAI_GPT4O_MINI
