@@ -242,7 +242,9 @@ class Pipeline:
             if self.layout_detector:
                 layout = self.layout_detector.process([page_image])
                 if self.reading_order_detector:
-                    layout = self.reading_order_detector.process(layout)
+                    layout = self.reading_order_detector.process(
+                        [page_image], [layout]
+                    )
 
                 layout = layout[0]
                 figure_blocks, table_blocks, text_blocks = (
