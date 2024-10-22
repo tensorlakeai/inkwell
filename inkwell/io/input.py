@@ -7,6 +7,8 @@ from io import BytesIO
 import cv2
 import numpy as np
 import pdfplumber
+from typing import List
+from dataclasses import dataclass
 
 _logger = logging.getLogger(__name__)
 
@@ -101,3 +103,39 @@ def read_pdf_as_images(pdf_path: str) -> list[np.ndarray]:
         image = convert_page_to_image(page)
         images.append(image)
     return images
+
+
+def _is_native_pdf(path: str) -> bool:
+    return path.endswith(".pdf")
+
+def _preprocess_native_pdf(document, pages_to_parse: List[int] = None):
+        pages = document.pages
+
+        if pages_to_parse is not None:
+            pages = [
+                page for i, page in enumerate(pages) if i in pages_to_parse
+            ]
+
+        pages = [
+            (convert_page_to_image(page), page.page_number) for page in pages
+        ]
+
+        return pages
+
+@dataclass
+class PageImage:
+    page_image: np.ndarray
+    page_number: int
+
+def read_pdf_pages(document_path: str, pages_to_parse: List[int] = None):
+    if _is_native_pdf(document_path):
+        document = read_pdf_document(document_path)
+        pages = _preprocess_native_pdf(document, pages_to_parse)
+    else:
+        pages = [(read_image(document_path), 1)]
+
+    page_images = []
+    for page in pages:
+        page_image, page_number = page
+        page_images.append(PageImage(page_image=page_image, page_number=page_number))
+    return page_images

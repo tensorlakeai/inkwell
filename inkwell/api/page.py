@@ -23,12 +23,14 @@ class PageFragment(BaseModel):
     fragment_type: PageFragmentType
     content: Union[TextBox, Table, Figure]
     reading_order_index: Optional[int] = None
+    page_number: Optional[int] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "fragment_type": self.fragment_type,
             "content": self.content.to_dict(),
             "reading_order_index": self.reading_order_index,
+            "page_number": self.page_number,
         }
 
 
