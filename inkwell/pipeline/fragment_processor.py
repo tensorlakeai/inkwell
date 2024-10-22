@@ -1,9 +1,10 @@
+import io
 import logging
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
-import io
 
 import numpy as np
+from PIL import Image
 
 from inkwell.api.document import Document
 from inkwell.api.figure import Figure
@@ -14,7 +15,6 @@ from inkwell.components import Layout
 from inkwell.figure_extractor.base import BaseFigureExtractor
 from inkwell.ocr.base import BaseOCR
 from inkwell.table_extractor.base import BaseTableExtractor
-from PIL import Image
 
 _logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ class TableFragmentProcessor(FragmentProcessor):
         _logger.info("Processing %d table fragments in page", len(layout))
         table_fragments = []
         table_images = []
-        for table_block in layout:
+        for table_block in layout.get_blocks():
             table_image = table_block.pad_ratio(0.05).crop_image(image)
             table_images.append(table_image)
 
@@ -62,7 +62,7 @@ class TableFragmentProcessor(FragmentProcessor):
             table_encoding = TableEncoding.TEXT
 
         for table_data, table_block, table_image in zip(
-            table_data, layout, table_images
+            table_data, layout.get_blocks(), table_images
         ):
             table_text = str(table_data)
             table_image_bytes = table_image.tobytes()
@@ -76,7 +76,9 @@ class TableFragmentProcessor(FragmentProcessor):
             )
             table_fragments.append(
                 PageFragment(
-                    fragment_type=PageFragmentType.TABLE, content=table
+                    fragment_type=PageFragmentType.TABLE,
+                    content=table,
+                    reading_order_index=table_block.reading_order_index,
                 )
             )
         return table_fragments
@@ -95,7 +97,7 @@ class FigureFragmentProcessor(FragmentProcessor):
         _logger.info("Processing %d figure fragments in page", len(layout))
         figure_fragments = []
         figure_images = []
-        for figure_block in layout:
+        for figure_block in layout.get_blocks():
             figure_image = figure_block.pad_ratio(0.05).crop_image(image)
             figure_images.append(figure_image)
 
@@ -105,7 +107,7 @@ class FigureFragmentProcessor(FragmentProcessor):
             ocr_results = self.ocr_detector.process(figure_images)
 
         for ocr_result, figure_block, figure_image in zip(
-            ocr_results, layout, figure_images
+            ocr_results, layout.get_blocks(), figure_images
         ):
             figure_image = Image.fromarray(figure_image)
             img_bytes = io.BytesIO()
@@ -131,7 +133,7 @@ class TextFragmentProcessor(FragmentProcessor):
     def process(
         self, image: np.ndarray, layout: Union[Layout, None] = None
     ) -> List[PageFragment]:
-        num_fragments = 1 if layout is None else len(layout)
+        num_fragments = 1 if layout is None else len(layout.get_blocks())
         _logger.info("Processing %d text fragments in page", num_fragments)
 
         if layout is None:
@@ -158,7 +160,7 @@ class TextFragmentProcessor(FragmentProcessor):
 
         ocr_results = self.ocr_detector.process(text_images)
         for ocr_result, text_block, text_image in zip(
-            ocr_results, layout, text_images
+            ocr_results, layout.get_blocks(), text_images
         ):
             text_fragments.append(
                 PageFragment(
