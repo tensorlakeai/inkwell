@@ -288,7 +288,6 @@ class Pipeline:
 
             processed_pages.append(
                 Page(
-                    page_image=Page.encode_image(page_image.tobytes()),
                     page_number=page_number,
                     page_fragments=fragments,
                     layout=layout.to_dict(),
