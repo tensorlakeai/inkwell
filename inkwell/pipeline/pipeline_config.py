@@ -10,6 +10,8 @@ from inkwell.reading_order import ReadingOrderDetectorType
 from inkwell.table_detector import TableDetectorType
 from inkwell.table_extractor import TableExtractorType
 
+default_layout_detector_kwargs = {"detection_threshold": 0.4, "batch_size": 1}
+
 
 class PipelineConfig(BaseModel):
     layout_detector: Union[LayoutDetectorType, None] = None
@@ -22,7 +24,7 @@ class PipelineConfig(BaseModel):
 
 class DefaultPipelineConfig(PipelineConfig):
     table_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
-    layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
+    layout_detector_kwargs: Dict[str, Any] = default_layout_detector_kwargs
     inference_backend: InferenceBackend = InferenceBackend.VLLM
     layout_detector: Union[LayoutDetectorType, None] = (
         LayoutDetectorType.FASTER_RCNN
@@ -36,7 +38,8 @@ class DefaultPipelineConfig(PipelineConfig):
 
 
 class DefaultGPUPipelineConfig(PipelineConfig):
-    layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
+    layout_detector_kwargs: Dict[str, Any] = default_layout_detector_kwargs
+
     inference_backend: InferenceBackend = InferenceBackend.VLLM
     layout_detector: Union[LayoutDetectorType, None] = (
         LayoutDetectorType.FASTER_RCNN
@@ -50,7 +53,7 @@ class DefaultGPUPipelineConfig(PipelineConfig):
 
 
 class OpenAIGPT4oMiniPipelineConfig(PipelineConfig):
-    layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
+    layout_detector_kwargs: Dict[str, Any] = default_layout_detector_kwargs
     inference_backend: InferenceBackend = InferenceBackend.VLLM
     layout_detector: Union[LayoutDetectorType, None] = (
         LayoutDetectorType.FASTER_RCNN
@@ -66,7 +69,7 @@ class OpenAIGPT4oMiniPipelineConfig(PipelineConfig):
 
 
 class Phi3VisionPipelineConfig(PipelineConfig):
-    layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
+    layout_detector_kwargs: Dict[str, Any] = default_layout_detector_kwargs
     inference_backend: InferenceBackend = InferenceBackend.HUGGINGFACE
     layout_detector: Union[LayoutDetectorType, None] = (
         LayoutDetectorType.FASTER_RCNN
@@ -82,7 +85,7 @@ class Phi3VisionPipelineConfig(PipelineConfig):
 
 
 class Qwen2VisionPipelineConfig(PipelineConfig):
-    layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
+    layout_detector_kwargs: Dict[str, Any] = default_layout_detector_kwargs
     inference_backend: InferenceBackend = InferenceBackend.VLLM
     layout_detector: Union[LayoutDetectorType, None] = (
         LayoutDetectorType.FASTER_RCNN
@@ -96,7 +99,7 @@ class Qwen2VisionPipelineConfig(PipelineConfig):
 
 
 class MiniCPMPipelineConfig(PipelineConfig):
-    layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
+    layout_detector_kwargs: Dict[str, Any] = default_layout_detector_kwargs
     inference_backend: InferenceBackend = InferenceBackend.VLLM
     layout_detector: Union[LayoutDetectorType, None] = (
         LayoutDetectorType.FASTER_RCNN

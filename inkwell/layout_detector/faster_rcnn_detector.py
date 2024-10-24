@@ -9,7 +9,7 @@ class FasterRCNNLayoutDetector(Detectron2LayoutDetector):
     """
 
     def __init__(self, **kwargs):
-        super().__init__()
+        super().__init__(**kwargs)
 
         self._model_name = "faster_rcnn"
         model_cfg = load_layout_detector_config(LayoutDetectorType.FASTER_RCNN)
