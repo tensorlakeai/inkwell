@@ -3,10 +3,9 @@ from typing import List, Optional
 
 from inkwell.api.document import Document
 from inkwell.api.page import Page
-from inkwell.components import Layout, LayoutBlock
 from inkwell.figure_extractor import FigureExtractorFactory
 from inkwell.figure_extractor.base import BaseFigureExtractor
-from inkwell.io import convert_page_to_image, read_image, read_pdf_document
+from inkwell.io import read_pdf_pages
 from inkwell.layout_detector import LayoutDetectorFactory
 from inkwell.layout_detector.base import BaseLayoutDetector
 from inkwell.ocr import OCRFactory
@@ -16,10 +15,12 @@ from inkwell.pipeline.fragment_processor import (
     TableFragmentProcessor,
     TextFragmentProcessor,
 )
+from inkwell.pipeline.layout_processor import LayoutProcessor
 from inkwell.pipeline.pipeline_config import (
     DefaultPipelineConfig,
     PipelineConfig,
 )
+from inkwell.pipeline.utils import combine_fragments, split_layout_blocks
 from inkwell.reading_order import ReadingOrderDetectorFactory
 from inkwell.reading_order.base import BaseReadingOrderDetector
 from inkwell.table_detector import TableDetectorFactory
@@ -62,6 +63,11 @@ class Pipeline:
 
         self.text_fragment_processor = TextFragmentProcessor(
             ocr_detector=self.ocr_detector
+        )
+
+        self._layout_processor = LayoutProcessor(
+            layout_detector=self.layout_detector,
+            reading_order_detector=self.reading_order_detector,
         )
 
     def _initialize_layout_detector(
@@ -163,49 +169,6 @@ class Pipeline:
                 self.reading_order_detector.model_id
             )
 
-    def _is_native_pdf(self, path: str) -> bool:
-        return path.endswith(".pdf")
-
-    def _read_pdf(self, path: str):
-        return read_pdf_document(path)
-
-    def _read_image(self, path: str):
-        return read_image(path)
-
-    def _preprocess_native_pdf(
-        self, document: Document, pages_to_parse: List[int] = None
-    ):
-        pages = document.pages
-
-        if pages_to_parse is not None:
-            pages = [
-                page for i, page in enumerate(pages) if i in pages_to_parse
-            ]
-
-        pages = [
-            (convert_page_to_image(page), page.page_number) for page in pages
-        ]
-
-        return pages
-
-    @staticmethod
-    def _categorize_blocks(
-        blocks: List[LayoutBlock],
-    ) -> List[List[LayoutBlock]]:
-        figure_blocks = []
-        table_blocks = []
-        text_blocks = []
-
-        for block in blocks:
-            if block.type == "Figure":
-                figure_blocks.append(block)
-            elif block.type == "Table":
-                table_blocks.append(block)
-            else:
-                text_blocks.append(block)
-
-        return figure_blocks, table_blocks, text_blocks
-
     def model_ids(self):
         return self._model_ids
 
@@ -218,80 +181,41 @@ class Pipeline:
     def __repr__(self):
         return self._str_repr()
 
-    def _get_pages(self, document_path: str, pages_to_parse: List[int] = None):
-        if self._is_native_pdf(document_path):
-            document = self._read_pdf(document_path)
-            pages = self._preprocess_native_pdf(document, pages_to_parse)
-        else:
-            pages = [(self._read_image(document_path), 1)]
-        return pages
-
     def process(
         self, document_path: str, pages_to_parse: List[int] = None
     ) -> Document:
 
         _logger.info(self._str_repr())
 
-        pages = self._get_pages(document_path, pages_to_parse)
+        pages = read_pdf_pages(document_path, pages_to_parse)
+        pages_layouts = self._layout_processor.process(pages)
 
-        processed_pages = []
-        layout = None
-        fragments = []
-        for idx, (page_image, page_number) in enumerate(pages):
-            _logger.info("Processing page %d/%d", idx + 1, len(pages))
-            if self.layout_detector:
-                layout = self.layout_detector.process([page_image])
-                if self.reading_order_detector:
-                    layout = self.reading_order_detector.process(
-                        [page_image], layout
-                    )
+        document_page_blocks = split_layout_blocks(pages_layouts)
 
-                layout = layout[0]
-                figure_blocks, table_blocks, text_blocks = (
-                    self._categorize_blocks(layout.get_blocks())
-                )
+        text_fragments = self.text_fragment_processor.process(
+            document_page_blocks
+        )
+        figure_fragments = self.figure_fragment_processor.process(
+            document_page_blocks
+        )
+        table_fragments = self.table_fragment_processor.process(
+            document_page_blocks
+        )
 
-                figure_fragments = self.figure_fragment_processor.process(
-                    page_image, Layout(blocks=figure_blocks)
-                )
-                fragments.extend(figure_fragments)
+        _logger.info("Combining fragments")
+        pages_map = combine_fragments(
+            figure_fragments, table_fragments, text_fragments
+        )
+        pages = []
+        for page_number, page_fragments in pages_map.items():
+            if self.reading_order_detector:
+                page_fragments.sort(key=lambda x: x.reading_order_index)
 
-                text_fragments = self.text_fragment_processor.process(
-                    page_image, Layout(blocks=text_blocks)
-                )
-                fragments.extend(text_fragments)
-
-                if self.config.table_detector:
-                    table_layout = self.table_detector.process(page_image)
-                    table_fragments = self.table_fragment_processor.process(
-                        page_image, Layout(blocks=table_layout.get_blocks())
-                    )
-                else:
-                    table_fragments = self.table_fragment_processor.process(
-                        page_image, Layout(blocks=table_blocks)
-                    )
-
-                fragments.extend(table_fragments)
-                layout = Layout(
-                    blocks=figure_blocks + table_blocks + text_blocks
-                )
-
-            else:
-                _logger.info(
-                    "No layout detector configured, \
-                    doing OCR on the whole image"
-                )
-            full_page_text_fragments = self.text_fragment_processor.process(
-                page_image, None
+            page = Page(
+                page_number=page_number,
+                page_fragments=page_fragments,
             )
-            fragments.extend(full_page_text_fragments)
+            pages.append(page)
 
-            processed_pages.append(
-                Page(
-                    page_number=page_number,
-                    page_fragments=fragments,
-                    layout=layout.to_dict(),
-                )
-            )
-
-        return Document(pages=processed_pages)
+        document = Document(pages=pages)
+        return document

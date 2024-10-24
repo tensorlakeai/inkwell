@@ -13,6 +13,8 @@ def get_mock_text_fragment():
             content=TextBox(
                 text="Mock value",
             ),
+            page_number=0,
+            reading_order_index=0,
         )
     ]
     return text_fragment
@@ -26,6 +28,7 @@ def get_mock_table_fragment():
                 data={"Mock value": ["Mock value"]},
                 encoding=TableEncoding.DICT,
             ),
+            page_number=0,
         )
     ]
     return table_fragment
@@ -39,6 +42,8 @@ def get_mock_figure_fragment():
                 image=Figure.encode_image(np.zeros((5, 5)).tobytes()),
                 text="Mock value",
             ),
+            page_number=0,
+            reading_order_index=0,
         )
     ]
     return figure_fragment

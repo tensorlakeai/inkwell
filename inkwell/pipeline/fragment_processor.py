@@ -1,7 +1,8 @@
 import io
 import logging
 from abc import ABC, abstractmethod
-from typing import List, Optional, Union
+from dataclasses import dataclass
+from typing import Optional
 
 import numpy as np
 from PIL import Image
@@ -11,9 +12,10 @@ from inkwell.api.figure import Figure
 from inkwell.api.page import PageFragment, PageFragmentType
 from inkwell.api.table import Table, TableEncoding
 from inkwell.api.text import TextBox
-from inkwell.components import Layout
+from inkwell.components import LayoutBlock
 from inkwell.figure_extractor.base import BaseFigureExtractor
 from inkwell.ocr.base import BaseOCR
+from inkwell.pipeline.utils import DocumentPageBlocks
 from inkwell.table_extractor.base import BaseTableExtractor
 
 _logger = logging.getLogger(__name__)
@@ -22,7 +24,7 @@ _logger = logging.getLogger(__name__)
 class DocumentProcessor(ABC):
     @abstractmethod
     def process(
-        self, document_path: str, pages_to_parse: Optional[List[int]] = None
+        self, document_path: str, pages_to_parse: Optional[list[int]] = None
     ) -> Document:
         pass
 
@@ -30,9 +32,15 @@ class DocumentProcessor(ABC):
 class FragmentProcessor(ABC):
     @abstractmethod
     def process(
-        self, image: np.ndarray, layout: Union[Layout, None] = None
-    ) -> List[PageFragment]:
+        self, document_page_blocks: DocumentPageBlocks
+    ) -> list[PageFragment]:
         pass
+
+
+@dataclass
+class TableFragmentInformation:
+    page_number: int
+    table_block: LayoutBlock
 
 
 class TableFragmentProcessor(FragmentProcessor):
@@ -45,32 +53,48 @@ class TableFragmentProcessor(FragmentProcessor):
         self.table_extractor = table_extractor
 
     def process(
-        self, image: np.ndarray, layout: Union[Layout, None] = None
-    ) -> List[PageFragment]:
-        _logger.info("Processing %d table fragments in page", len(layout))
-        table_fragments = []
+        self, document_page_blocks: DocumentPageBlocks
+    ) -> list[PageFragment]:
         table_images = []
-        for table_block in layout.get_blocks():
-            table_image = table_block.pad_ratio(0.05).crop_image(image)
-            table_images.append(table_image)
+        table_blocks: list[TableFragmentInformation] = []
+        for page_block in document_page_blocks.page_blocks:
+            for table_block in page_block.table_blocks:
+                table_image = table_block.pad_ratio(0.05).crop_image(
+                    page_block.page_image
+                )
+                table_images.append(table_image)
+                table_blocks.append(
+                    TableFragmentInformation(
+                        page_number=page_block.page_number,
+                        table_block=table_block,
+                    )
+                )
 
         if self.table_extractor:
-            table_data = self.table_extractor.process(table_images)
+            _logger.info(
+                "Running table extractor on %d table fragments",
+                len(table_images),
+            )
+            ocr_results = self.table_extractor.process(table_images)
             table_encoding = TableEncoding.JSON
         else:
-            table_data = self.ocr_detector.process(table_images)
+            _logger.info(
+                "Running OCR on %d table fragments", len(table_images)
+            )
+            ocr_results = self.ocr_detector.process(table_images)
             table_encoding = TableEncoding.TEXT
 
-        for table_data, table_block, table_image in zip(
-            table_data, layout.get_blocks(), table_images
+        table_fragments = []
+        for ocr_result, table_block, table_image in zip(
+            ocr_results, table_blocks, table_images
         ):
-            table_text = str(table_data)
+            table_text = str(ocr_result)
             table_image_bytes = table_image.tobytes()
             table = Table(
-                data=table_data,
+                data=ocr_result,
                 text=table_text,
-                bbox=table_block.rectangle.bbox_dict(),
-                score=table_block.score,
+                bbox=table_block.table_block.rectangle.bbox_dict(),
+                score=table_block.table_block.score,
                 image=Table.encode_image(table_image_bytes),
                 encoding=table_encoding,
             )
@@ -78,10 +102,17 @@ class TableFragmentProcessor(FragmentProcessor):
                 PageFragment(
                     fragment_type=PageFragmentType.TABLE,
                     content=table,
-                    reading_order_index=table_block.reading_order_index,
+                    reading_order_index=table_block.table_block.reading_order_index,
+                    page_number=table_block.page_number,
                 )
             )
         return table_fragments
+
+
+@dataclass
+class FigureFragmentInformation:
+    page_number: int
+    figure_block: LayoutBlock
 
 
 class FigureFragmentProcessor(FragmentProcessor):
@@ -92,22 +123,36 @@ class FigureFragmentProcessor(FragmentProcessor):
         self.figure_extractor = figure_extractor
 
     def process(
-        self, image: np.ndarray, layout: Union[Layout, None] = None
-    ) -> List[PageFragment]:
-        _logger.info("Processing %d figure fragments in page", len(layout))
-        figure_fragments = []
+        self, document_page_blocks: DocumentPageBlocks
+    ) -> list[PageFragment]:
         figure_images = []
-        for figure_block in layout.get_blocks():
-            figure_image = figure_block.pad_ratio(0.05).crop_image(image)
-            figure_images.append(figure_image)
+        figure_blocks: list[FigureFragmentInformation] = []
+        for page_block in document_page_blocks.page_blocks:
+            for figure_block in page_block.figure_blocks:
+                figure_images.append(
+                    figure_block.pad_ratio(0.05).crop_image(
+                        page_block.page_image
+                    )
+                )
+                figure_blocks.append(
+                    FigureFragmentInformation(
+                        page_number=page_block.page_number,
+                        figure_block=figure_block,
+                    )
+                )
 
+        _logger.info(
+            "Running figure extractor on %d figure fragments",
+            len(figure_images),
+        )
         if self.figure_extractor:
             ocr_results = self.figure_extractor.process(figure_images)
         else:
             ocr_results = self.ocr_detector.process(figure_images)
 
+        figure_fragments = []
         for ocr_result, figure_block, figure_image in zip(
-            ocr_results, layout.get_blocks(), figure_images
+            ocr_results, figure_blocks, figure_images
         ):
             figure_image = Image.fromarray(figure_image)
             img_bytes = io.BytesIO()
@@ -117,14 +162,21 @@ class FigureFragmentProcessor(FragmentProcessor):
                     fragment_type=PageFragmentType.FIGURE,
                     content=Figure(
                         image=Figure.encode_image(img_bytes.getvalue()),
-                        bbox=figure_block.rectangle.bbox_dict(),
-                        score=figure_block.score,
+                        bbox=figure_block.figure_block.rectangle.bbox_dict(),
+                        score=figure_block.figure_block.score,
                         text=ocr_result,
                     ),
-                    reading_order_index=figure_block.reading_order_index,
+                    reading_order_index=figure_block.figure_block.reading_order_index,
+                    page_number=figure_block.page_number,
                 )
             )
         return figure_fragments
+
+
+@dataclass
+class TextFragmentInformation:
+    page_number: int
+    text_block: LayoutBlock
 
 
 class TextFragmentProcessor(FragmentProcessor):
@@ -132,49 +184,46 @@ class TextFragmentProcessor(FragmentProcessor):
         self.ocr_detector = ocr_detector
 
     def process(
-        self, image: np.ndarray, layout: Union[Layout, None] = None
-    ) -> List[PageFragment]:
-        num_fragments = 1 if layout is None else len(layout.get_blocks())
-        _logger.info("Processing %d text fragments in page", num_fragments)
-
-        if layout is None:
-            ocr_results = self.ocr_detector.process([image])
-            text_fragments = [
-                PageFragment(
-                    fragment_type=PageFragmentType.TEXT,
-                    content=TextBox(
-                        text=ocr_results[0],
-                        text_type="text",
-                        bbox=None,
-                        score=None,
-                        image=TextBox.encode_image(image.tobytes()),
-                    ),
-                    reading_order_index=None,
+        self, document_page_blocks: DocumentPageBlocks
+    ) -> list[PageFragment]:
+        text_images: list[np.ndarray] = []
+        text_blocks: list[TextFragmentInformation] = []
+        for page_block in document_page_blocks.page_blocks:
+            for text_block in page_block.text_blocks:
+                text_images.append(
+                    text_block.pad_ratio(0.05).crop_image(
+                        page_block.page_image
+                    )
                 )
-            ]
-            return text_fragments
+                text_blocks.append(
+                    TextFragmentInformation(
+                        page_number=page_block.page_number,
+                        text_block=text_block,
+                    )
+                )
 
-        text_images = []
-        text_fragments = []
-        for text_block in layout:
-            text_image = text_block.pad_ratio(0.05).crop_image(image)
-            text_images.append(text_image)
-
+        _logger.info("Running OCR on %d text fragments", len(text_images))
         ocr_results = self.ocr_detector.process(text_images)
+        text_fragments = []
         for ocr_result, text_block, text_image in zip(
-            ocr_results, layout.get_blocks(), text_images
+            ocr_results, text_blocks, text_images
         ):
+            text_image = Image.fromarray(text_image)
+            img_bytes = io.BytesIO()
+            text_image.save(img_bytes, format="PNG")
+
             text_fragments.append(
                 PageFragment(
                     fragment_type=PageFragmentType.TEXT,
                     content=TextBox(
                         text=ocr_result,
-                        text_type=text_block.type,
-                        bbox=text_block.rectangle.bbox_dict(),
-                        score=text_block.score,
+                        text_type=text_block.text_block.type,
+                        bbox=text_block.text_block.rectangle.bbox_dict(),
+                        score=text_block.text_block.score,
                         image=TextBox.encode_image(text_image.tobytes()),
                     ),
-                    reading_order_index=text_block.reading_order_index,
+                    reading_order_index=text_block.text_block.reading_order_index,
+                    page_number=text_block.page_number,
                 )
             )
         return text_fragments

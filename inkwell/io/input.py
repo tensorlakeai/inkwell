@@ -2,7 +2,6 @@ import logging
 import urllib.error
 import urllib.parse
 import urllib.request
-from dataclasses import dataclass
 from io import BytesIO
 from typing import List
 
@@ -10,7 +9,7 @@ import cv2
 import numpy as np
 import pdfplumber
 
-from inkwell.components.layout import Layout
+from inkwell.components.document import PageImage
 
 _logger = logging.getLogger(__name__)
 
@@ -120,13 +119,6 @@ def _preprocess_native_pdf(document, pages_to_parse: List[int] = None):
     pages = [(convert_page_to_image(page), page.page_number) for page in pages]
 
     return pages
-
-
-@dataclass
-class PageImage:
-    page_image: np.ndarray
-    page_number: int
-    page_layout: Layout
 
 
 def read_pdf_pages(document_path: str, pages_to_parse: List[int] = None):
