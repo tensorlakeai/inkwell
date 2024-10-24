@@ -67,7 +67,7 @@ class OpenAIGPT4oMiniPipelineConfig(PipelineConfig):
 
 class Phi3VisionPipelineConfig(PipelineConfig):
     layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
-    inference_backend: InferenceBackend = InferenceBackend.VLLM
+    inference_backend: InferenceBackend = InferenceBackend.HUGGINGFACE
     layout_detector: Union[LayoutDetectorType, None] = (
         LayoutDetectorType.FASTER_RCNN
     )
@@ -93,3 +93,19 @@ class Qwen2VisionPipelineConfig(PipelineConfig):
         TableExtractorType.QWEN2_2B_VISION
     )
     figure_extractor: Union[FigureExtractorType, None] = None
+
+
+class MiniCPMPipelineConfig(PipelineConfig):
+    layout_detector_kwargs: Dict[str, Any] = {"detection_threshold": 0.4}
+    inference_backend: InferenceBackend = InferenceBackend.VLLM
+    layout_detector: Union[LayoutDetectorType, None] = (
+        LayoutDetectorType.FASTER_RCNN
+    )
+    ocr_detector: Union[OCRType, None] = OCRType.MINI_CPM
+    table_detector: Union[TableDetectorType, None] = None
+    table_extractor: Union[TableExtractorType, None] = (
+        TableExtractorType.MINI_CPM
+    )
+    figure_extractor: Union[FigureExtractorType, None] = (
+        FigureExtractorType.MINI_CPM
+    )

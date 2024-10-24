@@ -1,5 +1,8 @@
 # flake8: noqa: E501
 
+from inkwell.table_extractor.minicpm_table_extractor import (
+    MiniCPMTableExtractor,
+)
 from inkwell.table_extractor.openai_4o_mini_table_extractor import (
     OpenAI4OMiniTableExtractor,
 )
@@ -23,9 +26,15 @@ class TableExtractorFactory:
         if table_extractor_type == TableExtractorType.TABLE_TRANSFORMER:
             return TableTransformerExtractor()
 
-        if is_vllm_available():
-            if table_extractor_type == TableExtractorType.PHI3_VISION:
+        if table_extractor_type == TableExtractorType.PHI3_VISION:
+            if is_vllm_available():
                 return Phi3VTableExtractor(**kwargs)
+            raise ValueError("Please install vllm to use Phi3 Vision OCR")
+
+        if table_extractor_type == TableExtractorType.MINI_CPM:
+            if is_vllm_available():
+                return MiniCPMTableExtractor(**kwargs)
+            raise ValueError("Please install vllm to use MiniCPM OCR")
 
         if table_extractor_type == TableExtractorType.OPENAI_GPT4O_MINI:
             return OpenAI4OMiniTableExtractor()
