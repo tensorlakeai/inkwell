@@ -3,12 +3,10 @@
 
 from inkwell.models.model_registry import ModelRegistry
 from inkwell.models.models import InferenceBackend
+from inkwell.models.phi3_vision_model_loader_hf import Phi3VisionModelWrapper
 from inkwell.utils.env_utils import is_vllm_available
 
-__all__ = [
-    "ModelRegistry",
-    "InferenceBackend",
-]
+__all__ = ["ModelRegistry", "InferenceBackend", "Phi3VisionModelWrapper"]
 
 if is_vllm_available():
     from inkwell.models.minicpm_model_loader_vllm import (
