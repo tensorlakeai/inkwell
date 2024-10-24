@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "py-inkwell"
-version = "0.0.31"
+version = "0.0.32"
 description = "Python library for document processing"
 authors = ["Mohit Raghavendra <mohithmitra@gmail.com>"]
 license = "Apache 2.0"
