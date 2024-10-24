@@ -1,11 +1,9 @@
-import io
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 
 import numpy as np
-from PIL import Image
 
 from inkwell.api.document import Document
 from inkwell.api.figure import Figure
@@ -85,17 +83,13 @@ class TableFragmentProcessor(FragmentProcessor):
             table_encoding = TableEncoding.TEXT
 
         table_fragments = []
-        for ocr_result, table_block, table_image in zip(
-            ocr_results, table_blocks, table_images
-        ):
+        for ocr_result, table_block in zip(ocr_results, table_blocks):
             table_text = str(ocr_result)
-            table_image_bytes = table_image.tobytes()
             table = Table(
                 data=ocr_result,
                 text=table_text,
                 bbox=table_block.table_block.rectangle.bbox_dict(),
                 score=table_block.table_block.score,
-                image=Table.encode_image(table_image_bytes),
                 encoding=table_encoding,
             )
             table_fragments.append(
@@ -151,17 +145,11 @@ class FigureFragmentProcessor(FragmentProcessor):
             ocr_results = self.ocr_detector.process(figure_images)
 
         figure_fragments = []
-        for ocr_result, figure_block, figure_image in zip(
-            ocr_results, figure_blocks, figure_images
-        ):
-            figure_image = Image.fromarray(figure_image)
-            img_bytes = io.BytesIO()
-            figure_image.save(img_bytes, format="PNG")
+        for ocr_result, figure_block in zip(ocr_results, figure_blocks):
             figure_fragments.append(
                 PageFragment(
                     fragment_type=PageFragmentType.FIGURE,
                     content=Figure(
-                        image=Figure.encode_image(img_bytes.getvalue()),
                         bbox=figure_block.figure_block.rectangle.bbox_dict(),
                         score=figure_block.figure_block.score,
                         text=ocr_result,
@@ -205,13 +193,7 @@ class TextFragmentProcessor(FragmentProcessor):
         _logger.info("Running OCR on %d text fragments", len(text_images))
         ocr_results = self.ocr_detector.process(text_images)
         text_fragments = []
-        for ocr_result, text_block, text_image in zip(
-            ocr_results, text_blocks, text_images
-        ):
-            text_image = Image.fromarray(text_image)
-            img_bytes = io.BytesIO()
-            text_image.save(img_bytes, format="PNG")
-
+        for ocr_result, text_block in zip(ocr_results, text_blocks):
             text_fragments.append(
                 PageFragment(
                     fragment_type=PageFragmentType.TEXT,
@@ -220,7 +202,6 @@ class TextFragmentProcessor(FragmentProcessor):
                         text_type=text_block.text_block.type,
                         bbox=text_block.text_block.rectangle.bbox_dict(),
                         score=text_block.text_block.score,
-                        image=TextBox.encode_image(text_image.tobytes()),
                     ),
                     reading_order_index=text_block.text_block.reading_order_index,
                     page_number=text_block.page_number,

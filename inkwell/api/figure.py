@@ -1,7 +1,7 @@
 from base64 import b64encode
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class Figure(BaseModel):
@@ -9,7 +9,7 @@ class Figure(BaseModel):
     Figure in a document.
     """
 
-    image: str = Field(exclude=True)
+    image: Optional[str] = None
     bbox: Optional[dict[str, float]] = None
     text: Optional[str] = None
     score: Optional[float] = None
