@@ -26,7 +26,7 @@ if is_detectron2_available():
 _logger = logging.getLogger(__name__)
 
 
-DETECTRON2_DEFAULT_BATCH_SIZE = 8
+DETECTRON2_DEFAULT_BATCH_SIZE = 1
 
 
 class BatchPredictor(detectron2.engine.DefaultPredictor):
