@@ -2,12 +2,14 @@
 
 import logging
 import os
+from itertools import batched
 from pathlib import Path
 from typing import Callable, Optional, Union
 
 import numpy as np
 import torch
 from PIL import Image
+from tqdm import tqdm
 
 from inkwell.components import Layout, LayoutBlock, Rectangle
 from inkwell.layout_detector.base import BaseLayoutDetector, BaseLayoutEngine
@@ -22,6 +24,9 @@ if is_detectron2_available():
     import detectron2.engine  # pylint: disable=import-outside-toplevel
 
 _logger = logging.getLogger(__name__)
+
+
+DETECTRON2_DEFAULT_BATCH_SIZE = 1
 
 
 class BatchPredictor(detectron2.engine.DefaultPredictor):
@@ -181,11 +186,14 @@ class Detectron2LayoutDetector(BaseLayoutDetector):
     Detectron2-based layout detector.
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__()
         self._config = {}
         self._model = None
         self._model_name = ""
+        self._batch_size = kwargs.get(
+            "batch_size", DETECTRON2_DEFAULT_BATCH_SIZE
+        )
 
     def _load_model(self, **kwargs):
 
@@ -239,4 +247,9 @@ class Detectron2LayoutDetector(BaseLayoutDetector):
             or `list[Layout]`:
             The detected layout of the input image or list of images.
         """
-        return self._model.detect(image_batch)
+        batches = list(batched(image_batch, self._batch_size))
+        preds = []
+        for batch in tqdm(batches, desc="Processing layout detection batches"):
+            preds.extend(self._model.detect(batch))
+
+        return preds
