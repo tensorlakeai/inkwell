@@ -4,6 +4,7 @@ from typing import Optional
 import numpy as np
 import torch
 from PIL import Image
+from tqdm import tqdm
 from transformers import DetrImageProcessor, TableTransformerForObjectDetection
 
 from inkwell.components import Layout, LayoutBlock, Rectangle
@@ -176,7 +177,7 @@ class TableTransformerExtractor(BaseTableExtractor):
     def process(self, image_batch: list[np.ndarray]) -> list[dict]:
 
         table_results = []
-        for img in image_batch:
+        for img in tqdm(image_batch, desc="Processing table fragments"):
             image_pil = Image.fromarray(img)
             encoding = self._processor(image_pil, return_tensors="pt")
 
